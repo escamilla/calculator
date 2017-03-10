@@ -4,6 +4,7 @@ class TokenStream {
   constructor(input) {
     this.inputStream = new InputStream(input);
     this.operators = ['+', '-', '*', '/'];
+    this.current = null;
   }
 
   isWhitespace(char) {
@@ -35,7 +36,20 @@ class TokenStream {
     return parseInt(str);
   }
 
+  peek() {
+    if (this.current === null) {
+      this.current = this.readToken();
+    }
+    return this.current;
+  }
+
   next() {
+    const token = this.current;
+    this.current = null;
+    return token || this.readToken();
+  }
+
+  readToken() {
     this.skipWhitespace();
     if (this.inputStream.eof()) {
       return null;
