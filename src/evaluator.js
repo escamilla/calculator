@@ -27,7 +27,10 @@ class Evaluator {
   }
 
   evaluateOperation(operator, operands) {
-    return operators[operator](operands);
+    if (operators[operator].checkArgs(operands)) {
+      return operators[operator].method(operands);
+    }
+    throw new Error(`invalid arguments for operator: ${operator}`);
   }
 }
 
