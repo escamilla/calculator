@@ -32,7 +32,7 @@ class TokenStream {
     while (this.isDigit(this.inputStream.peek())) {
       str += this.inputStream.next();
     }
-    if (this.inputStream.peek() === '.') {
+    if (this.inputStream.peek() === '.' && this.isDigit(this.inputStream.lookAhead())) {
       str += this.inputStream.next();
       while (this.isDigit(this.inputStream.peek())) {
         str += this.inputStream.next();
