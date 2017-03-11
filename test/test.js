@@ -12,7 +12,7 @@ function interpret(input) {
 }
 
 describe('interpret()', function () {
-  const tests = [
+  const positiveTests = [
     {input: '1', expected: 1},
     {input: '-1', expected: -1},
     {input: '0.1', expected: 0.1},
@@ -29,10 +29,33 @@ describe('interpret()', function () {
     {input: 'fooBar', expected: 'fooBar'},
   ];
 
-  tests.forEach(function (test) {
+  positiveTests.forEach(function (test) {
     it(`correctly evaluates ${test.input}`, function () {
       const actual = interpret(test.input);
       assert.equal(actual, test.expected);
     });
+  });
+
+  const negativeTests = [
+    {input: '(', reason: 'unmatched parenthesis'},
+    {input: ')', reason: 'unmatched parenthesis'},
+    {input: '()', reason: 'empty symbolic expression'},
+    {input: '(1)', reason: 'symbolic expression must begin with a symbol'},
+    {input: '(foo)', reason: 'undefined symbol'},
+    {input: 'foo bar', reason: 'must be single expression'},
+    {input: '(add 1 2) foo', reason: 'must be single expression'},
+    {input: 'foo (add 1 2)', reason: 'must be single expression'},
+    {input: '-foo', reason: 'symbol cannot begin with a hyphen'},
+    {input: 'foo-', reason: 'symbol cannot end with a hyphen'},
+    {input: '.1', reason: 'number cannot begin with a decimal point'},
+    {input: '1.', reason: 'number cannot end with a decimal point'},
+  ];
+
+  negativeTests.forEach(function (test) {
+    it(`throws an error evaluating ${test.input} (${test.reason})`, function () {
+      assert.throws(() => {
+        interpret(test.input);
+      });
+    })
   });
 });
