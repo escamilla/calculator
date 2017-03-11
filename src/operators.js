@@ -86,6 +86,15 @@ const operators = {
     }
   },
 
+  sequence: {
+    checkArgs(operands) {
+      return operands.length >= 1;
+    },
+    method(operands) {
+      return operands[operands.length - 1];
+    }
+  }
+
 };
 
 module.exports = operators;

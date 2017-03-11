@@ -63,6 +63,7 @@ describe('interpret()', function () {
     {input: '(quote (add 1 2))', expected: new QuotedExpressionNode(new NumberNode(3))},
     {input: "(unquote 'foo)", expected: new SymbolNode('foo')},
     {input: "(unquote '(add 1 2))", expected: new NumberNode(3)},
+    {input: "(sequence (add 1 2) (add 2 3))", expected: new NumberNode(5)},
   ];
 
   positiveTests.forEach(function (test) {
