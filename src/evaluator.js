@@ -1,3 +1,9 @@
+const {
+  NumberNode,
+  SymbolNode,
+  SymbolicExpressionNode,
+  QuotedExpressionNode
+} = require('./nodes');
 const operators = require('./operators');
 
 class Evaluator {
@@ -10,13 +16,10 @@ class Evaluator {
   }
 
   evaluateNode(node) {
-    switch (node.type) {
-      case 'symbolic-expression':
-        return this.evaluateSymbolicExpression(node);
-      case 'number':
-      case 'symbol':
-      case 'quoted-expression':
-        return node;
+    if (node instanceof NumberNode || node instanceof SymbolNode || node instanceof QuotedExpressionNode) {
+      return node;
+    } else if (node instanceof SymbolicExpressionNode) {
+      return this.evaluateSymbolicExpression(node);
     }
   }
 

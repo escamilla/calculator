@@ -1,84 +1,70 @@
+const {NumberNode} = require('./nodes');
+
 const operators = {
 
   add: {
     checkArgs(operands) {
       return operands.length >= 2 &&
-        operands.every((operand) => operand.type === 'number');
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
-      return {
-        type: 'number',
-        value: operands.reduce((acc, operand) => {
+      return new NumberNode(
+        operands.reduce((acc, operand) => {
           return acc + operand.value;
-        }, 0)
-      };
+        }, 0));
     }
   },
 
   sub: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand.type === 'number');
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
-      return {
-        type: 'number',
-        value: operands[0].value - operands[1].value
-      };
-    },
+      return new NumberNode(operands[0].value - operands[1].value);
+    }
   },
 
   mul: {
     checkArgs(operands) {
       return operands.length >= 2 &&
-        operands.every((operand) => operand.type === 'number');
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
-      return {
-        type: 'number',
-        value: operands.reduce((acc, operand) => {
+      return new NumberNode(
+        operands.reduce((acc, operand) => {
           return acc * operand.value;
-        }, 1)
-      };
-    },
+        }, 1));
+    }
   },
 
   div: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand.type === 'number');
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
-      return {
-        type: 'number',
-        value: operands[0].value / operands[1].value
-      };
-    },
+      return new NumberNode(operands[0].value / operands[1].value);
+    }
   },
 
   mod: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand.type === 'number');
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
-      return {
-        type: 'number',
-        value: operands[0].value % operands[1].value
-      };
-    },
+      return new NumberNode(operands[0].value % operands[1].value);
+    }
   },
 
   pow: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand.type === 'number');
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
-      return {
-        type: 'number',
-        value: Math.pow(operands[0].value, operands[1].value)
-      };
+      return new NumberNode(Math.pow(operands[0].value, operands[1].value));
     }
   }
 

@@ -1,4 +1,10 @@
 const TokenStream = require('./token-stream');
+const {
+  NumberNode,
+  SymbolNode,
+  SymbolicExpressionNode,
+  QuotedExpressionNode
+} = require('./nodes');
 
 class Parser {
   constructor(input) {
@@ -37,40 +43,27 @@ class Parser {
   }
 
   parseNumber() {
-    return {
-      type: 'number',
-      value: this.consumeToken('number').value
-    };
+    return new NumberNode(this.consumeToken('number').value);
   }
 
   parseSymbol() {
-    return {
-      type: 'symbol',
-      value: this.consumeToken('symbol').value
-    };
+    return new SymbolNode(this.consumeToken('symbol').value);
   }
 
   parseSymbolicExpression() {
     this.consumeToken('left-parenthesis');
-    const operator = this.consumeToken('symbol');
+    const operator = this.parseSymbol();
     const operands = [];
     while (this.tokenStream.peek().type !== 'right-parenthesis') {
       operands.push(this.parseExpression());
     }
     this.consumeToken('right-parenthesis');
-    return {
-      type: 'symbolic-expression',
-      operator,
-      operands
-    };
+    return new SymbolicExpressionNode(operator, operands);
   }
 
   parseQuotedExpression() {
     this.consumeToken('single-quote');
-    return {
-      type: 'quoted-expression',
-      value: this.parseExpression()
-    };
+    return new QuotedExpressionNode(this.parseExpression());
   }
 }
 

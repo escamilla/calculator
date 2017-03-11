@@ -3,6 +3,12 @@ const {describe, it} = require('mocha');
 
 const Parser = require('../src/parser');
 const Evaluator = require('../src/evaluator');
+const {
+  NumberNode,
+  SymbolNode,
+  SymbolicExpressionNode,
+  QuotedExpressionNode
+} = require('../src/nodes');
 
 function interpret(input) {
   const parser = new Parser(input);
@@ -13,61 +19,45 @@ function interpret(input) {
 
 describe('interpret()', function () {
   const positiveTests = [
-    {input: '1', expected: {type: 'number', value: 1}},
-    {input: '-1', expected: {type: 'number', value: -1}},
-    {input: '0.1', expected: {type: 'number', value: 0.1}},
-    {input: '-0.1', expected: {type: 'number', value: -0.1}},
-    {input: '(add 1 2)', expected: {type: 'number', value: 3}},
-    {input: '(sub 3 2)', expected: {type: 'number', value: 1}},
-    {input: '(mul 2 3)', expected: {type: 'number', value: 6}},
-    {input: '(div 6 3)', expected: {type: 'number', value: 2}},
-    {input: '(mod 9 6)', expected: {type: 'number', value: 3}},
-    {input: '(pow 2 3)', expected: {type: 'number', value: 8}},
-    {input: '(add (add 1 2) 3)', expected: {type: 'number', value: 6}},
-    {input: 'foo', expected: {type: 'symbol', value: 'foo'}},
-    {input: 'foo-bar', expected: {type: 'symbol', value: 'foo-bar'}},
-    {input: 'fooBar', expected: {type: 'symbol', value: 'fooBar'}},
-    {input: "'1", expected: {type: 'quoted-expression', value: {type: 'number', value: 1}}},
-    {input: "'-1", expected: {type: 'quoted-expression', value: {type: 'number', value: -1}}},
-    {input: "'0.1", expected: {type: 'quoted-expression', value: {type: 'number', value: 0.1}}},
-    {input: "'-0.1", expected: {type: 'quoted-expression', value: {type: 'number', value: -0.1}}},
-    {input: "'foo", expected: {type: 'quoted-expression', value: {type: 'symbol', value: 'foo'}}},
-    {input: "'foo-bar", expected: {type: 'quoted-expression', value: {type: 'symbol', value: 'foo-bar'}}},
-    {input: "'fooBar", expected: {type: 'quoted-expression', value: {type: 'symbol', value: 'fooBar'}}},
+    {input: '1', expected: new NumberNode(1)},
+    {input: '-1', expected: new NumberNode(-1)},
+    {input: '0.1', expected: new NumberNode(0.1)},
+    {input: '-0.1', expected: new NumberNode(-0.1)},
+    {input: '(add 1 2)', expected: new NumberNode(3)},
+    {input: '(sub 3 2)', expected: new NumberNode(1)},
+    {input: '(mul 2 3)', expected: new NumberNode(6)},
+    {input: '(div 6 3)', expected: new NumberNode(2)},
+    {input: '(mod 9 6)', expected: new NumberNode(3)},
+    {input: '(pow 2 3)', expected: new NumberNode(8)},
+    {input: '(add (add 1 2) 3)', expected: new NumberNode(6)},
+    {input: 'foo', expected: new SymbolNode('foo')},
+    {input: 'foo-bar', expected: new SymbolNode('foo-bar')},
+    {input: 'fooBar', expected: new SymbolNode('fooBar')},
+    {input: "'1", expected: new QuotedExpressionNode(new NumberNode(1))},
+    {input: "'-1", expected: new QuotedExpressionNode(new NumberNode(-1))},
+    {input: "'0.1", expected: new QuotedExpressionNode(new NumberNode(0.1))},
+    {input: "'-0.1", expected: new QuotedExpressionNode(new NumberNode(-0.1))},
+    {input: "'foo", expected: new QuotedExpressionNode(new SymbolNode('foo'))},
+    {input: "'foo-bar", expected: new QuotedExpressionNode(new SymbolNode('foo-bar'))},
+    {input: "'fooBar", expected: new QuotedExpressionNode(new SymbolNode('fooBar'))},
     {
       input: "'(add 1 2)",
-      expected: {
-        type: 'quoted-expression',
-        value: {
-          type: 'symbolic-expression',
-          operator: {type: 'symbol', value: 'add'},
-          operands: [
-            {type: 'number', value: 1},
-            {type: 'number', value: 2}
-          ]
-        }
-      }
+      expected: new QuotedExpressionNode(
+        new SymbolicExpressionNode(new SymbolNode('add'), [
+          new NumberNode(1),
+          new NumberNode(2)
+        ]))
     },
     {
       input: "'(add (add 1 2) 3)",
-      expected: {
-        type: 'quoted-expression',
-        value: {
-          type: 'symbolic-expression',
-          operator: {type: 'symbol', value: 'add'},
-          operands: [
-            {
-              type: 'symbolic-expression',
-              operator: {type: 'symbol', value: 'add'},
-              operands: [
-                {type: 'number', value: 1},
-                {type: 'number', value: 2}
-              ]
-            },
-            {type: 'number', value: 3}
-          ]
-        }
-      }
+      expected: new QuotedExpressionNode(
+        new SymbolicExpressionNode(new SymbolNode('add'), [
+          new SymbolicExpressionNode(new SymbolNode('add'), [
+            new NumberNode(1),
+            new NumberNode(2)
+          ]),
+          new NumberNode(3)
+        ]))
     },
   ];
 
