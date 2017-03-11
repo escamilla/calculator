@@ -19,7 +19,7 @@ if (argv._.length === 0) {
 const input = argv._.shift().toString();
 
 const parser = new Parser(input);
-const ast = parser.parseExpression();
+const ast = parser.parse();
 
 const evaluator = new Evaluator(ast);
 const output = evaluator.evaluate().value;

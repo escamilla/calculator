@@ -48,7 +48,7 @@ class TokenStream {
 
   readSymbol() {
     let str = '';
-    while (this.isLetter(this.inputStream.peek()) || this.inputStream.peek() === '-') {
+    while (this.isLetter(this.inputStream.peek()) || (this.inputStream.peek() === '-' && this.isLetter(this.inputStream.lookAhead()))) {
       str += this.inputStream.next();
     }
     return str;
@@ -110,6 +110,10 @@ class TokenStream {
     }
 
     this.inputStream.die(`Unexpected character: '${char}'`)
+  }
+
+  eof() {
+    return this.peek() === null;
   }
 }
 

@@ -13,6 +13,14 @@ class Parser {
     throw new Error(`Expected token of type ${expectedType} but got token of type ${token.type}`);
   }
 
+  parse() {
+    const result = this.parseExpression();
+    if (!this.tokenStream.eof()) {
+      throw new Error('Expected end of file after expression');
+    }
+    return result;
+  }
+
   parseExpression() {
     switch (this.tokenStream.peek().type) {
       case 'left-parenthesis':
