@@ -3,7 +3,6 @@ const InputStream = require('./input-stream');
 class TokenStream {
   constructor(input) {
     this.inputStream = new InputStream(input);
-    this.operators = ['+', '-', '*', '/', '%', '^'];
     this.current = null;
   }
 
@@ -17,10 +16,6 @@ class TokenStream {
 
   isLetter(char) {
     return /[a-z]/i.test(char);
-  }
-
-  isOperator(char) {
-    return this.operators.includes(char);
   }
 
   skipWhitespace() {
@@ -85,13 +80,6 @@ class TokenStream {
       return {
         type: 'symbol',
         value: this.readSymbol()
-      };
-    }
-
-    if (this.isOperator(char)) {
-      return {
-        type: 'operator',
-        value: this.inputStream.next()
       };
     }
 

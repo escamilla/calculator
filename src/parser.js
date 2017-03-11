@@ -24,13 +24,13 @@ class Parser {
   parseExpression() {
     switch (this.tokenStream.peek().type) {
       case 'left-parenthesis':
-        return this.parseOperation();
+        return this.parseSymbolicExpression();
       case 'number':
         return this.parseNumber();
       case 'symbol':
         return this.parseSymbol();
       default:
-        throw new Error('Expected number or arithmetic operation');
+        throw new Error('Expected number, symbol, or symbolic expression');
     }
   }
 
@@ -48,16 +48,16 @@ class Parser {
     };
   }
 
-  parseOperation() {
+  parseSymbolicExpression() {
     this.consumeToken('left-parenthesis');
-    const operator = this.consumeToken('operator').value;
+    const operator = this.consumeToken('symbol');
     const operands = [];
     while (this.tokenStream.peek().type !== 'right-parenthesis') {
       operands.push(this.parseExpression());
     }
     this.consumeToken('right-parenthesis');
     return {
-      type: 'operation',
+      type: 'symbolic-expression',
       operator,
       operands
     }

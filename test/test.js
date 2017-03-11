@@ -5,7 +5,7 @@ const Evaluator = require('../src/evaluator');
 
 function interpret(input) {
   const parser = new Parser(input);
-  const ast = parser.parseExpression();
+  const ast = parser.parse();
   const evaluator = new Evaluator(ast);
   const output = evaluator.evaluate();
   return output.value;
@@ -17,13 +17,13 @@ describe('interpret()', function () {
     {input: '-1', expected: -1},
     {input: '0.1', expected: 0.1},
     {input: '-0.1', expected: -0.1},
-    {input: '(+ 1 2)', expected: 3},
-    {input: '(- 3 2)', expected: 1},
-    {input: '(* 2 3)', expected: 6},
-    {input: '(/ 6 3)', expected: 2},
-    {input: '(% 9 6)', expected: 3},
-    {input: '(^ 2 3)', expected: 8},
-    {input: '(+ (+ 1 2) 3)', expected: 6},
+    {input: '(add 1 2)', expected: 3},
+    {input: '(sub 3 2)', expected: 1},
+    {input: '(mul 2 3)', expected: 6},
+    {input: '(div 6 3)', expected: 2},
+    {input: '(mod 9 6)', expected: 3},
+    {input: '(pow 2 3)', expected: 8},
+    {input: '(add (add 1 2) 3)', expected: 6},
     {input: 'foo', expected: 'foo'},
     {input: 'foo-bar', expected: 'foo-bar'},
     {input: 'fooBar', expected: 'fooBar'},

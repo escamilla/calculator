@@ -1,6 +1,6 @@
 const operators = {
 
-  '+': {
+  add: {
     checkArgs(operands) {
       return operands.length >= 2 &&
         operands.every((operand) => operand.type === 'number');
@@ -15,7 +15,7 @@ const operators = {
     }
   },
 
-  '-': {
+  sub: {
     checkArgs(operands) {
       return operands.length === 2 &&
         operands.every((operand) => operand.type === 'number');
@@ -28,7 +28,7 @@ const operators = {
     },
   },
 
-  '*': {
+  mul: {
     checkArgs(operands) {
       return operands.length >= 2 &&
         operands.every((operand) => operand.type === 'number');
@@ -43,7 +43,7 @@ const operators = {
     },
   },
 
-  '/': {
+  div: {
     checkArgs(operands) {
       return operands.length === 2 &&
         operands.every((operand) => operand.type === 'number');
@@ -56,7 +56,7 @@ const operators = {
     },
   },
 
-  '%': {
+  mod: {
     checkArgs(operands) {
       return operands.length === 2 &&
         operands.every((operand) => operand.type === 'number');
@@ -69,7 +69,7 @@ const operators = {
     },
   },
 
-  '^': {
+  pow: {
     checkArgs(operands) {
       return operands.length === 2 &&
         operands.every((operand) => operand.type === 'number');

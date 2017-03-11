@@ -11,15 +11,15 @@ class Evaluator {
 
   evaluateNode(node) {
     switch (node.type) {
-      case 'operation':
-        return this.evaluateOperationNode(node);
+      case 'symbolic-expression':
+        return this.evaluateSymbolicExpression(node);
       case 'number':
       case 'symbol':
         return node;
     }
   }
 
-  evaluateOperationNode(node) {
+  evaluateSymbolicExpression(node) {
     const evaluatedOperands = node.operands.map((operand) => {
       return this.evaluateNode(operand);
     });
@@ -27,10 +27,10 @@ class Evaluator {
   }
 
   evaluateOperation(operator, operands) {
-    if (operators[operator].checkArgs(operands)) {
-      return operators[operator].method(operands);
+    if (operators[operator.value].checkArgs(operands)) {
+      return operators[operator.value].method(operands);
     }
-    throw new Error(`invalid arguments for operator: ${operator}`);
+    throw new Error(`invalid arguments for operator: ${operator.value}`);
   }
 }
 
