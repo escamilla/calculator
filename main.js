@@ -1,4 +1,15 @@
-const Parser = require('./parser');
-const parser = new Parser("(* (+ 1 2) 3)");
 const util = require('util');
-console.log(util.inspect(parser.parseExpression(), { depth: null, colors: true }));
+
+const Parser = require('./parser');
+const Evaluator = require('./evaluator');
+
+const input = "(* (+ 1 2) 3)";
+
+const parser = new Parser(input);
+const ast = parser.parseExpression();
+
+const evaluator = new Evaluator(ast);
+const output = evaluator.evaluate().value;
+
+const details = { input, output, ast };
+console.log(util.inspect(details, { depth: null, colors: true}));

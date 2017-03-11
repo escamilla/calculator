@@ -33,7 +33,7 @@ class Parser {
 
   parseOperation() {
     this.consumeToken('left-parenthesis');
-    const operator = this.consumeToken('operator');
+    const operator = this.consumeToken('operator').value;
     const operands = [];
     while (this.tokenStream.peek().type !== 'right-parenthesis') {
       operands.push(this.parseExpression());
@@ -41,7 +41,7 @@ class Parser {
     this.consumeToken('right-parenthesis');
     return {
       type: 'operation',
-      operator: operator.value,
+      operator,
       operands
     }
   }
