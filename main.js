@@ -25,8 +25,8 @@ const evaluator = new Evaluator(ast);
 const output = evaluator.evaluate().value;
 
 if (argv.verbose) {
-  const details = { input, output, ast };
-  console.log(util.inspect(details, { depth: null, colors: true}));
+  const details = {input, output, ast};
+  console.log(util.inspect(details, {depth: null, colors: true}));
 } else {
   console.log(output);
 }
