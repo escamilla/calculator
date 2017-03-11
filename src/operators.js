@@ -1,4 +1,4 @@
-const {NumberNode} = require('./nodes');
+const {NumberNode, QuotedExpressionNode} = require('./nodes');
 
 const operators = {
 
@@ -66,7 +66,25 @@ const operators = {
     method(operands) {
       return new NumberNode(Math.pow(operands[0].value, operands[1].value));
     }
-  }
+  },
+
+  quote: {
+    checkArgs(operands) {
+      return operands.length === 1;
+    },
+    method(operands) {
+      return new QuotedExpressionNode(operands[0]);
+    }
+  },
+
+  unquote: {
+    checkArgs(operands) {
+      return operands.length === 1 && operands[0] instanceof QuotedExpressionNode;
+    },
+    method(operands) {
+      return operands[0].value;
+    }
+  },
 
 };
 
