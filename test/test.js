@@ -1,4 +1,5 @@
 const assert = require('assert');
+const {describe, it} = require('mocha');
 
 const Parser = require('../src/parser');
 const Evaluator = require('../src/evaluator');
@@ -7,32 +8,73 @@ function interpret(input) {
   const parser = new Parser(input);
   const ast = parser.parse();
   const evaluator = new Evaluator(ast);
-  const output = evaluator.evaluate();
-  return output.value;
+  return evaluator.evaluate();
 }
 
 describe('interpret()', function () {
   const positiveTests = [
-    {input: '1', expected: 1},
-    {input: '-1', expected: -1},
-    {input: '0.1', expected: 0.1},
-    {input: '-0.1', expected: -0.1},
-    {input: '(add 1 2)', expected: 3},
-    {input: '(sub 3 2)', expected: 1},
-    {input: '(mul 2 3)', expected: 6},
-    {input: '(div 6 3)', expected: 2},
-    {input: '(mod 9 6)', expected: 3},
-    {input: '(pow 2 3)', expected: 8},
-    {input: '(add (add 1 2) 3)', expected: 6},
-    {input: 'foo', expected: 'foo'},
-    {input: 'foo-bar', expected: 'foo-bar'},
-    {input: 'fooBar', expected: 'fooBar'},
+    {input: '1', expected: {type: 'number', value: 1}},
+    {input: '-1', expected: {type: 'number', value: -1}},
+    {input: '0.1', expected: {type: 'number', value: 0.1}},
+    {input: '-0.1', expected: {type: 'number', value: -0.1}},
+    {input: '(add 1 2)', expected: {type: 'number', value: 3}},
+    {input: '(sub 3 2)', expected: {type: 'number', value: 1}},
+    {input: '(mul 2 3)', expected: {type: 'number', value: 6}},
+    {input: '(div 6 3)', expected: {type: 'number', value: 2}},
+    {input: '(mod 9 6)', expected: {type: 'number', value: 3}},
+    {input: '(pow 2 3)', expected: {type: 'number', value: 8}},
+    {input: '(add (add 1 2) 3)', expected: {type: 'number', value: 6}},
+    {input: 'foo', expected: {type: 'symbol', value: 'foo'}},
+    {input: 'foo-bar', expected: {type: 'symbol', value: 'foo-bar'}},
+    {input: 'fooBar', expected: {type: 'symbol', value: 'fooBar'}},
+    {input: "'1", expected: {type: 'quoted-expression', value: {type: 'number', value: 1}}},
+    {input: "'-1", expected: {type: 'quoted-expression', value: {type: 'number', value: -1}}},
+    {input: "'0.1", expected: {type: 'quoted-expression', value: {type: 'number', value: 0.1}}},
+    {input: "'-0.1", expected: {type: 'quoted-expression', value: {type: 'number', value: -0.1}}},
+    {input: "'foo", expected: {type: 'quoted-expression', value: {type: 'symbol', value: 'foo'}}},
+    {input: "'foo-bar", expected: {type: 'quoted-expression', value: {type: 'symbol', value: 'foo-bar'}}},
+    {input: "'fooBar", expected: {type: 'quoted-expression', value: {type: 'symbol', value: 'fooBar'}}},
+    {
+      input: "'(add 1 2)",
+      expected: {
+        type: 'quoted-expression',
+        value: {
+          type: 'symbolic-expression',
+          operator: {type: 'symbol', value: 'add'},
+          operands: [
+            {type: 'number', value: 1},
+            {type: 'number', value: 2}
+          ]
+        }
+      }
+    },
+    {
+      input: "'(add (add 1 2) 3)",
+      expected: {
+        type: 'quoted-expression',
+        value: {
+          type: 'symbolic-expression',
+          operator: {type: 'symbol', value: 'add'},
+          operands: [
+            {
+              type: 'symbolic-expression',
+              operator: {type: 'symbol', value: 'add'},
+              operands: [
+                {type: 'number', value: 1},
+                {type: 'number', value: 2}
+              ]
+            },
+            {type: 'number', value: 3}
+          ]
+        }
+      }
+    },
   ];
 
   positiveTests.forEach(function (test) {
     it(`correctly evaluates ${test.input}`, function () {
       const actual = interpret(test.input);
-      assert.equal(actual, test.expected);
+      assert.deepStrictEqual(actual, test.expected);
     });
   });
 
