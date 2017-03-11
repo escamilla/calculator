@@ -15,6 +15,8 @@ describe('interpret()', function () {
   const tests = [
     {input: '1', expected: 1},
     {input: '-1', expected: -1},
+    {input: '0.1', expected: 0.1},
+    {input: '-0.1', expected: -0.1},
     {input: '(+ 1 2)', expected: 3},
     {input: '(- 3 2)', expected: 1},
     {input: '(* 2 3)', expected: 6},

@@ -33,7 +33,13 @@ class TokenStream {
     while (this.isDigit(this.inputStream.peek())) {
       str += this.inputStream.next();
     }
-    return parseInt(str);
+    if (this.inputStream.peek() === '.') {
+      str += this.inputStream.next();
+      while (this.isDigit(this.inputStream.peek())) {
+        str += this.inputStream.next();
+      }
+    }
+    return parseFloat(str);
   }
 
   peek() {

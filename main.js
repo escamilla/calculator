@@ -16,7 +16,7 @@ if (argv._.length === 0) {
   process.exit();
 }
 
-const input = argv._.shift();
+const input = argv._.shift().toString();
 
 const parser = new Parser(input);
 const ast = parser.parseExpression();
