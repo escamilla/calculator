@@ -29,6 +29,8 @@ class Parser {
         return this.parseNumber();
       case 'symbol':
         return this.parseSymbol();
+      case 'single-quote':
+        return this.parseQuotedExpression();
       default:
         throw new Error('Expected number, symbol, or symbolic expression');
     }
@@ -60,7 +62,15 @@ class Parser {
       type: 'symbolic-expression',
       operator,
       operands
-    }
+    };
+  }
+
+  parseQuotedExpression() {
+    this.consumeToken('single-quote');
+    return {
+      type: 'quoted-expression',
+      value: this.parseExpression()
+    };
   }
 }
 

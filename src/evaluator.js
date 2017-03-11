@@ -15,6 +15,7 @@ class Evaluator {
         return this.evaluateSymbolicExpression(node);
       case 'number':
       case 'symbol':
+      case 'quoted-expression':
         return node;
     }
   }
@@ -23,7 +24,9 @@ class Evaluator {
     const evaluatedOperands = node.operands.map((operand) => {
       return this.evaluateNode(operand);
     });
-    return this.evaluateOperation(node.operator, evaluatedOperands);
+    const result = this.evaluateOperation(node.operator, evaluatedOperands);
+    // the result might be an s-expression, so another evaluation is necessary
+    return this.evaluateNode(result);
   }
 
   evaluateOperation(operator, operands) {

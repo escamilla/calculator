@@ -83,21 +83,25 @@ class TokenStream {
       };
     }
 
-    if (char === '(') {
-      return {
-        type: 'left-parenthesis',
-        value: this.inputStream.next()
-      };
+    switch (char) {
+      case '(':
+        return {
+          type: 'left-parenthesis',
+          value: this.inputStream.next()
+        };
+      case ')':
+        return {
+          type: 'right-parenthesis',
+          value: this.inputStream.next()
+        };
+      case "'":
+        return {
+          type: 'single-quote',
+          value: this.inputStream.next()
+        };
+      default:
+        this.inputStream.die(`Unexpected character: '${char}'`)
     }
-
-    if (char === ')') {
-      return {
-        type: 'right-parenthesis',
-        value: this.inputStream.next()
-      };
-    }
-
-    this.inputStream.die(`Unexpected character: '${char}'`)
   }
 
   eof() {

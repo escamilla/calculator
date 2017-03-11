@@ -22,7 +22,7 @@ const parser = new Parser(input);
 const ast = parser.parse();
 
 const evaluator = new Evaluator(ast);
-const output = evaluator.evaluate().value;
+const output = evaluator.evaluate();
 
 if (argv.verbose) {
   const details = {input, output, ast};
