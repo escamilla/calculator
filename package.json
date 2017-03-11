@@ -1,0 +1,15 @@
+{
+  "name": "calculator",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
+  "repository": "escamilla/calculator",
+  "scripts": {
+    "demo": "node main.js",
+    "test": "mocha"
+  },
+  "private": true,
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  }
+}

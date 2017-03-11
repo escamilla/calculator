@@ -2,7 +2,10 @@
 
 Evaluate arithmetic expressions written in parenthesized prefix notation.
 
-## Running
 ```
-node main.js
+# evaluate an example expression and display the parse tree
+npm run demo
+
+# run unit tests
+npm test
 ```
