@@ -24,6 +24,9 @@ describe('interpret()', function () {
     {input: '(% 9 6)', expected: 3},
     {input: '(^ 2 3)', expected: 8},
     {input: '(+ (+ 1 2) 3)', expected: 6},
+    {input: 'foo', expected: 'foo'},
+    {input: 'foo-bar', expected: 'foo-bar'},
+    {input: 'fooBar', expected: 'fooBar'},
   ];
 
   tests.forEach(function (test) {

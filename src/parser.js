@@ -19,6 +19,8 @@ class Parser {
         return this.parseOperation();
       case 'number':
         return this.parseNumber();
+      case 'symbol':
+        return this.parseSymbol();
       default:
         throw new Error('Expected number or arithmetic operation');
     }
@@ -28,6 +30,13 @@ class Parser {
     return {
       type: 'number',
       value: this.consumeToken('number').value
+    };
+  }
+
+  parseSymbol() {
+    return {
+      type: 'symbol',
+      value: this.consumeToken('symbol').value
     };
   }
 

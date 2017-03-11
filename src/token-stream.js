@@ -15,6 +15,10 @@ class TokenStream {
     return /\d/.test(char);
   }
 
+  isLetter(char) {
+    return /[a-z]/i.test(char);
+  }
+
   isOperator(char) {
     return this.operators.includes(char);
   }
@@ -42,6 +46,14 @@ class TokenStream {
     return parseFloat(str);
   }
 
+  readSymbol() {
+    let str = '';
+    while (this.isLetter(this.inputStream.peek()) || this.inputStream.peek() === '-') {
+      str += this.inputStream.next();
+    }
+    return str;
+  }
+
   peek() {
     if (this.current === null) {
       this.current = this.readToken();
@@ -66,6 +78,13 @@ class TokenStream {
       return {
         type: 'number',
         value: this.readNumber()
+      };
+    }
+
+    if (this.isLetter(char)) {
+      return {
+        type: 'symbol',
+        value: this.readSymbol()
       };
     }
 

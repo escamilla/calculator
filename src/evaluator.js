@@ -14,6 +14,7 @@ class Evaluator {
       case 'operation':
         return this.evaluateOperationNode(node);
       case 'number':
+      case 'symbol':
         return node;
     }
   }
