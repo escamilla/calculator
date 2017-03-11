@@ -30,6 +30,20 @@ const operators = {
       type: 'number',
       value: operands[0].value / operands[1].value
     };
+  },
+
+  '%'(operands) {
+    return {
+      type: 'number',
+      value: operands[0].value % operands[1].value
+    };
+  },
+
+  '^'(operands) {
+    return {
+      type: 'number',
+      value: Math.pow(operands[0].value, operands[1].value)
+    };
   }
 
 };

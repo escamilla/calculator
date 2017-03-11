@@ -21,6 +21,8 @@ describe('interpret()', function () {
     {input: '(- 3 2)', expected: 1},
     {input: '(* 2 3)', expected: 6},
     {input: '(/ 6 3)', expected: 2},
+    {input: '(% 9 6)', expected: 3},
+    {input: '(^ 2 3)', expected: 8},
     {input: '(+ (+ 1 2) 3)', expected: 6},
   ];
 

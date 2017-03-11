@@ -3,7 +3,7 @@ const InputStream = require('./input-stream');
 class TokenStream {
   constructor(input) {
     this.inputStream = new InputStream(input);
-    this.operators = ['+', '-', '*', '/'];
+    this.operators = ['+', '-', '*', '/', '%', '^'];
     this.current = null;
   }
 
