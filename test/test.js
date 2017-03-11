@@ -1,7 +1,7 @@
 const assert = require('assert');
 
-const Parser = require('../Parser');
-const Evaluator = require('../Evaluator');
+const Parser = require('../src/parser');
+const Evaluator = require('../src/evaluator');
 
 function interpret(input) {
   const parser = new Parser(input);

@@ -5,7 +5,7 @@
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
   "repository": "escamilla/calculator",
   "scripts": {
-    "eval": "node main.js",
+    "eval": "node src/main.js",
     "test": "mocha"
   },
   "private": true,
