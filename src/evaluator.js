@@ -4,6 +4,8 @@ const {
   SymbolicExpressionNode,
   QuotedExpressionNode
 } = require('./nodes');
+
+const Environment = require('./environment');
 const operators = require('./operators');
 
 class Evaluator {
@@ -12,29 +14,35 @@ class Evaluator {
   }
 
   evaluate() {
-    return this.evaluateNode(this.ast);
+    return this.evaluateNode(this.ast, new Environment());
   }
 
-  evaluateNode(node) {
-    if (node instanceof NumberNode || node instanceof SymbolNode || node instanceof QuotedExpressionNode) {
+  evaluateNode(node, env) {
+    if (node instanceof NumberNode || node instanceof QuotedExpressionNode) {
       return node;
+    } else if (node instanceof SymbolNode) {
+      return this.evaluateSymbolNode(node, env);
     } else if (node instanceof SymbolicExpressionNode) {
-      return this.evaluateSymbolicExpression(node);
+      return this.evaluateSymbolicExpression(node, env);
     }
   }
 
-  evaluateSymbolicExpression(node) {
-    const evaluatedOperands = node.operands.map((operand) => {
-      return this.evaluateNode(operand);
-    });
-    const result = this.evaluateOperation(node.operator, evaluatedOperands);
-    // the result might be an s-expression, so another evaluation is necessary
-    return this.evaluateNode(result);
+  evaluateSymbolNode(node, env) {
+    return env.lookUp(node.value) || node;
   }
 
-  evaluateOperation(operator, operands) {
+  evaluateSymbolicExpression(node, env) {
+    const evaluatedOperands = node.operands.map((operand) => {
+      return this.evaluateNode(operand, new Environment(env));
+    });
+    const result = this.evaluateOperation(node.operator, evaluatedOperands, env);
+    // the result might be an s-expression, so another evaluation is necessary
+    return this.evaluateNode(result, new Environment(env));
+  }
+
+  evaluateOperation(operator, operands, env) {
     if (operators[operator.value].checkArgs(operands)) {
-      return operators[operator.value].method(operands);
+      return operators[operator.value].method(operands, env);
     }
     throw new Error(`invalid arguments for operator: ${operator.value}`);
   }

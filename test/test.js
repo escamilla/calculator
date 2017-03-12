@@ -69,6 +69,11 @@ describe('interpret()', function () {
     {input: "(unquote 'foo)", expected: new SymbolNode('foo')},
     {input: "(unquote '(add 1 2))", expected: new NumberNode(3)},
     {input: "(sequence (add 1 2) (add 2 3))", expected: new NumberNode(5)},
+    {input: "(let 'pi 3.14)", expected: new NumberNode(3.14)},
+    {input: "(sequence (let 'pi 3.14) pi)", expected: new NumberNode(3.14)},
+    {input: "(sequence (let 'pi 3.14) (sequence pi))", expected: new NumberNode(3.14)},
+    {input: "(sequence (let 'pi 3.14) (let 'pi 3.142) pi)", expected: new NumberNode(3.142)},
+    {input: "(sequence (let 'pi 3.14) (sequence (let 'pi 3.142)) pi)", expected: new NumberNode(3.14)},
   ];
 
   positiveTests.forEach(function (test) {

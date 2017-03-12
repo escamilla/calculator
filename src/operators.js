@@ -1,4 +1,8 @@
-const {NumberNode, QuotedExpressionNode} = require('./nodes');
+const {
+  NumberNode,
+  SymbolNode,
+  QuotedExpressionNode
+} = require('./nodes');
 
 const operators = {
 
@@ -92,6 +96,22 @@ const operators = {
     },
     method(operands) {
       return operands[operands.length - 1];
+    }
+  },
+
+  let: {
+    checkArgs(operands) {
+      return operands.length === 2 &&
+        operands[0] instanceof QuotedExpressionNode &&
+        operands[0].value instanceof SymbolNode;
+    },
+    method(operands, env) {
+      const key = operands[0].value.value;
+      const value = operands[1];
+      if (env.parent !== null) {
+        env.parent.define(key, value);
+      }
+      return value;
     }
   }
 
