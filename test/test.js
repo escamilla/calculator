@@ -4,6 +4,7 @@ const {describe, it} = require('mocha');
 const Lexer = require('../src/lexer');
 const Parser = require('../src/parser');
 const Evaluator = require('../src/evaluator');
+const Environment = require('../src/environment');
 
 const {
   NumberNode,
@@ -97,6 +98,42 @@ describe('interpret()', function () {
       assert.throws(() => {
         interpret(test.input);
       });
-    })
+    });
+  });
+});
+
+describe('Environment', function () {
+  describe('#lookUp', function () {
+    it('returns value from the current scope', function (done) {
+      const env = new Environment();
+      env.define('pi', 3.14);
+      assert.strictEqual(env.lookUp('pi'), 3.14);
+      done();
+    });
+
+    it('returns value from the outer scope', function (done) {
+      const parent = new Environment();
+      parent.define('pi', 3.14);
+      const child = new Environment(parent);
+      assert.strictEqual(child.lookUp('pi'), 3.14);
+      done();
+    });
+
+    it('returns value from the outermost scope', function (done) {
+      const grandparent = new Environment();
+      grandparent.define('pi', 3.14);
+      const parent = new Environment(grandparent);
+      const child = new Environment(parent);
+      assert.strictEqual(child.lookUp('pi'), 3.14);
+      done();
+    });
+
+    it('cannot return value from inner scope', function (done) {
+      const parent = new Environment();
+      const child = new Environment(parent);
+      child.define('pi', 3.14);
+      assert.strictEqual(parent.lookUp('pi'), null);
+      done();
+    });
   });
 });
