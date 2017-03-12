@@ -113,17 +113,17 @@ describe('Environment', function () {
 
     it('returns value from the outer scope', function (done) {
       const parent = new Environment();
-      parent.define('pi', 3.14);
       const child = new Environment(parent);
+      parent.define('pi', 3.14);
       assert.strictEqual(child.lookUp('pi'), 3.14);
       done();
     });
 
     it('returns value from the outermost scope', function (done) {
       const grandparent = new Environment();
-      grandparent.define('pi', 3.14);
       const parent = new Environment(grandparent);
       const child = new Environment(parent);
+      grandparent.define('pi', 3.14);
       assert.strictEqual(child.lookUp('pi'), 3.14);
       done();
     });
@@ -133,6 +133,16 @@ describe('Environment', function () {
       const child = new Environment(parent);
       child.define('pi', 3.14);
       assert.strictEqual(parent.lookUp('pi'), null);
+      done();
+    });
+
+    it('can shadow value from the outer scope', function (done) {
+      const parent = new Environment();
+      const child = new Environment(parent);
+      parent.define('pi', 3.14);
+      child.define('pi', 3.142);
+      assert.strictEqual(parent.lookUp('pi'), 3.14);
+      assert.strictEqual(child.lookUp('pi'), 3.142);
       done();
     });
   });
