@@ -8,6 +8,7 @@ const argv = parseArgs(process.argv.slice(2), {
   }
 });
 
+const Lexer = require('./lexer');
 const Parser = require('./parser');
 const Evaluator = require('./evaluator');
 
@@ -17,16 +18,29 @@ if (argv._.length === 0) {
 }
 
 const input = argv._.shift().toString();
+const debugInfo = {input};
 
-const parser = new Parser(input);
-const ast = parser.parse();
+try {
+  const lexer = new Lexer(input);
+  const tokens = lexer.lex();
+  debugInfo.tokens = tokens;
 
-const evaluator = new Evaluator(ast);
-const output = evaluator.evaluate();
+  const parser = new Parser(tokens);
+  const ast = parser.parse();
+  debugInfo.ast = ast;
+
+  const evaluator = new Evaluator(ast);
+  const output = evaluator.evaluate();
+  debugInfo.output = output;
+} catch (e) {
+  if (argv.verbose) {
+    console.log(util.inspect(debugInfo, {depth: null, colors: true}));
+  }
+  throw e;
+}
 
 if (argv.verbose) {
-  const details = {input, output, ast};
-  console.log(util.inspect(details, {depth: null, colors: true}));
+  console.log(util.inspect(debugInfo, {depth: null, colors: true}));
 } else {
-  console.log(output);
+  console.log(util.inspect(debugInfo.output), {depth: null, colors: true});
 }

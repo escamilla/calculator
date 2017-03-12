@@ -1,8 +1,10 @@
 const assert = require('assert');
 const {describe, it} = require('mocha');
 
+const Lexer = require('../src/lexer');
 const Parser = require('../src/parser');
 const Evaluator = require('../src/evaluator');
+
 const {
   NumberNode,
   SymbolNode,
@@ -11,7 +13,9 @@ const {
 } = require('../src/nodes');
 
 function interpret(input) {
-  const parser = new Parser(input);
+  const lexer = new Lexer(input);
+  const tokens = lexer.lex();
+  const parser = new Parser(tokens);
   const ast = parser.parse();
   const evaluator = new Evaluator(ast);
   return evaluator.evaluate();

@@ -1,4 +1,3 @@
-const TokenStream = require('./token-stream');
 const {
   NumberNode,
   SymbolNode,
@@ -7,12 +6,25 @@ const {
 } = require('./nodes');
 
 class Parser {
-  constructor(input) {
-    this.tokenStream = new TokenStream(input);
+  constructor(tokens) {
+    this.tokens = tokens;
+    this.position = 0;
+  }
+
+  peek() {
+    return this.tokens[this.position];
+  }
+
+  next() {
+    return this.tokens[this.position++];
+  }
+
+  eof() {
+    return this.position >= this.tokens.length;
   }
 
   consumeToken(expectedType) {
-    const token = this.tokenStream.next();
+    const token = this.next();
     if (token.type === expectedType) {
       return token;
     }
@@ -21,14 +33,14 @@ class Parser {
 
   parse() {
     const result = this.parseExpression();
-    if (!this.tokenStream.eof()) {
+    if (!this.eof()) {
       throw new Error('Expected end of file after expression');
     }
     return result;
   }
 
   parseExpression() {
-    switch (this.tokenStream.peek().type) {
+    switch (this.peek().type) {
       case 'left-parenthesis':
         return this.parseSymbolicExpression();
       case 'number':
@@ -54,7 +66,7 @@ class Parser {
     this.consumeToken('left-parenthesis');
     const operator = this.parseSymbol();
     const operands = [];
-    while (this.tokenStream.peek().type !== 'right-parenthesis') {
+    while (this.peek().type !== 'right-parenthesis') {
       operands.push(this.parseExpression());
     }
     this.consumeToken('right-parenthesis');
