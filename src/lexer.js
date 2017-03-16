@@ -15,12 +15,13 @@ class Lexer {
   }
 
   next() {
-    const char = this.input.charAt(this.position++);
+    const char = this.input.charAt(this.position);
+    this.position += 1;
     if (char === '\n') {
-      this.line++;
+      this.line += 1;
       this.column = 1;
     } else {
-      this.column++;
+      this.column += 1;
     }
     return char;
   }
@@ -86,14 +87,14 @@ class Lexer {
     if (this.isDigit(char) || (char === '-' && this.isDigit(this.lookAhead()))) {
       return {
         type: 'number',
-        value: this.readNumber()
+        value: this.readNumber(),
       };
     }
 
     if (this.isAlpha(char)) {
       return {
         type: 'symbol',
-        value: this.readSymbol()
+        value: this.readSymbol(),
       };
     }
 
@@ -101,21 +102,23 @@ class Lexer {
       case '(':
         return {
           type: 'left-parenthesis',
-          value: this.next()
+          value: this.next(),
         };
       case ')':
         return {
           type: 'right-parenthesis',
-          value: this.next()
+          value: this.next(),
         };
       case "'":
         return {
           type: 'single-quote',
-          value: this.next()
+          value: this.next(),
         };
       default:
-        this.die(`unknown character: ${char}`)
+        this.die(`unknown character: ${char}`);
     }
+
+    return null;
   }
 
   lex() {

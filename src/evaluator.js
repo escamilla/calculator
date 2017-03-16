@@ -2,7 +2,7 @@ const {
   NumberNode,
   SymbolNode,
   SymbolicExpressionNode,
-  QuotedExpressionNode
+  QuotedExpressionNode,
 } = require('./nodes');
 
 const Environment = require('./environment');
@@ -25,6 +25,7 @@ class Evaluator {
     } else if (node instanceof SymbolicExpressionNode) {
       return this.evaluateSymbolicExpression(node, env);
     }
+    throw new Error(`unknown node type: ${node.constructor.name}`);
   }
 
   evaluateSymbolNode(node, env) {
@@ -32,9 +33,8 @@ class Evaluator {
   }
 
   evaluateSymbolicExpression(node, env) {
-    const evaluatedOperands = node.operands.map((operand) => {
-      return this.evaluateNode(operand, new Environment(env));
-    });
+    const evaluatedOperands =
+      node.operands.map(operand => this.evaluateNode(operand, new Environment(env)));
     const result = this.evaluateOperation(node.operator, evaluatedOperands, env);
     // the result might be an s-expression, so another evaluation is necessary
     return this.evaluateNode(result, new Environment(env));

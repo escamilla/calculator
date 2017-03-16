@@ -1,11 +1,11 @@
 const util = require('util');
-
 const parseArgs = require('minimist');
+
 const argv = parseArgs(process.argv.slice(2), {
   boolean: 'verbose',
   alias: {
-    v: 'verbose'
-  }
+    v: 'verbose',
+  },
 });
 
 const Lexer = require('./lexer');
@@ -18,7 +18,7 @@ if (argv._.length === 0) {
 }
 
 const input = argv._.shift().toString();
-const debugInfo = {input};
+const debugInfo = { input };
 
 try {
   const lexer = new Lexer(input);
@@ -34,13 +34,13 @@ try {
   debugInfo.output = output;
 } catch (e) {
   if (argv.verbose) {
-    console.log(util.inspect(debugInfo, {depth: null, colors: true}));
+    console.log(util.inspect(debugInfo, { depth: null, colors: true }));
   }
   throw e;
 }
 
 if (argv.verbose) {
-  console.log(util.inspect(debugInfo, {depth: null, colors: true}));
+  console.log(util.inspect(debugInfo, { depth: null, colors: true }));
 } else {
-  console.log(util.inspect(debugInfo.output), {depth: null, colors: true});
+  console.log(util.inspect(debugInfo.output), { depth: null, colors: true });
 }

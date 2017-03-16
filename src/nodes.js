@@ -27,5 +27,5 @@ module.exports = {
   NumberNode,
   SymbolNode,
   SymbolicExpressionNode,
-  QuotedExpressionNode
+  QuotedExpressionNode,
 };

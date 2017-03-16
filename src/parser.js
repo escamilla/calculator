@@ -2,7 +2,7 @@ const {
   NumberNode,
   SymbolNode,
   SymbolicExpressionNode,
-  QuotedExpressionNode
+  QuotedExpressionNode,
 } = require('./nodes');
 
 class Parser {
@@ -16,7 +16,9 @@ class Parser {
   }
 
   next() {
-    return this.tokens[this.position++];
+    const token = this.tokens[this.position];
+    this.position += 1;
+    return token;
   }
 
   eof() {

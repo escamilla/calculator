@@ -1,7 +1,7 @@
 const {
   NumberNode,
   SymbolNode,
-  QuotedExpressionNode
+  QuotedExpressionNode,
 } = require('./nodes');
 
 const operators = {
@@ -9,67 +9,63 @@ const operators = {
   add: {
     checkArgs(operands) {
       return operands.length >= 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every(operand => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(
-        operands.reduce((acc, operand) => {
-          return acc + operand.value;
-        }, 0));
-    }
+        operands.reduce((acc, operand) => acc + operand.value, 0));
+    },
   },
 
   sub: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every(operand => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(operands[0].value - operands[1].value);
-    }
+    },
   },
 
   mul: {
     checkArgs(operands) {
       return operands.length >= 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every(operand => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(
-        operands.reduce((acc, operand) => {
-          return acc * operand.value;
-        }, 1));
-    }
+        operands.reduce((acc, operand) => acc * operand.value, 1));
+    },
   },
 
   div: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every(operand => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(operands[0].value / operands[1].value);
-    }
+    },
   },
 
   mod: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every(operand => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(operands[0].value % operands[1].value);
-    }
+    },
   },
 
   pow: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every(operand => operand instanceof NumberNode);
     },
     method(operands) {
-      return new NumberNode(Math.pow(operands[0].value, operands[1].value));
-    }
+      return new NumberNode(operands[0].value ** operands[1].value);
+    },
   },
 
   quote: {
@@ -78,7 +74,7 @@ const operators = {
     },
     method(operands) {
       return new QuotedExpressionNode(operands[0]);
-    }
+    },
   },
 
   unquote: {
@@ -87,7 +83,7 @@ const operators = {
     },
     method(operands) {
       return operands[0].value;
-    }
+    },
   },
 
   sequence: {
@@ -96,7 +92,7 @@ const operators = {
     },
     method(operands) {
       return operands[operands.length - 1];
-    }
+    },
   },
 
   let: {
@@ -112,8 +108,8 @@ const operators = {
         env.parent.define(key, value);
       }
       return value;
-    }
-  }
+    },
+  },
 
 };
 

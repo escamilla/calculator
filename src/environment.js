@@ -9,7 +9,7 @@ class Environment {
   }
 
   lookUp(key) {
-    if (this.definitions.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(this.definitions, key)) {
       return this.definitions[key];
     }
     if (this.parent !== null) {
