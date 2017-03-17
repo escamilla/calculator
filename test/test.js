@@ -78,6 +78,11 @@ describe('interpret()', () => {
     { input: "(sequence (let 'pi 3.14) (sequence pi))", expected: new NumberNode(3.14) },
     { input: "(sequence (let 'pi 3.14) (let 'pi 3.142) pi)", expected: new NumberNode(3.142) },
     { input: "(sequence (let 'pi 3.14) (sequence (let 'pi 3.142)) pi)", expected: new NumberNode(3.14) },
+    { input: "((lambda '(x y) '(add x y)) 1 2)", expected: new NumberNode(3) },
+    { input: "(sequence (let 'x 1) ((lambda '(y) '(add x y)) 2))", expected: new NumberNode(3) },
+    { input: "(sequence (let 'x 1) (let 'y 2) ((lambda '() '(add x y))))", expected: new NumberNode(3) },
+    { input: "(sequence (let 'x 1) ((lambda '(x y) '(add x y)) 2 2))", expected: new NumberNode(4) },
+    { input: "(sequence (let 'square (lambda '(x) '(mul x x))) (square 3))", expected: new NumberNode(9) },
   ];
 
   positiveTests.forEach((test) => {

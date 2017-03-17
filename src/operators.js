@@ -1,7 +1,9 @@
 const {
   NumberNode,
   SymbolNode,
+  SymbolicExpressionNode,
   QuotedExpressionNode,
+  LambdaFunctionNode,
 } = require('./nodes');
 
 const operators = {
@@ -108,6 +110,29 @@ const operators = {
         env.parent.define(key, value);
       }
       return value;
+    },
+  },
+
+  lambda: {
+    checkArgs(operands) {
+      if (operands.length !== 2) {
+        return false;
+      }
+      if (!(operands[0] instanceof QuotedExpressionNode)) {
+        return false;
+      }
+      if (!(operands[1] instanceof QuotedExpressionNode)) {
+        return false;
+      }
+      if (!(operands[0].value instanceof SymbolicExpressionNode)) {
+        return false;
+      }
+      return true;
+    },
+    method(operands) {
+      const parameters = operands[0];
+      const body = operands[1];
+      return new LambdaFunctionNode(parameters, body);
     },
   },
 

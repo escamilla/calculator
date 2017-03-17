@@ -38,9 +38,21 @@ class QuotedExpressionNode {
   }
 }
 
+class LambdaFunctionNode {
+  constructor(parameters, body) {
+    this.parameters = parameters;
+    this.body = body;
+  }
+
+  toString() {
+    return `(lambda ${this.parameters.toString()} ${this.body.toString()})`;
+  }
+}
+
 module.exports = {
   NumberNode,
   SymbolNode,
   SymbolicExpressionNode,
   QuotedExpressionNode,
+  LambdaFunctionNode,
 };
