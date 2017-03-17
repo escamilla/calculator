@@ -2,11 +2,19 @@ class NumberNode {
   constructor(value) {
     this.value = value;
   }
+
+  toString() {
+    return `${this.value}`;
+  }
 }
 
 class SymbolNode {
   constructor(value) {
     this.value = value;
+  }
+
+  toString() {
+    return `${this.value}`;
   }
 }
 
@@ -15,11 +23,19 @@ class SymbolicExpressionNode {
     this.operator = operator;
     this.operands = operands;
   }
+
+  toString() {
+    return `(${this.operator} ${this.operands.join(' ')})`;
+  }
 }
 
 class QuotedExpressionNode {
   constructor(value) {
     this.value = value;
+  }
+
+  toString() {
+    return `'${this.value.toString()}`;
   }
 }
 

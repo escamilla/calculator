@@ -32,6 +32,7 @@ try {
   const evaluator = new Evaluator(ast);
   const output = evaluator.evaluate();
   debugInfo.output = output;
+  debugInfo.prettyOutput = output.toString();
 } catch (e) {
   if (argv.verbose) {
     console.log(util.inspect(debugInfo, { depth: null, colors: true }));
@@ -42,5 +43,5 @@ try {
 if (argv.verbose) {
   console.log(util.inspect(debugInfo, { depth: null, colors: true }));
 } else {
-  console.log(util.inspect(debugInfo.output), { depth: null, colors: true });
+  console.log(debugInfo.prettyOutput);
 }
