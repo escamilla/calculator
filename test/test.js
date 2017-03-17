@@ -48,7 +48,8 @@ describe('interpret()', () => {
     {
       input: "'(add 1 2)",
       expected: new QuotedExpressionNode(
-        new SymbolicExpressionNode(new SymbolNode('add'), [
+        new SymbolicExpressionNode([
+          new SymbolNode('add'),
           new NumberNode(1),
           new NumberNode(2),
         ])),
@@ -56,8 +57,10 @@ describe('interpret()', () => {
     {
       input: "'(add (add 1 2) 3)",
       expected: new QuotedExpressionNode(
-        new SymbolicExpressionNode(new SymbolNode('add'), [
-          new SymbolicExpressionNode(new SymbolNode('add'), [
+        new SymbolicExpressionNode([
+          new SymbolNode('add'),
+          new SymbolicExpressionNode([
+            new SymbolNode('add'),
             new NumberNode(1),
             new NumberNode(2),
           ]),

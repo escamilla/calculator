@@ -19,13 +19,12 @@ class SymbolNode {
 }
 
 class SymbolicExpressionNode {
-  constructor(operator, operands) {
-    this.operator = operator;
-    this.operands = operands;
+  constructor(items) {
+    this.items = items;
   }
 
   toString() {
-    return `(${this.operator} ${this.operands.join(' ')})`;
+    return `(${this.items.map(item => item.toString()).join(' ')})`;
   }
 }
 

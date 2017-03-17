@@ -66,13 +66,12 @@ class Parser {
 
   parseSymbolicExpression() {
     this.consumeToken('left-parenthesis');
-    const operator = this.parseExpression();
-    const operands = [];
+    const items = [];
     while (this.peek().type !== 'right-parenthesis') {
-      operands.push(this.parseExpression());
+      items.push(this.parseExpression());
     }
     this.consumeToken('right-parenthesis');
-    return new SymbolicExpressionNode(operator, operands);
+    return new SymbolicExpressionNode(items);
   }
 
   parseQuotedExpression() {
