@@ -1,9 +1,9 @@
 {
-  "name": "calculator",
+  "name": "squirrel",
   "version": "0.0.1",
   "license": "MIT",
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
-  "repository": "escamilla/calculator",
+  "repository": "escamilla/squirrel.js",
   "scripts": {
     "eval": "node src/main.js",
     "test": "mocha"
