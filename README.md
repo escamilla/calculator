@@ -1,6 +1,6 @@
-# Calculator
+# Squirrel.js
 
-Evaluate arithmetic expressions written in parenthesized prefix notation.
+A JavaScript rewrite (with some changes) of [Squirrel](https://github.com/escamilla/squirrel), an expression-oriented programming language I wrote in C#.
 
 ## Usage
 
