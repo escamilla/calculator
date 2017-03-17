@@ -66,7 +66,7 @@ class Parser {
 
   parseSymbolicExpression() {
     this.consumeToken('left-parenthesis');
-    const operator = this.parseSymbol();
+    const operator = this.parseExpression();
     const operands = [];
     while (this.peek().type !== 'right-parenthesis') {
       operands.push(this.parseExpression());

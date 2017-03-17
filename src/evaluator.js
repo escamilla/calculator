@@ -33,9 +33,10 @@ class Evaluator {
   }
 
   evaluateSymbolicExpression(node, env) {
+    const evaluatedOperator = this.evaluateNode(node.operator, new Environment(env));
     const evaluatedOperands =
       node.operands.map(operand => this.evaluateNode(operand, new Environment(env)));
-    const result = this.evaluateOperation(node.operator, evaluatedOperands, env);
+    const result = this.evaluateOperation(evaluatedOperator, evaluatedOperands, env);
     // the result might be an s-expression, so another evaluation is necessary
     return this.evaluateNode(result, new Environment(env));
   }
