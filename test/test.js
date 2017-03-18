@@ -91,6 +91,8 @@ describe('interpret()', () => {
     { input: '(gt 0 1)', expected: new NumberNode(1) },
     { input: '(gt 1 0)', expected: new NumberNode(0) },
     { input: '(gt 1 1)', expected: new NumberNode(1) },
+    { input: "(if (lt 0 1) 'true 'false)", expected: new SymbolNode('true') },
+    { input: "(if (gt 0 1) 'true 'false)", expected: new SymbolNode('false') },
   ];
 
   positiveTests.forEach((test) => {
