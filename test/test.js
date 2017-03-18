@@ -83,6 +83,14 @@ describe('interpret()', () => {
     { input: "(sequence (let 'x 1) (let 'y 2) ((lambda '() '(add x y))))", expected: new NumberNode(3) },
     { input: "(sequence (let 'x 1) ((lambda '(x y) '(add x y)) 2 2))", expected: new NumberNode(4) },
     { input: "(sequence (let 'square (lambda '(x) '(mul x x))) (square 3))", expected: new NumberNode(9) },
+    { input: '(eq 0 1)', expected: new NumberNode(1) },
+    { input: '(eq 1 1)', expected: new NumberNode(0) },
+    { input: '(lt 0 1)', expected: new NumberNode(0) },
+    { input: '(lt 1 0)', expected: new NumberNode(1) },
+    { input: '(lt 1 1)', expected: new NumberNode(1) },
+    { input: '(gt 0 1)', expected: new NumberNode(1) },
+    { input: '(gt 1 0)', expected: new NumberNode(0) },
+    { input: '(gt 1 1)', expected: new NumberNode(1) },
   ];
 
   positiveTests.forEach((test) => {

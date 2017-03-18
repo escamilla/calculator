@@ -136,6 +136,39 @@ const operators = {
     },
   },
 
+  eq: {
+    checkArgs(operands) {
+      return operands.length === 2 &&
+        operands.every(operand => operand instanceof NumberNode);
+    },
+    method(operands) {
+      return operands[0].value === operands[1].value ?
+        new NumberNode(0) : new NumberNode(1);
+    },
+  },
+
+  lt: {
+    checkArgs(operands) {
+      return operands.length === 2 &&
+        operands.every(operand => operand instanceof NumberNode);
+    },
+    method(operands) {
+      return operands[0].value < operands[1].value ?
+        new NumberNode(0) : new NumberNode(1);
+    },
+  },
+
+  gt: {
+    checkArgs(operands) {
+      return operands.length === 2 &&
+        operands.every(operand => operand instanceof NumberNode);
+    },
+    method(operands) {
+      return operands[0].value > operands[1].value ?
+        new NumberNode(0) : new NumberNode(1);
+    },
+  },
+
 };
 
 module.exports = operators;
