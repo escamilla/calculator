@@ -1,0 +1,131 @@
+(sequence
+
+  (let 'true 0)
+
+  (let 'false 1)
+
+  (let 'not
+    (lambda '(x)
+      '(if x
+        'false
+        'true
+      )
+    )
+  )
+
+  (let 'and
+    (lambda '(x y)
+      '(if x
+        'y
+        'false
+      )
+    )
+  )
+
+  (let 'or
+    (lambda '(x y)
+      '(if x
+        'true
+        'y
+      )
+    )
+  )
+
+  (let 'le
+    (lambda '(x y)
+      '(or (lt x y) (eq x y))
+    )
+  )
+
+  (let 'ge
+    (lambda '(x y)
+      '(or (gt x y) (eq x y))
+    )
+  )
+
+  (let 'is-empty
+    (lambda '(array)
+      '(eq 0 (length array))
+    )
+  )
+
+  (let 'head
+    (lambda '(array)
+      '(nth array 1)
+    )
+  )
+
+  (let 'tail
+    (lambda '(array)
+      '(slice array 1 (add (length array) 1))
+    )
+  )
+
+  (let 'range
+    (lambda '(x)
+      '(if (le x 0)
+        ''()
+        '(join
+          (range (sub x 1))
+          (list x)
+        )
+      )
+    )
+  )
+
+  (let 'map
+    (lambda '(array function)
+      '(if (is-empty array)
+        ''()
+        '(join
+          (list (function (head array)))
+          (map (tail array) function)
+        )
+      )
+    )
+  )
+
+  (let 'filter
+    (lambda '(array function)
+      '(if (is-empty array)
+        ''()
+        '(join
+          (if (function (head array))
+            '(list (head array))
+            ''()
+          )
+          (filter (tail array) function)
+        )
+      )
+    )
+  )
+
+  (let 'factorial
+    (lambda '(x)
+      '(if (eq x 0)
+        '1
+        '(mul x (factorial (sub x 1)))
+      )
+    )
+  )
+
+  (let 'is-even
+    (lambda '(x) '(eq 0 (mod x 2)))
+  )
+
+  (let 'is-odd
+    (lambda '(x) '(eq 1 (mod x 2)))
+  )
+
+  (let 'square
+    (lambda '(x) '(mul x x))
+  )
+
+  (print (factorial 10))
+  (print (map (range 10) square))
+  (print (filter (range 10) is-odd))
+  (print (filter (range 10) is-even))
+
+  done
+
+)
