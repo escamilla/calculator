@@ -1,0 +1,11 @@
+(sequence
+  (let 'factorial
+    (lambda '(x)
+      '(if (eq x 0)
+        '1
+        '(mul x (factorial (sub x 1)))
+      )
+    )
+  )
+  (factorial 10)
+)

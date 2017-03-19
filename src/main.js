@@ -1,3 +1,4 @@
+const fs = require('fs');
 const util = require('util');
 const parseArgs = require('minimist');
 
@@ -13,11 +14,19 @@ const Parser = require('./parser');
 const Evaluator = require('./evaluator');
 
 if (argv._.length === 0) {
-  console.log('no expression given');
+  console.log('no file specified');
   process.exit();
 }
 
-const input = argv._.shift().toString();
+const filename = argv._.shift();
+let input;
+try {
+  input = fs.readFileSync(filename, 'utf8');
+} catch (e) {
+  console.log(e.message);
+  process.exit();
+}
+
 const debugInfo = { input };
 
 try {
