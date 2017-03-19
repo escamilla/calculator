@@ -249,6 +249,16 @@ const operators = {
     },
   },
 
+  print: {
+    checkArgs(operands) {
+      return operands.length === 1;
+    },
+    method(operands) {
+      console.log(operands[0].toString());
+      return operands[0];
+    },
+  },
+
 };
 
 module.exports = operators;
