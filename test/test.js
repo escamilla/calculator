@@ -67,6 +67,15 @@ describe('interpret()', () => {
           new NumberNode(3),
         ])),
     },
+    {
+      input: '(list a b c)',
+      expected: new QuotedExpressionNode(
+        new SymbolicExpressionNode([
+          new SymbolNode('a'),
+          new SymbolNode('b'),
+          new SymbolNode('c'),
+        ])),
+    },
     { input: '(quote foo)', expected: new QuotedExpressionNode(new SymbolNode('foo')) },
     { input: '(quote (add 1 2))', expected: new QuotedExpressionNode(new NumberNode(3)) },
     { input: "(unquote 'foo)", expected: new SymbolNode('foo') },

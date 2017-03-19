@@ -70,6 +70,15 @@ const operators = {
     },
   },
 
+  list: {
+    checkArgs(operands) {
+      return operands.length > 0;
+    },
+    method(operands) {
+      return new QuotedExpressionNode(new SymbolicExpressionNode(operands));
+    },
+  },
+
   quote: {
     checkArgs(operands) {
       return operands.length === 1;
