@@ -183,6 +183,63 @@ const operators = {
     },
   },
 
+  length: {
+    checkArgs(operands) {
+      return operands.length === 1 &&
+        operands[0] instanceof QuotedExpressionNode &&
+        operands[0].value instanceof SymbolicExpressionNode;
+    },
+    method(operands) {
+      return new NumberNode(operands[0].value.items.length);
+    },
+  },
+
+  nth: {
+    checkArgs(operands) {
+      return operands.length === 2 &&
+        operands[0] instanceof QuotedExpressionNode &&
+        operands[0].value instanceof SymbolicExpressionNode &&
+        operands[1] instanceof NumberNode;
+    },
+    method(operands) {
+      const index = operands[1].value - 1;
+      return operands[0].value.items[index];
+    },
+  },
+
+  slice: {
+    checkArgs(operands) {
+      return operands.length === 3 &&
+        operands[0] instanceof QuotedExpressionNode &&
+        operands[0].value instanceof SymbolicExpressionNode &&
+        operands[1] instanceof NumberNode &&
+        operands[2] instanceof NumberNode;
+    },
+    method(operands) {
+      const { items } = operands[0].value;
+      const begin = operands[1].value;
+      const end = operands[2].value;
+      const sliced = items.slice(begin, end);
+      return new QuotedExpressionNode(new SymbolicExpressionNode(sliced));
+    },
+  },
+
+  join: {
+    checkArgs(operands) {
+      return operands.length === 2 &&
+        operands[0] instanceof QuotedExpressionNode &&
+        operands[0].value instanceof SymbolicExpressionNode &&
+        operands[1] instanceof QuotedExpressionNode &&
+        operands[1].value instanceof SymbolicExpressionNode;
+    },
+    method(operands) {
+      const leftItems = operands[0].value.items;
+      const rightItems = operands[1].value.items;
+      const joined = leftItems.concat(rightItems);
+      return new QuotedExpressionNode(new SymbolicExpressionNode(joined));
+    },
+  },
+
 };
 
 module.exports = operators;

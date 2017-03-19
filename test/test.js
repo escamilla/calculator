@@ -93,6 +93,19 @@ describe('interpret()', () => {
     { input: '(gt 1 1)', expected: new NumberNode(1) },
     { input: "(if (lt 0 1) 'true 'false)", expected: new SymbolNode('true') },
     { input: "(if (gt 0 1) 'true 'false)", expected: new SymbolNode('false') },
+    { input: "(length '())", expected: new NumberNode(0) },
+    { input: "(length '(a b c))", expected: new NumberNode(3) },
+    { input: "(nth '(a b c) 2)", expected: new SymbolNode('b') },
+    { input: "(nth '(a b (sequence c)) 3)", expected: new SymbolNode('c') },
+    {
+      input: "(join '(a) '(b c))",
+      expected: new QuotedExpressionNode(
+        new SymbolicExpressionNode([
+          new SymbolNode('a'),
+          new SymbolNode('b'),
+          new SymbolNode('c'),
+        ])),
+    },
   ];
 
   positiveTests.forEach((test) => {
