@@ -121,11 +121,142 @@
     (lambda '(x) '(mul x x))
   )
 
-  (print (factorial 10))
-  (print (map (range 10) square))
-  (print (filter (range 10) is-odd))
-  (print (filter (range 10) is-even))
+  (let 'reduce
+    (lambda '(array function accumulator)
+      '(if (is-empty array)
+        'accumulator
+        '(reduce (tail array) function (function accumulator (head array)))
+      )
+    )
+  )
 
-  done
+  (let 'sum
+    (lambda '(array)
+      '(reduce array add 0)
+    )
+  )
+
+  (let 'pattern '(
+    '(0 0 0 1 1 0 0 0)
+    '(0 0 1 0 0 1 0 0)
+    '(0 1 0 0 0 0 1 0)
+    '(1 0 0 0 0 0 0 1)
+    '(1 0 0 0 0 0 0 1)
+    '(0 1 0 0 0 0 1 0)
+    '(0 0 1 0 0 1 0 0)
+    '(0 0 0 1 1 0 0 0)
+  ))
+
+  (let 'adjacent-points
+    (lambda '(point)
+      '(sequence
+        (let 'x (nth point 1))
+        (let 'y (nth point 2))
+        (list
+          (list (sub x 1) (sub y 1))
+          (list (sub x 1) y)
+          (list (sub x 1) (add y 1))
+          (list x (sub y 1))
+          (list x (add y 1))
+          (list (add x 1) (sub y 1))
+          (list (add x 1) y)
+          (list (add x 1) (add y 1))
+        )
+      )
+    )
+  )
+
+  (let 'get-cell
+    (lambda '(grid point)
+      '(sequence
+        (let 'x (nth point 1))
+        (let 'y (nth point 2))
+        (if (and
+            (and (gt x 0) (le x (length grid)))
+            (and (gt y 0) (le y (length (nth grid 1)))))
+          '(nth (nth grid x) y)
+          '0
+        )
+      )
+    )
+  )
+
+  (let 'get-neighbors
+    (lambda '(grid point)
+      '(map
+        (adjacent-points point)
+        (lambda '(point)
+          '(get-cell grid point)
+        )
+      )
+    )
+  )
+
+  (let 'compute-new-value
+    (lambda '(grid point)
+      '(sequence
+        (let 'living-neighbors (sum (get-neighbors grid point)))
+        (if (eq 1 (get-cell grid point))
+          '(if (or (eq living-neighbors 2) (eq living-neighbors 3))
+            '1
+            '0
+          )
+          '(if (eq living-neighbors 3)
+            '1
+            '0
+          )
+        )
+      )
+    )
+  )
+
+  (let 'next-generation
+    (lambda '(grid)
+      '(sequence
+        (let 'rows (length grid))
+        (let 'cols (length (head grid)))
+        (map
+          (range rows)
+          (lambda '(row)
+            '(map
+              (range cols)
+              (lambda '(col)
+                '(compute-new-value grid (list row col))
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+
+  (let 'print-grid
+    (lambda '(grid)
+      '(sequence
+        (let 'rows (length grid))
+        (map
+          (range rows)
+          (lambda '(row)
+            '(print (nth grid row))
+          )
+        )
+      )
+    )
+  )
+
+  (let 'generations
+    (lambda '(grid count)
+      '(if (eq 0 count)
+        'done
+        '(sequence
+          (print-grid grid)
+          (print '())
+          (generations (next-generation grid) (sub count 1))
+        )
+      )
+    )
+  )
+
+  (generations pattern 6)
 
 )

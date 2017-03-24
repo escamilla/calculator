@@ -8,6 +8,9 @@ A JavaScript rewrite (with some changes) of [Squirrel](https://github.com/escami
 # evaluate a source file and display the result
 npm run eval <path>
 
+# run included demo: Conway's Game of Life
+npm run eval examples/functions.sq
+
 # use the `-v | --verbose` flag to show more details including the parse tree
 npm run eval -- -v <path>
 
