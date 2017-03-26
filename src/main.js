@@ -13,44 +13,60 @@ const Lexer = require('./lexer');
 const Parser = require('./parser');
 const Evaluator = require('./evaluator');
 
-if (argv._.length === 0) {
-  console.log('no file specified');
-  process.exit();
-}
+(() => {
+  module.exports = {
+    Lexer,
+    Parser,
+    Evaluator,
+    interpret(input) {
+      const lexer = new Lexer(input);
+      const parser = new Parser(lexer.lex());
+      const evaluator = new Evaluator(parser.parse());
+      return evaluator.evaluate();
+    },
+  };
 
-const filename = argv._.shift();
-let input;
-try {
-  input = fs.readFileSync(filename, 'utf8');
-} catch (e) {
-  console.log(e.message);
-  process.exit();
-}
+  if (!module.parent) {
+    if (argv._.length === 0) {
+      console.log('no file specified');
+      process.exit();
+    }
 
-const debugInfo = { input };
+    const filename = argv._.shift();
+    let input;
+    try {
+      input = fs.readFileSync(filename, 'utf8');
+    } catch (e) {
+      console.log(e.message);
+      process.exit();
+    }
 
-try {
-  const lexer = new Lexer(input);
-  const tokens = lexer.lex();
-  debugInfo.tokens = tokens;
+    const debugInfo = { input };
 
-  const parser = new Parser(tokens);
-  const ast = parser.parse();
-  debugInfo.ast = ast;
+    try {
+      const lexer = new Lexer(input);
+      const tokens = lexer.lex();
+      debugInfo.tokens = tokens;
 
-  const evaluator = new Evaluator(ast);
-  const output = evaluator.evaluate();
-  debugInfo.output = output;
-  debugInfo.prettyOutput = output.toString();
-} catch (e) {
-  if (argv.verbose) {
-    console.log(util.inspect(debugInfo, { depth: null, colors: true }));
+      const parser = new Parser(tokens);
+      const ast = parser.parse();
+      debugInfo.ast = ast;
+
+      const evaluator = new Evaluator(ast);
+      const output = evaluator.evaluate();
+      debugInfo.output = output;
+      debugInfo.prettyOutput = output.toString();
+    } catch (e) {
+      if (argv.verbose) {
+        console.log(util.inspect(debugInfo, { depth: null, colors: true }));
+      }
+      throw e;
+    }
+
+    if (argv.verbose) {
+      console.log(util.inspect(debugInfo, { depth: null, colors: true }));
+    } else {
+      console.log(debugInfo.prettyOutput);
+    }
   }
-  throw e;
-}
-
-if (argv.verbose) {
-  console.log(util.inspect(debugInfo, { depth: null, colors: true }));
-} else {
-  console.log(debugInfo.prettyOutput);
-}
+})();
