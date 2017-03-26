@@ -233,7 +233,7 @@ const operators = {
     },
   },
 
-  join: {
+  concat: {
     checkArgs(operands) {
       return operands.length === 2 &&
         operands[0] instanceof QuotedExpressionNode &&

@@ -86,7 +86,7 @@
     (lambda '(x)
       '(if (le x 0)
         ''()
-        '(join
+        '(concat
           (range (sub x 1))
           (list x)
         )
@@ -98,7 +98,7 @@
     (lambda '(array function)
       '(if (is-empty array)
         ''()
-        '(join
+        '(concat
           (list (function (head array)))
           (map (tail array) function)
         )
@@ -110,7 +110,7 @@
     (lambda '(array function)
       '(if (is-empty array)
         ''()
-        '(join
+        '(concat
           (if (function (head array))
             '(list (head array))
             ''()
@@ -277,6 +277,8 @@
       )
     )
   )
+
+  (generations pattern 11)
 
   done
 
