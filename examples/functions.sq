@@ -43,6 +43,27 @@
     )
   )
 
+  (let 'factorial
+    (lambda '(x)
+      '(if (eq x 0)
+        '1
+        '(mul x (factorial (sub x 1)))
+      )
+    )
+  )
+
+  (let 'is-even
+    (lambda '(x) '(eq 0 (mod x 2)))
+  )
+
+  (let 'is-odd
+    (lambda '(x) '(eq 1 (mod x 2)))
+  )
+
+  (let 'square
+    (lambda '(x) '(mul x x))
+  )
+
   (let 'is-empty
     (lambda '(array)
       '(eq 0 (length array))
@@ -100,25 +121,25 @@
     )
   )
 
-  (let 'factorial
-    (lambda '(x)
-      '(if (eq x 0)
-        '1
-        '(mul x (factorial (sub x 1)))
+  (let 'some
+    (lambda '(array function)
+      '(if (is-empty array)
+        'false
+        '(if (function (head array))
+          'true
+          '(some (tail array) function)
+        )
       )
     )
   )
 
-  (let 'is-even
-    (lambda '(x) '(eq 0 (mod x 2)))
-  )
-
-  (let 'is-odd
-    (lambda '(x) '(eq 1 (mod x 2)))
-  )
-
-  (let 'square
-    (lambda '(x) '(mul x x))
+  (let 'every
+    (lambda '(array function)
+      '(eq
+        (length array)
+        (length (filter array function))
+      )
+    )
   )
 
   (let 'reduce
@@ -257,6 +278,6 @@
     )
   )
 
-  (generations pattern 6)
+  done
 
 )
