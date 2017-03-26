@@ -163,6 +163,18 @@
     )
   )
 
+  (let 'includes
+    (lambda '(array value)
+      '(if (is-empty array)
+        'false
+        '(if (eq (head array) value)
+          'true
+          '(includes (tail array) value)
+        )
+      )
+    )
+  )
+
   (let 'pattern '(
     '(0 0 0 1 1 0 0 0)
     '(0 0 1 0 0 1 0 0)
