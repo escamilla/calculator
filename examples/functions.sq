@@ -157,6 +157,12 @@
     )
   )
 
+  (let 'product
+    (lambda '(array)
+      '(reduce array mul 1)
+    )
+  )
+
   (let 'pattern '(
     '(0 0 0 1 1 0 0 0)
     '(0 0 1 0 0 1 0 0)
