@@ -5,7 +5,10 @@ A JavaScript rewrite (with some changes) of [Squirrel](https://github.com/escami
 ## Usage
 
 ```
-# evaluate a source file and display the result
+# run an interactive console
+npm run eval
+
+# run a source file and display the result
 npm run eval <path>
 
 # run included demo: Conway's Game of Life

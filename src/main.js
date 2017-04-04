@@ -77,6 +77,7 @@ const Environment = require('./environment');
 
     const replEnvironment = new Environment();
 
+    console.log('tip: the result of the most recently evaluated expression is assigned to the special variable _ (underscore)');
     rl.prompt();
     rl.on('line', (line) => {
       if (line.trim()) {
