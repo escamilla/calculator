@@ -71,6 +71,9 @@ class Lexer {
 
   readSymbol() {
     let str = '';
+    if (this.peek() === '_') {
+      return this.next();
+    }
     while (this.isAlpha(this.peek()) || (this.peek() === '-' && this.isAlpha(this.lookAhead()))) {
       str += this.next();
     }
@@ -91,7 +94,7 @@ class Lexer {
       };
     }
 
-    if (this.isAlpha(char)) {
+    if (this.isAlpha(char) || char === '_') {
       return {
         type: 'symbol',
         value: this.readSymbol(),

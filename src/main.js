@@ -10,6 +10,7 @@ const argv = parseArgs(process.argv.slice(2), {
   },
 });
 
+const { SymbolNode } = require('./nodes');
 const Lexer = require('./lexer');
 const Parser = require('./parser');
 const Evaluator = require('./evaluator');
@@ -85,6 +86,7 @@ const Environment = require('./environment');
         console.log(e.message);
       }
       if (result) {
+        replEnvironment.define(new SymbolNode('_'), result);
         console.log(result.toString());
       }
       rl.prompt();
