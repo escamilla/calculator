@@ -107,7 +107,7 @@ describe('interpret()', () => {
     { input: "(nth '(a b c) 2)", expected: new SymbolNode('b') },
     { input: "(nth '(a b (sequence c)) 3)", expected: new SymbolNode('c') },
     {
-      input: "(join '(a) '(b c))",
+      input: "(concat '(a) '(b c))",
       expected: new QuotedExpressionNode(
         new SymbolicExpressionNode([
           new SymbolNode('a'),
