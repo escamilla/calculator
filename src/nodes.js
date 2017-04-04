@@ -18,6 +18,16 @@ class SymbolNode {
   }
 }
 
+class StringNode {
+  constructor(value) {
+    this.value = value;
+  }
+
+  toString() {
+    return `"${this.value}"`;
+  }
+}
+
 class SymbolicExpressionNode {
   constructor(items) {
     this.items = items;
@@ -52,6 +62,7 @@ class LambdaFunctionNode {
 module.exports = {
   NumberNode,
   SymbolNode,
+  StringNode,
   SymbolicExpressionNode,
   QuotedExpressionNode,
   LambdaFunctionNode,

@@ -80,6 +80,20 @@ class Lexer {
     return str;
   }
 
+  readString() {
+    let str = '';
+    this.next();
+    while (this.peek() && this.peek() !== '"') {
+      str += this.next();
+    }
+    if (this.peek() === '"') {
+      this.next();
+    } else {
+      throw new Error('unterminated string');
+    }
+    return str;
+  }
+
   readToken() {
     this.skipWhitespace();
     if (this.eof()) {
@@ -111,6 +125,11 @@ class Lexer {
         return {
           type: 'right-parenthesis',
           value: this.next(),
+        };
+      case '"':
+        return {
+          type: 'string',
+          value: this.readString(),
         };
       case "'":
         return {

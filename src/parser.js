@@ -1,6 +1,7 @@
 const {
   NumberNode,
   SymbolNode,
+  StringNode,
   SymbolicExpressionNode,
   QuotedExpressionNode,
 } = require('./nodes');
@@ -49,6 +50,8 @@ class Parser {
         return this.parseNumber();
       case 'symbol':
         return this.parseSymbol();
+      case 'string':
+        return this.parseString();
       case 'single-quote':
         return this.parseQuotedExpression();
       default:
@@ -62,6 +65,10 @@ class Parser {
 
   parseSymbol() {
     return new SymbolNode(this.consumeToken('symbol').value);
+  }
+
+  parseString() {
+    return new StringNode(this.consumeToken('string').value);
   }
 
   parseSymbolicExpression() {

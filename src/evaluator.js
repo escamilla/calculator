@@ -1,6 +1,7 @@
 const {
   NumberNode,
   SymbolNode,
+  StringNode,
   SymbolicExpressionNode,
   QuotedExpressionNode,
   LambdaFunctionNode,
@@ -21,6 +22,7 @@ class Evaluator {
 
   evaluateNode(node, env) {
     if (node instanceof NumberNode ||
+        node instanceof StringNode ||
         node instanceof QuotedExpressionNode ||
         node instanceof LambdaFunctionNode) {
       return node;
