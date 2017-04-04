@@ -79,15 +79,17 @@ const Environment = require('./environment');
 
     rl.prompt();
     rl.on('line', (line) => {
-      let result = null;
-      try {
-        result = interpret(line, replEnvironment);
-      } catch (e) {
-        console.log(e.message);
-      }
-      if (result) {
-        replEnvironment.define(new SymbolNode('_'), result);
-        console.log(result.toString());
+      if (line.trim()) {
+        let result = null;
+        try {
+          result = interpret(line, replEnvironment);
+        } catch (e) {
+          console.log(e.message);
+        }
+        if (result) {
+          replEnvironment.define(new SymbolNode('_'), result);
+          console.log(result.toString());
+        }
       }
       rl.prompt();
     }).on('close', () => {
