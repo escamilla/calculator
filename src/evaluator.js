@@ -10,12 +10,13 @@ const Environment = require('./environment');
 const operators = require('./operators');
 
 class Evaluator {
-  constructor(ast) {
+  constructor(ast, globalEnv = null) {
     this.ast = ast;
+    this.globalEnv = globalEnv;
   }
 
   evaluate() {
-    return this.evaluateNode(this.ast, new Environment());
+    return this.evaluateNode(this.ast, new Environment(this.globalEnv));
   }
 
   evaluateNode(node, env) {
