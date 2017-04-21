@@ -88,7 +88,7 @@ const Environment = require('./environment');
           console.log(e.message);
         }
         if (result) {
-          replEnvironment.define(new SymbolNode('_'), result);
+          replEnvironment.set(new SymbolNode('_'), result);
           console.log(result.toString());
         }
       }

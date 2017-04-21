@@ -152,16 +152,16 @@ describe('Environment', () => {
   describe('#lookUp', () => {
     it('returns value from the current scope', (done) => {
       const env = new Environment();
-      env.define('pi', 3.14);
-      assert.strictEqual(env.lookUp('pi'), 3.14);
+      env.set('pi', 3.14);
+      assert.strictEqual(env.get('pi'), 3.14);
       done();
     });
 
     it('returns value from the outer scope', (done) => {
       const parent = new Environment();
       const child = new Environment(parent);
-      parent.define('pi', 3.14);
-      assert.strictEqual(child.lookUp('pi'), 3.14);
+      parent.set('pi', 3.14);
+      assert.strictEqual(child.get('pi'), 3.14);
       done();
     });
 
@@ -169,26 +169,26 @@ describe('Environment', () => {
       const grandparent = new Environment();
       const parent = new Environment(grandparent);
       const child = new Environment(parent);
-      grandparent.define('pi', 3.14);
-      assert.strictEqual(child.lookUp('pi'), 3.14);
+      grandparent.set('pi', 3.14);
+      assert.strictEqual(child.get('pi'), 3.14);
       done();
     });
 
     it('cannot return value from inner scope', (done) => {
       const parent = new Environment();
       const child = new Environment(parent);
-      child.define('pi', 3.14);
-      assert.strictEqual(parent.lookUp('pi'), null);
+      child.set('pi', 3.14);
+      assert.strictEqual(parent.get('pi'), null);
       done();
     });
 
     it('can shadow value from the outer scope', (done) => {
       const parent = new Environment();
       const child = new Environment(parent);
-      parent.define('pi', 3.14);
-      child.define('pi', 3.142);
-      assert.strictEqual(parent.lookUp('pi'), 3.14);
-      assert.strictEqual(child.lookUp('pi'), 3.142);
+      parent.set('pi', 3.14);
+      child.set('pi', 3.142);
+      assert.strictEqual(parent.get('pi'), 3.14);
+      assert.strictEqual(child.get('pi'), 3.142);
       done();
     });
   });

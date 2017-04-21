@@ -35,7 +35,7 @@ class Evaluator {
   }
 
   evaluateSymbolNode(node, env) {
-    return env.lookUp(node.value) || node;
+    return env.get(node.value) || node;
   }
 
   evaluateListNode(node, env) {
@@ -77,7 +77,7 @@ class Evaluator {
     for (let i = 0; i < expected; i += 1) {
       const key = parameters[i].value;
       const value = operands[i];
-      lambdaEnv.define(key, value);
+      lambdaEnv.set(key, value);
     }
 
     return this.evaluateNode(body, lambdaEnv);

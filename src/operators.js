@@ -116,7 +116,7 @@ const operators = {
       const key = operands[0].value.value;
       const value = operands[1];
       if (env.parent !== null) {
-        env.parent.define(key, value);
+        env.parent.set(key, value);
       }
       return value;
     },
