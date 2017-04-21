@@ -9,7 +9,7 @@ const Environment = require('../src/environment');
 const {
   NumberNode,
   SymbolNode,
-  SymbolicExpressionNode,
+  ListNode,
   QuotedExpressionNode,
 } = require('../src/nodes');
 
@@ -48,7 +48,7 @@ describe('interpret()', () => {
     {
       input: "'(add 1 2)",
       expected: new QuotedExpressionNode(
-        new SymbolicExpressionNode([
+        new ListNode([
           new SymbolNode('add'),
           new NumberNode(1),
           new NumberNode(2),
@@ -57,9 +57,9 @@ describe('interpret()', () => {
     {
       input: "'(add (add 1 2) 3)",
       expected: new QuotedExpressionNode(
-        new SymbolicExpressionNode([
+        new ListNode([
           new SymbolNode('add'),
-          new SymbolicExpressionNode([
+          new ListNode([
             new SymbolNode('add'),
             new NumberNode(1),
             new NumberNode(2),
@@ -70,7 +70,7 @@ describe('interpret()', () => {
     {
       input: '(list a b c)',
       expected: new QuotedExpressionNode(
-        new SymbolicExpressionNode([
+        new ListNode([
           new SymbolNode('a'),
           new SymbolNode('b'),
           new SymbolNode('c'),
@@ -109,7 +109,7 @@ describe('interpret()', () => {
     {
       input: "(concat '(a) '(b c))",
       expected: new QuotedExpressionNode(
-        new SymbolicExpressionNode([
+        new ListNode([
           new SymbolNode('a'),
           new SymbolNode('b'),
           new SymbolNode('c'),

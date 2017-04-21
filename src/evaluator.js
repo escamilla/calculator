@@ -2,7 +2,7 @@ const {
   NumberNode,
   SymbolNode,
   StringNode,
-  SymbolicExpressionNode,
+  ListNode,
   QuotedExpressionNode,
   LambdaFunctionNode,
 } = require('./nodes');
@@ -28,8 +28,8 @@ class Evaluator {
       return node;
     } else if (node instanceof SymbolNode) {
       return this.evaluateSymbolNode(node, env);
-    } else if (node instanceof SymbolicExpressionNode) {
-      return this.evaluateSymbolicExpression(node, env);
+    } else if (node instanceof ListNode) {
+      return this.evaluateListNode(node, env);
     }
     throw new Error(`unknown node type: ${node.constructor.name}`);
   }
@@ -38,10 +38,10 @@ class Evaluator {
     return env.lookUp(node.value) || node;
   }
 
-  evaluateSymbolicExpression(node, env) {
-    const evaluatedItems = node.items.map(item => this.evaluateNode(item, new Environment(env)));
-    const operator = evaluatedItems[0];
-    const operands = evaluatedItems.slice(1);
+  evaluateListNode(node, env) {
+    const values = node.elements.map(element => this.evaluateNode(element, new Environment(env)));
+    const operator = values[0];
+    const operands = values.slice(1);
 
     let result;
     if (operator instanceof SymbolNode) {
@@ -64,7 +64,7 @@ class Evaluator {
   }
 
   evaluateLambdaFunction(operator, operands, env) {
-    const parameters = operator.parameters.value.items;
+    const parameters = operator.parameters.value.elements;
     const body = operator.body.value;
 
     const expected = parameters.length;

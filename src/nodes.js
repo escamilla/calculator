@@ -28,13 +28,13 @@ class StringNode {
   }
 }
 
-class SymbolicExpressionNode {
-  constructor(items) {
-    this.items = items;
+class ListNode {
+  constructor(elements) {
+    this.elements = elements;
   }
 
   toString() {
-    return `(${this.items.map(item => item.toString()).join(' ')})`;
+    return `(${this.elements.map(element => element.toString()).join(' ')})`;
   }
 }
 
@@ -63,7 +63,7 @@ module.exports = {
   NumberNode,
   SymbolNode,
   StringNode,
-  SymbolicExpressionNode,
+  ListNode,
   QuotedExpressionNode,
   LambdaFunctionNode,
 };

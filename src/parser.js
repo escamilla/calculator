@@ -2,7 +2,7 @@ const {
   NumberNode,
   SymbolNode,
   StringNode,
-  SymbolicExpressionNode,
+  ListNode,
   QuotedExpressionNode,
 } = require('./nodes');
 
@@ -78,7 +78,7 @@ class Parser {
       items.push(this.parseExpression());
     }
     this.consumeToken('right-parenthesis');
-    return new SymbolicExpressionNode(items);
+    return new ListNode(items);
   }
 
   parseQuotedExpression() {

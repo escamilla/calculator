@@ -1,7 +1,7 @@
 const {
   NumberNode,
   SymbolNode,
-  SymbolicExpressionNode,
+  ListNode,
   QuotedExpressionNode,
   LambdaFunctionNode,
 } = require('./nodes');
@@ -75,7 +75,7 @@ const operators = {
       return operands.length > 0;
     },
     method(operands) {
-      return new QuotedExpressionNode(new SymbolicExpressionNode(operands));
+      return new QuotedExpressionNode(new ListNode(operands));
     },
   },
 
@@ -133,7 +133,7 @@ const operators = {
       if (!(operands[1] instanceof QuotedExpressionNode)) {
         return false;
       }
-      if (!(operands[0].value instanceof SymbolicExpressionNode)) {
+      if (!(operands[0].value instanceof ListNode)) {
         return false;
       }
       return true;
@@ -188,7 +188,7 @@ const operators = {
     method(operands) {
       const condition = operands[0].value;
       const outcome = condition === 0 ? operands[1] : operands[2];
-      return new SymbolicExpressionNode([new SymbolNode('unquote'), outcome]);
+      return new ListNode([new SymbolNode('unquote'), outcome]);
     },
   },
 
@@ -196,10 +196,10 @@ const operators = {
     checkArgs(operands) {
       return operands.length === 1 &&
         operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof SymbolicExpressionNode;
+        operands[0].value instanceof ListNode;
     },
     method(operands) {
-      return new NumberNode(operands[0].value.items.length);
+      return new NumberNode(operands[0].value.elements.length);
     },
   },
 
@@ -207,12 +207,12 @@ const operators = {
     checkArgs(operands) {
       return operands.length === 2 &&
         operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof SymbolicExpressionNode &&
+        operands[0].value instanceof ListNode &&
         operands[1] instanceof NumberNode;
     },
     method(operands) {
       const index = operands[1].value - 1;
-      return operands[0].value.items[index];
+      return operands[0].value.elements[index];
     },
   },
 
@@ -220,7 +220,7 @@ const operators = {
     checkArgs(operands) {
       return operands.length === 3 &&
         operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof SymbolicExpressionNode &&
+        operands[0].value instanceof ListNode &&
         operands[1] instanceof NumberNode &&
         operands[2] instanceof NumberNode;
     },
@@ -229,7 +229,7 @@ const operators = {
       const begin = operands[1].value;
       const end = operands[2].value;
       const sliced = items.slice(begin, end);
-      return new QuotedExpressionNode(new SymbolicExpressionNode(sliced));
+      return new QuotedExpressionNode(new ListNode(sliced));
     },
   },
 
@@ -237,15 +237,15 @@ const operators = {
     checkArgs(operands) {
       return operands.length === 2 &&
         operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof SymbolicExpressionNode &&
+        operands[0].value instanceof ListNode &&
         operands[1] instanceof QuotedExpressionNode &&
-        operands[1].value instanceof SymbolicExpressionNode;
+        operands[1].value instanceof ListNode;
     },
     method(operands) {
-      const leftItems = operands[0].value.items;
-      const rightItems = operands[1].value.items;
-      const joined = leftItems.concat(rightItems);
-      return new QuotedExpressionNode(new SymbolicExpressionNode(joined));
+      const leftElements = operands[0].value.elements;
+      const rightElements = operands[1].value.elements;
+      const joined = leftElements.concat(rightElements);
+      return new QuotedExpressionNode(new ListNode(joined));
     },
   },
 
