@@ -225,10 +225,10 @@ const operators = {
         operands[2] instanceof NumberNode;
     },
     method(operands) {
-      const { items } = operands[0].value;
+      const { elements } = operands[0].value;
       const begin = operands[1].value;
       const end = operands[2].value;
-      const sliced = items.slice(begin, end);
+      const sliced = elements.slice(begin, end);
       return new QuotedExpressionNode(new ListNode(sliced));
     },
   },
