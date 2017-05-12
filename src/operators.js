@@ -178,20 +178,6 @@ const operators = {
     },
   },
 
-  if: {
-    checkArgs(operands) {
-      return operands.length === 3 &&
-        operands[0] instanceof NumberNode &&
-        operands[1] instanceof QuotedExpressionNode &&
-        operands[2] instanceof QuotedExpressionNode;
-    },
-    method(operands) {
-      const condition = operands[0].value;
-      const outcome = condition === 0 ? operands[1] : operands[2];
-      return new ListNode([new SymbolNode('unquote'), outcome]);
-    },
-  },
-
   length: {
     checkArgs(operands) {
       return operands.length === 1 &&

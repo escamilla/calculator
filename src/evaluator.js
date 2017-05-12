@@ -39,9 +39,14 @@ class Evaluator {
   }
 
   evaluateListNode(node, env) {
-    const values = node.elements.map(element => this.evaluateNode(element, new Environment(env)));
-    const operator = values[0];
-    const operands = values.slice(1);
+    const operator = this.evaluateNode(node.elements[0], new Environment(env));
+
+    if (operator instanceof SymbolNode && operator.value === 'if') {
+      const operands = node.elements.slice(1);
+      return this.evaluateIfOperation(operator, operands, env);
+    }
+
+    const operands = node.elements.slice(1).map(el => this.evaluateNode(el, new Environment(env)));
 
     let result;
     if (operator instanceof SymbolNode) {
@@ -54,6 +59,15 @@ class Evaluator {
 
     // the result might be an s-expression, so another evaluation is necessary
     return this.evaluateNode(result, new Environment(env));
+  }
+
+  evaluateIfOperation(operator, operands, env) {
+    const condition = this.evaluateNode(operands[0], env);
+    if (!(condition instanceof NumberNode)) {
+      throw new Error('condition in if expression must evaluate to a number representing a boolean value');
+    }
+    const outcome = condition.value === 0 ? operands[1] : operands[2];
+    return this.evaluateNode(outcome, env);
   }
 
   evaluateOperation(operator, operands, env) {

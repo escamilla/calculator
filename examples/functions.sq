@@ -7,8 +7,8 @@
   (let 'not
     (lambda '(x)
       '(if x
-        'false
-        'true
+        false
+        true
       )
     )
   )
@@ -16,8 +16,8 @@
   (let 'and
     (lambda '(x y)
       '(if x
-        'y
-        'false
+        y
+        false
       )
     )
   )
@@ -25,8 +25,8 @@
   (let 'or
     (lambda '(x y)
       '(if x
-        'true
-        'y
+        true
+        y
       )
     )
   )
@@ -46,8 +46,8 @@
   (let 'factorial
     (lambda '(x)
       '(if (eq x 0)
-        '1
-        '(mul x (factorial (sub x 1)))
+        1
+        (mul x (factorial (sub x 1)))
       )
     )
   )
@@ -85,8 +85,8 @@
   (let 'range
     (lambda '(x)
       '(if (le x 0)
-        ''()
-        '(concat
+        '()
+        (concat
           (range (sub x 1))
           (list x)
         )
@@ -97,8 +97,8 @@
   (let 'map
     (lambda '(array function)
       '(if (is-empty array)
-        ''()
-        '(concat
+        '()
+        (concat
           (list (function (head array)))
           (map (tail array) function)
         )
@@ -109,11 +109,11 @@
   (let 'filter
     (lambda '(array function)
       '(if (is-empty array)
-        ''()
-        '(concat
+        '()
+        (concat
           (if (function (head array))
-            '(list (head array))
-            ''()
+            (list (head array))
+            '()
           )
           (filter (tail array) function)
         )
@@ -124,10 +124,10 @@
   (let 'some
     (lambda '(array function)
       '(if (is-empty array)
-        'false
-        '(if (function (head array))
-          'true
-          '(some (tail array) function)
+        false
+        (if (function (head array))
+          true
+          (some (tail array) function)
         )
       )
     )
@@ -145,8 +145,8 @@
   (let 'reduce
     (lambda '(array function accumulator)
       '(if (is-empty array)
-        'accumulator
-        '(reduce (tail array) function (function accumulator (head array)))
+        accumulator
+        (reduce (tail array) function (function accumulator (head array)))
       )
     )
   )
@@ -166,10 +166,10 @@
   (let 'includes
     (lambda '(array value)
       '(if (is-empty array)
-        'false
-        '(if (eq (head array) value)
-          'true
-          '(includes (tail array) value)
+        false
+        (if (eq (head array) value)
+          true
+          (includes (tail array) value)
         )
       )
     )
@@ -178,8 +178,8 @@
   (let 'reverse
     (lambda '(array)
       '(if (is-empty array)
-        ''()
-        '(concat
+        '()
+        (concat
           (reverse (tail array))
           (list (head array))
         )
@@ -190,12 +190,12 @@
   (let 'find
     (lambda '(array function)
       '(if (is-empty array)
-        ''()
-        '(sequence
+        '()
+        (sequence
           (let 'value (head array))
           (if (function value)
-            'value
-            '(find (tail array) function)
+            value
+            (find (tail array) function)
           )
         )
       )
@@ -240,8 +240,8 @@
         (if (and
             (and (gt x 0) (le x (length grid)))
             (and (gt y 0) (le y (length (nth grid 1)))))
-          '(nth (nth grid x) y)
-          '0
+          (nth (nth grid x) y)
+          0
         )
       )
     )
@@ -263,13 +263,13 @@
       '(sequence
         (let 'living-neighbors (sum (get-neighbors grid point)))
         (if (eq 1 (get-cell grid point))
-          '(if (or (eq living-neighbors 2) (eq living-neighbors 3))
-            '1
-            '0
+          (if (or (eq living-neighbors 2) (eq living-neighbors 3))
+            1
+            0
           )
-          '(if (eq living-neighbors 3)
-            '1
-            '0
+          (if (eq living-neighbors 3)
+            1
+            0
           )
         )
       )
@@ -313,8 +313,8 @@
   (let 'generations
     (lambda '(grid count)
       '(if (eq 0 count)
-        'done
-        '(sequence
+        done
+        (sequence
           (print-grid grid)
           (print '())
           (generations (next-generation grid) (sub count 1))
