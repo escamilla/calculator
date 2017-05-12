@@ -1,7 +1,6 @@
 const {
   NumberNode,
   ListNode,
-  LambdaFunctionNode,
 } = require('./nodes');
 
 const operators = {
@@ -83,19 +82,6 @@ const operators = {
     },
     method(operands) {
       return operands[operands.length - 1];
-    },
-  },
-
-  lambda: {
-    checkArgs(operands) {
-      return operands.length === 2 &&
-        operands[0] instanceof ListNode &&
-        operands[1] instanceof ListNode;
-    },
-    method(operands) {
-      const parameters = operands[0];
-      const body = operands[1];
-      return new LambdaFunctionNode(parameters, body);
     },
   },
 

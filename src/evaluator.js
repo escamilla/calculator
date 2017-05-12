@@ -9,7 +9,7 @@ const {
 const Environment = require('./environment');
 const operators = require('./operators');
 
-const specialForms = ['if', 'let', 'quote', 'unquote'];
+const specialForms = ['if', 'lambda', 'let', 'quote', 'unquote'];
 
 class Evaluator {
   constructor(ast, globalEnv = null) {
@@ -45,10 +45,12 @@ class Evaluator {
       const operands = node.elements.slice(1);
       if (operator.value === 'if') {
         return this.evaluateIfOperation(operator, operands, env);
+      } else if (operator.value === 'lambda') {
+        return this.evaluateLambdaOperation(operator, operands, env);
       } else if (operator.value === 'let') {
         return this.evaluateLetOperation(operator, operands, env);
       } else if (operator.value === 'quote') {
-        return this.evaluateQuoteOperation(operator, operands);
+        return this.evaluateQuoteOperation(operator, operands, env);
       } else if (operator.value === 'unquote') {
         return this.evaluateUnquoteOperation(operator, operands, env);
       }
@@ -72,6 +74,20 @@ class Evaluator {
     }
     const outcome = condition.value === 0 ? operands[1] : operands[2];
     return this.evaluateNode(outcome, env);
+  }
+
+  evaluateLambdaOperation(operator, operands) {
+    if (operands.length !== 2) {
+      throw new Error('lambda operator takes exactly two arguments');
+    }
+
+    if (!(operands[0] instanceof ListNode && operands[1] instanceof ListNode)) {
+      throw new Error('both arguments to lambda operator must be lists');
+    }
+
+    const parameters = operands[0];
+    const body = operands[1];
+    return new LambdaFunctionNode(parameters, body);
   }
 
   evaluateLetOperation(operator, operands, env) {

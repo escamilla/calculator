@@ -5,8 +5,8 @@
   (let false 1)
 
   (let not
-    (lambda '(x)
-      '(if x
+    (lambda (x)
+      (if x
         false
         true
       )
@@ -14,8 +14,8 @@
   )
 
   (let and
-    (lambda '(x y)
-      '(if x
+    (lambda (x y)
+      (if x
         y
         false
       )
@@ -23,8 +23,8 @@
   )
 
   (let or
-    (lambda '(x y)
-      '(if x
+    (lambda (x y)
+      (if x
         true
         y
       )
@@ -32,20 +32,20 @@
   )
 
   (let le
-    (lambda '(x y)
-      '(or (lt x y) (eq x y))
+    (lambda (x y)
+      (or (lt x y) (eq x y))
     )
   )
 
   (let ge
-    (lambda '(x y)
-      '(or (gt x y) (eq x y))
+    (lambda (x y)
+      (or (gt x y) (eq x y))
     )
   )
 
   (let factorial
-    (lambda '(x)
-      '(if (eq x 0)
+    (lambda (x)
+      (if (eq x 0)
         1
         (mul x (factorial (sub x 1)))
       )
@@ -53,38 +53,38 @@
   )
 
   (let is-even
-    (lambda '(x) '(eq 0 (mod x 2)))
+    (lambda (x) (eq 0 (mod x 2)))
   )
 
   (let is-odd
-    (lambda '(x) '(eq 1 (mod x 2)))
+    (lambda (x) (eq 1 (mod x 2)))
   )
 
   (let square
-    (lambda '(x) '(mul x x))
+    (lambda (x) (mul x x))
   )
 
   (let is-empty
-    (lambda '(array)
-      '(eq 0 (length array))
+    (lambda (array)
+      (eq 0 (length array))
     )
   )
 
   (let head
-    (lambda '(array)
-      '(nth array 1)
+    (lambda (array)
+      (nth array 1)
     )
   )
 
   (let tail
-    (lambda '(array)
-      '(slice array 1 (add (length array) 1))
+    (lambda (array)
+      (slice array 1 (add (length array) 1))
     )
   )
 
   (let range
-    (lambda '(x)
-      '(if (le x 0)
+    (lambda (x)
+      (if (le x 0)
         '()
         (concat
           (range (sub x 1))
@@ -95,8 +95,8 @@
   )
 
   (let map
-    (lambda '(array function)
-      '(if (is-empty array)
+    (lambda (array function)
+      (if (is-empty array)
         '()
         (concat
           (list (function (head array)))
@@ -107,8 +107,8 @@
   )
 
   (let filter
-    (lambda '(array function)
-      '(if (is-empty array)
+    (lambda (array function)
+      (if (is-empty array)
         '()
         (concat
           (if (function (head array))
@@ -122,8 +122,8 @@
   )
 
   (let some
-    (lambda '(array function)
-      '(if (is-empty array)
+    (lambda (array function)
+      (if (is-empty array)
         false
         (if (function (head array))
           true
@@ -134,8 +134,8 @@
   )
 
   (let every
-    (lambda '(array function)
-      '(eq
+    (lambda (array function)
+      (eq
         (length array)
         (length (filter array function))
       )
@@ -143,8 +143,8 @@
   )
 
   (let reduce
-    (lambda '(array function accumulator)
-      '(if (is-empty array)
+    (lambda (array function accumulator)
+      (if (is-empty array)
         accumulator
         (reduce (tail array) function (function accumulator (head array)))
       )
@@ -152,20 +152,20 @@
   )
 
   (let sum
-    (lambda '(array)
-      '(reduce array add 0)
+    (lambda (array)
+      (reduce array add 0)
     )
   )
 
   (let product
-    (lambda '(array)
-      '(reduce array mul 1)
+    (lambda (array)
+      (reduce array mul 1)
     )
   )
 
   (let includes
-    (lambda '(array value)
-      '(if (is-empty array)
+    (lambda (array value)
+      (if (is-empty array)
         false
         (if (eq (head array) value)
           true
@@ -176,8 +176,8 @@
   )
 
   (let reverse
-    (lambda '(array)
-      '(if (is-empty array)
+    (lambda (array)
+      (if (is-empty array)
         '()
         (concat
           (reverse (tail array))
@@ -188,8 +188,8 @@
   )
 
   (let find
-    (lambda '(array function)
-      '(if (is-empty array)
+    (lambda (array function)
+      (if (is-empty array)
         '()
         (sequence
           (let value (head array))
@@ -214,8 +214,8 @@
   ))
 
   (let adjacent-points
-    (lambda '(point)
-      '(sequence
+    (lambda (point)
+      (sequence
         (let x (nth point 1))
         (let y (nth point 2))
         (list
@@ -233,8 +233,8 @@
   )
 
   (let get-cell
-    (lambda '(grid point)
-      '(sequence
+    (lambda (grid point)
+      (sequence
         (let x (nth point 1))
         (let y (nth point 2))
         (if (and
@@ -248,19 +248,19 @@
   )
 
   (let get-neighbors
-    (lambda '(grid point)
-      '(map
+    (lambda (grid point)
+      (map
         (adjacent-points point)
-        (lambda '(point)
-          '(get-cell grid point)
+        (lambda (point)
+          (get-cell grid point)
         )
       )
     )
   )
 
   (let compute-new-value
-    (lambda '(grid point)
-      '(sequence
+    (lambda (grid point)
+      (sequence
         (let living-neighbors (sum (get-neighbors grid point)))
         (if (eq 1 (get-cell grid point))
           (if (or (eq living-neighbors 2) (eq living-neighbors 3))
@@ -277,17 +277,17 @@
   )
 
   (let next-generation
-    (lambda '(grid)
-      '(sequence
+    (lambda (grid)
+      (sequence
         (let rows (length grid))
         (let cols (length (head grid)))
         (map
           (range rows)
-          (lambda '(row)
-            '(map
+          (lambda (row)
+            (map
               (range cols)
-              (lambda '(col)
-                '(compute-new-value grid (list row col))
+              (lambda (col)
+                (compute-new-value grid (list row col))
               )
             )
           )
@@ -297,13 +297,13 @@
   )
 
   (let print-grid
-    (lambda '(grid)
-      '(sequence
+    (lambda (grid)
+      (sequence
         (let rows (length grid))
         (map
           (range rows)
-          (lambda '(row)
-            '(print (nth grid row))
+          (lambda (row)
+            (print (nth grid row))
           )
         )
       )
@@ -311,8 +311,8 @@
   )
 
   (let generations
-    (lambda '(grid count)
-      '(if (eq 0 count)
+    (lambda (grid count)
+      (if (eq 0 count)
         done
         (sequence
           (print-grid grid)
