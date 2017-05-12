@@ -20,3 +20,19 @@ npm run eval -- -v <path>
 # run unit tests
 npm test
 ```
+
+## Sample
+
+```
+(sequence
+  (let factorial
+    (lambda (x)
+      (if (eq x 0)
+        1
+        (mul x (factorial (sub x 1)))
+      )
+    )
+  )
+  (print (factorial 10))
+)
+```
