@@ -1,6 +1,5 @@
 const {
   NumberNode,
-  SymbolNode,
   ListNode,
   LambdaFunctionNode,
 } = require('./nodes');
@@ -84,21 +83,6 @@ const operators = {
     },
     method(operands) {
       return operands[operands.length - 1];
-    },
-  },
-
-  let: {
-    checkArgs(operands) {
-      return operands.length === 2 &&
-        operands[0] instanceof SymbolNode;
-    },
-    method(operands, env) {
-      const key = operands[0].value;
-      const value = operands[1];
-      if (env.parent !== null) {
-        env.parent.set(key, value);
-      }
-      return value;
     },
   },
 

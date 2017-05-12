@@ -9,6 +9,8 @@ const {
 const Environment = require('./environment');
 const operators = require('./operators');
 
+const specialForms = ['if', 'let', 'quote', 'unquote'];
+
 class Evaluator {
   constructor(ast, globalEnv = null) {
     this.ast = ast;
@@ -39,15 +41,15 @@ class Evaluator {
   evaluateListNode(node, env) {
     const operator = this.evaluateNode(node.elements[0], new Environment(env));
 
-    if (operator instanceof SymbolNode) {
+    if (operator instanceof SymbolNode && specialForms.includes(operator.value)) {
+      const operands = node.elements.slice(1);
       if (operator.value === 'if') {
-        const operands = node.elements.slice(1);
         return this.evaluateIfOperation(operator, operands, env);
+      } else if (operator.value === 'let') {
+        return this.evaluateLetOperation(operator, operands, env);
       } else if (operator.value === 'quote') {
-        const operands = node.elements.slice(1);
         return this.evaluateQuoteOperation(operator, operands);
       } else if (operator.value === 'unquote') {
-        const operands = node.elements.slice(1);
         return this.evaluateUnquoteOperation(operator, operands, env);
       }
     }
@@ -70,6 +72,24 @@ class Evaluator {
     }
     const outcome = condition.value === 0 ? operands[1] : operands[2];
     return this.evaluateNode(outcome, env);
+  }
+
+  evaluateLetOperation(operator, operands, env) {
+    if (operands.length !== 2) {
+      throw new Error('let operator takes exactly two arguments');
+    }
+
+    if (!(operands[0] instanceof SymbolNode)) {
+      throw new Error('first argument to let operator must be a symbol');
+    }
+
+    const key = operands[0].value;
+    const value = this.evaluateNode(operands[1], env);
+
+    if (env.parent !== null) {
+      env.parent.set(key, value);
+    }
+    return value;
   }
 
   evaluateQuoteOperation(operator, operands) {
