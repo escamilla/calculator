@@ -3,7 +3,6 @@ const {
   SymbolNode,
   StringNode,
   ListNode,
-  QuotedExpressionNode,
 } = require('./nodes');
 
 class Parser {
@@ -83,7 +82,7 @@ class Parser {
 
   parseQuotedExpression() {
     this.consumeToken('single-quote');
-    return new QuotedExpressionNode(this.parseExpression());
+    return new ListNode([new SymbolNode('quote'), this.parseExpression()]);
   }
 }
 

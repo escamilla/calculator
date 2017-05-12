@@ -2,7 +2,6 @@ const {
   NumberNode,
   SymbolNode,
   ListNode,
-  QuotedExpressionNode,
   LambdaFunctionNode,
 } = require('./nodes');
 
@@ -75,25 +74,7 @@ const operators = {
       return operands.length > 0;
     },
     method(operands) {
-      return new QuotedExpressionNode(new ListNode(operands));
-    },
-  },
-
-  quote: {
-    checkArgs(operands) {
-      return operands.length === 1;
-    },
-    method(operands) {
-      return new QuotedExpressionNode(operands[0]);
-    },
-  },
-
-  unquote: {
-    checkArgs(operands) {
-      return operands.length === 1 && operands[0] instanceof QuotedExpressionNode;
-    },
-    method(operands) {
-      return operands[0].value;
+      return new ListNode(operands);
     },
   },
 
@@ -109,11 +90,10 @@ const operators = {
   let: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof SymbolNode;
+        operands[0] instanceof SymbolNode;
     },
     method(operands, env) {
-      const key = operands[0].value.value;
+      const key = operands[0].value;
       const value = operands[1];
       if (env.parent !== null) {
         env.parent.set(key, value);
@@ -124,19 +104,9 @@ const operators = {
 
   lambda: {
     checkArgs(operands) {
-      if (operands.length !== 2) {
-        return false;
-      }
-      if (!(operands[0] instanceof QuotedExpressionNode)) {
-        return false;
-      }
-      if (!(operands[1] instanceof QuotedExpressionNode)) {
-        return false;
-      }
-      if (!(operands[0].value instanceof ListNode)) {
-        return false;
-      }
-      return true;
+      return operands.length === 2 &&
+        operands[0] instanceof ListNode &&
+        operands[1] instanceof ListNode;
     },
     method(operands) {
       const parameters = operands[0];
@@ -180,58 +150,49 @@ const operators = {
 
   length: {
     checkArgs(operands) {
-      return operands.length === 1 &&
-        operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof ListNode;
+      return operands.length === 1 && operands[0] instanceof ListNode;
     },
     method(operands) {
-      return new NumberNode(operands[0].value.elements.length);
+      return new NumberNode(operands[0].elements.length);
     },
   },
 
   nth: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof ListNode &&
+        operands[0] instanceof ListNode &&
         operands[1] instanceof NumberNode;
     },
     method(operands) {
       const index = operands[1].value - 1;
-      return operands[0].value.elements[index];
+      return operands[0].elements[index];
     },
   },
 
   slice: {
     checkArgs(operands) {
       return operands.length === 3 &&
-        operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof ListNode &&
+        operands[0] instanceof ListNode &&
         operands[1] instanceof NumberNode &&
         operands[2] instanceof NumberNode;
     },
     method(operands) {
-      const { elements } = operands[0].value;
+      const { elements } = operands[0];
       const begin = operands[1].value;
       const end = operands[2].value;
       const sliced = elements.slice(begin, end);
-      return new QuotedExpressionNode(new ListNode(sliced));
+      return new ListNode(sliced);
     },
   },
 
   concat: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands[0] instanceof QuotedExpressionNode &&
-        operands[0].value instanceof ListNode &&
-        operands[1] instanceof QuotedExpressionNode &&
-        operands[1].value instanceof ListNode;
+        operands[0] instanceof ListNode &&
+        operands[1] instanceof ListNode;
     },
     method(operands) {
-      const leftElements = operands[0].value.elements;
-      const rightElements = operands[1].value.elements;
-      const joined = leftElements.concat(rightElements);
-      return new QuotedExpressionNode(new ListNode(joined));
+      return new ListNode(operands[0].elements.concat(operands[1].elements));
     },
   },
 

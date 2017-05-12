@@ -10,7 +10,6 @@ const {
   NumberNode,
   SymbolNode,
   ListNode,
-  QuotedExpressionNode,
 } = require('../src/nodes');
 
 function interpret(input) {
@@ -38,25 +37,25 @@ describe('interpret()', () => {
     { input: 'foo', expected: new SymbolNode('foo') },
     { input: 'foo-bar', expected: new SymbolNode('foo-bar') },
     { input: 'fooBar', expected: new SymbolNode('fooBar') },
-    { input: "'1", expected: new QuotedExpressionNode(new NumberNode(1)) },
-    { input: "'-1", expected: new QuotedExpressionNode(new NumberNode(-1)) },
-    { input: "'0.1", expected: new QuotedExpressionNode(new NumberNode(0.1)) },
-    { input: "'-0.1", expected: new QuotedExpressionNode(new NumberNode(-0.1)) },
-    { input: "'foo", expected: new QuotedExpressionNode(new SymbolNode('foo')) },
-    { input: "'foo-bar", expected: new QuotedExpressionNode(new SymbolNode('foo-bar')) },
-    { input: "'fooBar", expected: new QuotedExpressionNode(new SymbolNode('fooBar')) },
+    { input: "'1", expected: new NumberNode(1) },
+    { input: "'-1", expected: new NumberNode(-1) },
+    { input: "'0.1", expected: new NumberNode(0.1) },
+    { input: "'-0.1", expected: new NumberNode(-0.1) },
+    { input: "'foo", expected: new SymbolNode('foo') },
+    { input: "'foo-bar", expected: new SymbolNode('foo-bar') },
+    { input: "'fooBar", expected: new SymbolNode('fooBar') },
     {
       input: "'(add 1 2)",
-      expected: new QuotedExpressionNode(
+      expected:
         new ListNode([
           new SymbolNode('add'),
           new NumberNode(1),
           new NumberNode(2),
-        ])),
+        ]),
     },
     {
       input: "'(add (add 1 2) 3)",
-      expected: new QuotedExpressionNode(
+      expected:
         new ListNode([
           new SymbolNode('add'),
           new ListNode([
@@ -65,21 +64,37 @@ describe('interpret()', () => {
             new NumberNode(2),
           ]),
           new NumberNode(3),
-        ])),
+        ]),
     },
     {
       input: '(list a b c)',
-      expected: new QuotedExpressionNode(
+      expected:
         new ListNode([
           new SymbolNode('a'),
           new SymbolNode('b'),
           new SymbolNode('c'),
-        ])),
+        ]),
     },
-    { input: '(quote foo)', expected: new QuotedExpressionNode(new SymbolNode('foo')) },
-    { input: '(quote (add 1 2))', expected: new QuotedExpressionNode(new NumberNode(3)) },
+    { input: '(quote foo)', expected: new SymbolNode('foo') },
+    {
+      input: '(quote (add 1 2))',
+      expected:
+        new ListNode([
+          new SymbolNode('add'),
+          new NumberNode(1),
+          new NumberNode(2),
+        ]),
+    },
     { input: "(unquote 'foo)", expected: new SymbolNode('foo') },
-    { input: "(unquote '(add 1 2))", expected: new NumberNode(3) },
+    {
+      input: "(unquote '(add 1 2))",
+      expected:
+        new ListNode([
+          new SymbolNode('add'),
+          new NumberNode(1),
+          new NumberNode(2),
+        ]),
+    },
     { input: '(sequence (add 1 2) (add 2 3))', expected: new NumberNode(5) },
     { input: '((sequence add) 1 2)', expected: new NumberNode(3) },
     { input: "(let 'pi 3.14)", expected: new NumberNode(3.14) },
@@ -105,15 +120,14 @@ describe('interpret()', () => {
     { input: "(length '())", expected: new NumberNode(0) },
     { input: "(length '(a b c))", expected: new NumberNode(3) },
     { input: "(nth '(a b c) 2)", expected: new SymbolNode('b') },
-    { input: "(nth '(a b (sequence c)) 3)", expected: new SymbolNode('c') },
     {
       input: "(concat '(a) '(b c))",
-      expected: new QuotedExpressionNode(
+      expected:
         new ListNode([
           new SymbolNode('a'),
           new SymbolNode('b'),
           new SymbolNode('c'),
-        ])),
+        ]),
     },
   ];
 

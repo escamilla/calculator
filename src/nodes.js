@@ -38,16 +38,6 @@ class ListNode {
   }
 }
 
-class QuotedExpressionNode {
-  constructor(value) {
-    this.value = value;
-  }
-
-  toString() {
-    return `'${this.value.toString()}`;
-  }
-}
-
 class LambdaFunctionNode {
   constructor(parameters, body) {
     this.parameters = parameters;
@@ -64,6 +54,5 @@ module.exports = {
   SymbolNode,
   StringNode,
   ListNode,
-  QuotedExpressionNode,
   LambdaFunctionNode,
 };

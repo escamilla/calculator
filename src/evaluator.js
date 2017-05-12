@@ -3,7 +3,6 @@ const {
   SymbolNode,
   StringNode,
   ListNode,
-  QuotedExpressionNode,
   LambdaFunctionNode,
 } = require('./nodes');
 
@@ -23,7 +22,6 @@ class Evaluator {
   evaluateNode(node, env) {
     if (node instanceof NumberNode ||
         node instanceof StringNode ||
-        node instanceof QuotedExpressionNode ||
         node instanceof LambdaFunctionNode) {
       return node;
     } else if (node instanceof SymbolNode) {
@@ -41,24 +39,28 @@ class Evaluator {
   evaluateListNode(node, env) {
     const operator = this.evaluateNode(node.elements[0], new Environment(env));
 
-    if (operator instanceof SymbolNode && operator.value === 'if') {
-      const operands = node.elements.slice(1);
-      return this.evaluateIfOperation(operator, operands, env);
+    if (operator instanceof SymbolNode) {
+      if (operator.value === 'if') {
+        const operands = node.elements.slice(1);
+        return this.evaluateIfOperation(operator, operands, env);
+      } else if (operator.value === 'quote') {
+        const operands = node.elements.slice(1);
+        return this.evaluateQuoteOperation(operator, operands);
+      } else if (operator.value === 'unquote') {
+        const operands = node.elements.slice(1);
+        return this.evaluateUnquoteOperation(operator, operands, env);
+      }
     }
 
     const operands = node.elements.slice(1).map(el => this.evaluateNode(el, new Environment(env)));
 
-    let result;
     if (operator instanceof SymbolNode) {
-      result = this.evaluateOperation(operator, operands, env);
+      return this.evaluateOperation(operator, operands, env);
     } else if (operator instanceof LambdaFunctionNode) {
-      result = this.evaluateLambdaFunction(operator, operands, env);
-    } else {
-      throw new Error('first item of symbolic expression must be a symbol or lambda function');
+      return this.evaluateLambdaFunction(operator, operands, env);
     }
 
-    // the result might be an s-expression, so another evaluation is necessary
-    return this.evaluateNode(result, new Environment(env));
+    throw new Error('first item of symbolic expression must be a symbol or lambda function');
   }
 
   evaluateIfOperation(operator, operands, env) {
@@ -70,16 +72,37 @@ class Evaluator {
     return this.evaluateNode(outcome, env);
   }
 
+  evaluateQuoteOperation(operator, operands) {
+    if (operands.length !== 1) {
+      throw new Error('quote operator takes exactly one argument');
+    }
+    return operands[0];
+  }
+
+  evaluateUnquoteOperation(operator, operands, env) {
+    if (operands.length !== 1) {
+      throw new Error('unquote operator takes exactly one argument');
+    }
+    return this.evaluateNode(operands[0], env);
+  }
+
   evaluateOperation(operator, operands, env) {
+    if (operator.value === 'if') {
+      const condition = this.evaluateNode(operands[0], env);
+      const outcome = condition.value === 0 ? operands[1] : operands[2];
+      return this.evaluateNode(outcome, env);
+    }
+
     if (operators[operator.value].checkArgs(operands)) {
       return operators[operator.value].method(operands, env);
     }
+
     throw new Error(`invalid arguments for operator: ${operator.value}`);
   }
 
   evaluateLambdaFunction(operator, operands, env) {
-    const parameters = operator.parameters.value.elements;
-    const body = operator.body.value;
+    const parameters = operator.parameters.elements;
+    const body = operator.body;
 
     const expected = parameters.length;
     const actual = operands.length;
