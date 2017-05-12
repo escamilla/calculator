@@ -84,7 +84,13 @@ class Lexer {
     let str = '';
     this.next();
     while (this.peek() && this.peek() !== '"') {
-      str += this.next();
+      if (this.peek() === '\\' && this.lookAhead() === 'n') {
+        str += '\n';
+        this.next();
+        this.next();
+      } else {
+        str += this.next();
+      }
     }
     if (this.peek() === '"') {
       this.next();
