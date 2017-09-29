@@ -1,4 +1,5 @@
-import Token from "./Token";
+import Token from "./tokens/Token";
+import TokenType from "./tokens/TokenType";
 
 import ListNode from "./nodes/ListNode";
 import NumberNode from "./nodes/NumberNode";
@@ -34,7 +35,7 @@ class Parser {
     return this.position >= this.tokens.length;
   }
 
-  private consumeToken(expectedType): Token {
+  private consumeToken(expectedType: TokenType): Token {
     const token: Token = this.next();
     if (token.type === expectedType) {
       return token;
@@ -44,15 +45,15 @@ class Parser {
 
   private parseExpression() {
     switch (this.peek().type) {
-      case "left-parenthesis":
+      case TokenType.LEFT_PARENTHESIS:
         return this.parseSymbolicExpression();
-      case "number":
+      case TokenType.NUMBER:
         return this.parseNumber();
-      case "symbol":
+      case TokenType.SYMBOL:
         return this.parseSymbol();
-      case "string":
+      case TokenType.STRING:
         return this.parseString();
-      case "single-quote":
+      case TokenType.SINGLE_QUOTE:
         return this.parseQuotedExpression();
       default:
         throw new Error("Expected number, symbol, or symbolic expression");
@@ -60,29 +61,29 @@ class Parser {
   }
 
   private parseNumber() {
-    return new NumberNode(this.consumeToken("number").value);
+    return new NumberNode(this.consumeToken(TokenType.NUMBER).value);
   }
 
   private parseSymbol() {
-    return new SymbolNode(this.consumeToken("symbol").value);
+    return new SymbolNode(this.consumeToken(TokenType.SYMBOL).value);
   }
 
   private parseString() {
-    return new StringNode(this.consumeToken("string").value);
+    return new StringNode(this.consumeToken(TokenType.STRING).value);
   }
 
   private parseSymbolicExpression() {
-    this.consumeToken("left-parenthesis");
+    this.consumeToken(TokenType.LEFT_PARENTHESIS);
     const items = [];
-    while (this.peek().type !== "right-parenthesis") {
+    while (this.peek().type !== TokenType.RIGHT_PARENTHESIS) {
       items.push(this.parseExpression());
     }
-    this.consumeToken("right-parenthesis");
+    this.consumeToken(TokenType.RIGHT_PARENTHESIS);
     return new ListNode(items);
   }
 
   private parseQuotedExpression() {
-    this.consumeToken("single-quote");
+    this.consumeToken(TokenType.SINGLE_QUOTE);
     return new ListNode([new SymbolNode("quote"), this.parseExpression()]);
   }
 }

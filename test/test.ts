@@ -7,7 +7,8 @@ import Environment from "../src/Environment";
 import Evaluator from "../src/Evaluator";
 import Lexer from "../src/Lexer";
 import Parser from "../src/Parser";
-import Token from "../src/Token";
+
+import Token from "../src/tokens/Token";
 
 import ListNode from "../src/nodes/ListNode";
 import NumberNode from "../src/nodes/NumberNode";

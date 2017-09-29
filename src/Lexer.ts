@@ -1,4 +1,5 @@
-import Token from "./Token";
+import Token from "./tokens/Token";
+import TokenType from "./tokens/TokenType";
 
 class Lexer {
   public position;
@@ -127,22 +128,22 @@ class Lexer {
     const char = this.peek();
 
     if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
-      return new Token("number", this.readNumber());
+      return new Token(TokenType.NUMBER, this.readNumber());
     }
 
     if (this.isAlpha(char) || char === "_") {
-      return new Token("symbol", this.readSymbol());
+      return new Token(TokenType.SYMBOL, this.readSymbol());
     }
 
     switch (char) {
       case "(":
-        return new Token("left-parenthesis", this.next());
+        return new Token(TokenType.LEFT_PARENTHESIS, this.next());
       case ")":
-        return new Token("right-parenthesis", this.next());
+        return new Token(TokenType.RIGHT_PARENTHESIS, this.next());
       case "\"":
-        return new Token("string", this.readString());
+        return new Token(TokenType.STRING, this.readString());
       case "'":
-        return new Token("single-quote", this.next());
+        return new Token(TokenType.SINGLE_QUOTE, this.next());
       default:
         this.die(`unknown character: ${char}`);
     }
