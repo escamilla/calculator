@@ -1,16 +1,16 @@
-const assert = require('assert');
-const { describe, it } = require('mocha');
+import 'mocha';
+import { assert } from 'chai';
 
-const Lexer = require('../src/lexer');
-const Parser = require('../src/parser');
-const Evaluator = require('../src/evaluator');
-const Environment = require('../src/environment');
+import Lexer from '../src/lexer';
+import Parser from '../src/parser';
+import Evaluator from '../src/evaluator';
+import Environment from'../src/environment';
 
-const {
+import {
   NumberNode,
   SymbolNode,
   ListNode,
-} = require('../src/nodes');
+} from '../src/nodes';
 
 function interpret(input) {
   const lexer = new Lexer(input);
@@ -134,7 +134,7 @@ describe('interpret()', () => {
   positiveTests.forEach((test) => {
     it(`correctly evaluates ${test.input}`, () => {
       const actual = interpret(test.input);
-      assert.deepStrictEqual(actual, test.expected);
+      assert.deepEqual(actual, test.expected);
     });
   });
 
