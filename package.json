@@ -10,10 +10,12 @@
   },
   "private": true,
   "devDependencies": {
+    "@types/node": "^8.0.31",
     "eslint": "^3.17.1",
     "eslint-config-airbnb-base": "^11.1.1",
     "eslint-plugin-import": "^2.2.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "typescript": "^2.5.3"
   },
   "dependencies": {
     "minimist": "^1.2.0"
