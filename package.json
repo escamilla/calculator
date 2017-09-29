@@ -12,6 +12,7 @@
   "private": true,
   "devDependencies": {
     "@types/chai": "^4.0.4",
+    "@types/minimist": "^1.2.0",
     "@types/mocha": "^2.2.43",
     "@types/node": "^8.0.31",
     "chai": "^4.1.2",
