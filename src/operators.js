@@ -63,7 +63,8 @@ const operators = {
         operands.every(operand => operand instanceof NumberNode);
     },
     method(operands) {
-      return new NumberNode(operands[0].value ** operands[1].value);
+      // eslint-disable-next-line no-restricted-properties
+      return new NumberNode(Math.pow(operands[0].value, operands[1].value));
     },
   },
 
