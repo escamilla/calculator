@@ -1,12 +1,14 @@
-const {
+import {
   NumberNode,
   SymbolNode,
   StringNode,
   ListNode,
-} = require('./nodes');
+} from './nodes';
 
 class Parser {
-  constructor(tokens) {
+  public position;
+
+  constructor(public tokens) {
     this.tokens = tokens;
     this.position = 0;
   }
@@ -86,4 +88,4 @@ class Parser {
   }
 }
 
-module.exports = Parser;
+export default Parser;

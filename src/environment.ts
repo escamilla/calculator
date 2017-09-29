@@ -1,5 +1,7 @@
 class Environment {
-  constructor(parent = null) {
+  public scope: Map<any, any>;
+
+  constructor(public parent = null) {
     this.parent = parent;
     this.scope = new Map();
   }
@@ -19,4 +21,4 @@ class Environment {
 
 }
 
-module.exports = Environment;
+export default Environment;

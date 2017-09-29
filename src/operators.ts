@@ -1,7 +1,7 @@
-const {
+import {
   NumberNode,
   ListNode,
-} = require('./nodes');
+} from './nodes';
 
 const operators = {
 
@@ -179,4 +179,4 @@ const operators = {
 
 };
 
-module.exports = operators;
+export default operators;

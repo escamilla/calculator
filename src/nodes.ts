@@ -1,5 +1,5 @@
 class NumberNode {
-  constructor(value) {
+  constructor(public value) {
     this.value = value;
   }
 
@@ -9,7 +9,7 @@ class NumberNode {
 }
 
 class SymbolNode {
-  constructor(value) {
+  constructor(public value) {
     this.value = value;
   }
 
@@ -19,7 +19,7 @@ class SymbolNode {
 }
 
 class StringNode {
-  constructor(value) {
+  constructor(public value) {
     this.value = value;
   }
 
@@ -29,7 +29,7 @@ class StringNode {
 }
 
 class ListNode {
-  constructor(elements) {
+  constructor(public elements) {
     this.elements = elements;
   }
 
@@ -39,7 +39,7 @@ class ListNode {
 }
 
 class LambdaFunctionNode {
-  constructor(parameters, body) {
+  constructor(public parameters, public body) {
     this.parameters = parameters;
     this.body = body;
   }
@@ -49,7 +49,7 @@ class LambdaFunctionNode {
   }
 }
 
-module.exports = {
+export {
   NumberNode,
   SymbolNode,
   StringNode,

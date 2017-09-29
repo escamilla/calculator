@@ -1,5 +1,9 @@
 class Lexer {
-  constructor(input) {
+  public position;
+  public line;
+  public column;
+
+  constructor(public input) {
     this.input = input;
     this.position = 0;
     this.line = 1;
@@ -159,4 +163,4 @@ class Lexer {
   }
 }
 
-module.exports = Lexer;
+export default Lexer;

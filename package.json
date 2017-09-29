@@ -5,7 +5,8 @@
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
   "repository": "escamilla/squirrel.js",
   "scripts": {
-    "eval": "node src/main.js",
+    "eval": "npm run build && node dist/main.js",
+    "build": "tsc",
     "test": "mocha"
   },
   "private": true,

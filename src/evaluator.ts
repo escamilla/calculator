@@ -1,18 +1,18 @@
-const {
+import {
   NumberNode,
   SymbolNode,
   StringNode,
   ListNode,
   LambdaFunctionNode,
-} = require('./nodes');
+} from './nodes';
 
-const Environment = require('./environment');
-const operators = require('./operators');
+import Environment from './environment';
+import operators from './operators';
 
 const specialForms = ['if', 'lambda', 'let', 'quote', 'unquote'];
 
 class Evaluator {
-  constructor(ast, globalEnv = null) {
+  constructor(public ast, public globalEnv = null) {
     this.ast = ast;
     this.globalEnv = globalEnv;
   }
@@ -46,11 +46,11 @@ class Evaluator {
       if (operator.value === 'if') {
         return this.evaluateIfOperation(operator, operands, env);
       } else if (operator.value === 'lambda') {
-        return this.evaluateLambdaOperation(operator, operands, env);
+        return this.evaluateLambdaOperation(operator, operands);
       } else if (operator.value === 'let') {
         return this.evaluateLetOperation(operator, operands, env);
       } else if (operator.value === 'quote') {
-        return this.evaluateQuoteOperation(operator, operands, env);
+        return this.evaluateQuoteOperation(operator, operands);
       } else if (operator.value === 'unquote') {
         return this.evaluateUnquoteOperation(operator, operands, env);
       }
@@ -157,4 +157,4 @@ class Evaluator {
   }
 }
 
-module.exports = Evaluator;
+export default Evaluator;
