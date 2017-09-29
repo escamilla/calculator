@@ -1,3 +1,5 @@
+import Token from "./Token";
+
 class Lexer {
   public position;
   public line;
@@ -10,9 +12,9 @@ class Lexer {
     this.column = 1;
   }
 
-  public lex() {
-    const tokens = [];
-    let token;
+  public lex(): Token[] {
+    const tokens: Token[] = [];
+    let token: Token;
     while (true) {
       token = this.readToken();
       if (token === null) {
@@ -117,7 +119,7 @@ class Lexer {
     return str;
   }
 
-  private readToken() {
+  private readToken(): Token {
     this.skipWhitespace();
     if (this.eof()) {
       return null;
@@ -125,40 +127,22 @@ class Lexer {
     const char = this.peek();
 
     if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
-      return {
-        type: "number",
-        value: this.readNumber(),
-      };
+      return new Token("number", this.readNumber());
     }
 
     if (this.isAlpha(char) || char === "_") {
-      return {
-        type: "symbol",
-        value: this.readSymbol(),
-      };
+      return new Token("symbol", this.readSymbol());
     }
 
     switch (char) {
       case "(":
-        return {
-          type: "left-parenthesis",
-          value: this.next(),
-        };
+        return new Token("left-parenthesis", this.next());
       case ")":
-        return {
-          type: "right-parenthesis",
-          value: this.next(),
-        };
+        return new Token("right-parenthesis", this.next());
       case "\"":
-        return {
-          type: "string",
-          value: this.readString(),
-        };
+        return new Token("string", this.readString());
       case "'":
-        return {
-          type: "single-quote",
-          value: this.next(),
-        };
+        return new Token("single-quote", this.next());
       default:
         this.die(`unknown character: ${char}`);
     }

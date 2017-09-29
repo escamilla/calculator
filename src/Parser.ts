@@ -1,3 +1,5 @@
+import Token from "./Token";
+
 import ListNode from "./nodes/ListNode";
 import NumberNode from "./nodes/NumberNode";
 import StringNode from "./nodes/StringNode";
@@ -6,8 +8,7 @@ import SymbolNode from "./nodes/SymbolNode";
 class Parser {
   public position;
 
-  constructor(public tokens) {
-    this.tokens = tokens;
+  constructor(public tokens: Token[]) {
     this.position = 0;
   }
 
@@ -19,11 +20,11 @@ class Parser {
     return result;
   }
 
-  private peek() {
+  private peek(): Token {
     return this.tokens[this.position];
   }
 
-  private next() {
+  private next(): Token {
     const token = this.tokens[this.position];
     this.position += 1;
     return token;
@@ -33,8 +34,8 @@ class Parser {
     return this.position >= this.tokens.length;
   }
 
-  private consumeToken(expectedType) {
-    const token = this.next();
+  private consumeToken(expectedType): Token {
+    const token: Token = this.next();
     if (token.type === expectedType) {
       return token;
     }

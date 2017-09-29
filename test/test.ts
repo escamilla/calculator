@@ -7,6 +7,7 @@ import Environment from "../src/Environment";
 import Evaluator from "../src/Evaluator";
 import Lexer from "../src/Lexer";
 import Parser from "../src/Parser";
+import Token from "../src/Token";
 
 import ListNode from "../src/nodes/ListNode";
 import NumberNode from "../src/nodes/NumberNode";
@@ -14,7 +15,7 @@ import SymbolNode from "../src/nodes/SymbolNode";
 
 function interpret(input) {
   const lexer = new Lexer(input);
-  const tokens = lexer.lex();
+  const tokens: Token[] = lexer.lex();
   const parser = new Parser(tokens);
   const ast = parser.parse();
   const evaluator = new Evaluator(ast);
