@@ -1,19 +1,21 @@
-const fs = require('fs');
-const util = require('util');
-const parseArgs = require('minimist');
-const readline = require('readline');
+/* tslint:disable:no-console object-literal-sort-keys */
+
+import * as fs from "fs";
+import * as parseArgs from "minimist";
+import * as readline from "readline";
+import * as util from "util";
 
 const argv = parseArgs(process.argv.slice(2), {
-  boolean: 'verbose',
+  boolean: "verbose",
   alias: {
-    v: 'verbose',
+    v: "verbose",
   },
 });
 
-import Lexer from './lexer';
-import Parser from './parser';
-import Evaluator from './evaluator';
-import Environment from './environment';
+import Environment from "./Environment";
+import Evaluator from "./Evaluator";
+import Lexer from "./Lexer";
+import Parser from "./Parser";
 
 function interpret(input, environment = null) {
   const lexer = new Lexer(input);
@@ -25,7 +27,7 @@ function interpret(input, environment = null) {
 function runFile(filename) {
   let input;
   try {
-    input = fs.readFileSync(filename, 'utf8');
+    input = fs.readFileSync(filename, "utf8");
   } catch (e) {
     console.log(e.message);
     process.exit();
@@ -36,7 +38,7 @@ function runFile(filename) {
     tokens: undefined,
     ast: undefined,
     output: undefined,
-    prettyOutput: undefined
+    prettyOutput: undefined,
   };
 
   try {
@@ -74,9 +76,9 @@ function runRepl() {
 
   const replEnvironment = new Environment();
 
-  console.log('tip: the result of the most recently evaluated expression is assigned to the special variable _ (underscore)');
+  console.log("tip: _ (underscore) always contains the result of the most recently evaluated expression");
   rl.prompt();
-  rl.on('line', (line) => {
+  rl.on("line", (line) => {
     if (line.trim()) {
       let result = null;
       try {
@@ -85,12 +87,12 @@ function runRepl() {
         console.log(e.message);
       }
       if (result) {
-        replEnvironment.set('_', result);
+        replEnvironment.set("_", result);
         console.log(result.toString());
       }
     }
     rl.prompt();
-  }).on('close', () => {
+  }).on("close", () => {
     process.exit(0);
   });
 }

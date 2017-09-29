@@ -1,14 +1,13 @@
-import {
-  NumberNode,
-  ListNode,
-} from './nodes';
+/* tslint:disable:object-literal-sort-keys */
+
+import ListNode from "./nodes/ListNode";
+import NumberNode from "./nodes/NumberNode";
 
 const operators = {
-
   add: {
     checkArgs(operands) {
       return operands.length >= 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(
@@ -19,7 +18,7 @@ const operators = {
   sub: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(operands[0].value - operands[1].value);
@@ -29,7 +28,7 @@ const operators = {
   mul: {
     checkArgs(operands) {
       return operands.length >= 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(
@@ -40,7 +39,7 @@ const operators = {
   div: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(operands[0].value / operands[1].value);
@@ -50,7 +49,7 @@ const operators = {
   mod: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return new NumberNode(operands[0].value % operands[1].value);
@@ -60,7 +59,7 @@ const operators = {
   pow: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       // eslint-disable-next-line no-restricted-properties
@@ -89,7 +88,7 @@ const operators = {
   eq: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return operands[0].value === operands[1].value ?
@@ -100,7 +99,7 @@ const operators = {
   lt: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return operands[0].value < operands[1].value ?
@@ -111,7 +110,7 @@ const operators = {
   gt: {
     checkArgs(operands) {
       return operands.length === 2 &&
-        operands.every(operand => operand instanceof NumberNode);
+        operands.every((operand) => operand instanceof NumberNode);
     },
     method(operands) {
       return operands[0].value > operands[1].value ?
@@ -172,11 +171,10 @@ const operators = {
       return operands.length === 1;
     },
     method(operands) {
-      console.log(operands[0].toString());
+      console.log(operands[0].toString()); /* tslint:disable-line:no-console */
       return operands[0];
     },
   },
-
 };
 
 export default operators;

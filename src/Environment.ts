@@ -6,7 +6,7 @@ class Environment {
     this.scope = new Map();
   }
 
-  get(key) {
+  public get(key) {
     if (this.scope.has(key)) {
       return this.scope.get(key);
     } else if (this.parent !== null) {
@@ -15,10 +15,9 @@ class Environment {
     return null;
   }
 
-  set(key, value) {
+  public set(key, value) {
     this.scope.set(key, value);
   }
-
 }
 
 export default Environment;

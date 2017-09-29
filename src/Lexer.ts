@@ -10,18 +10,31 @@ class Lexer {
     this.column = 1;
   }
 
-  die(message) {
+  public lex() {
+    const tokens = [];
+    let token;
+    while (true) {
+      token = this.readToken();
+      if (token === null) {
+        break;
+      }
+      tokens.push(token);
+    }
+    return tokens;
+  }
+
+  private die(message) {
     throw new Error(`${message} (${this.line}:${this.column})`);
   }
 
-  peek() {
+  private peek() {
     return this.input.charAt(this.position);
   }
 
-  next() {
+  private next() {
     const char = this.input.charAt(this.position);
     this.position += 1;
-    if (char === '\n') {
+    if (char === "\n") {
       this.line += 1;
       this.column = 1;
     } else {
@@ -30,41 +43,41 @@ class Lexer {
     return char;
   }
 
-  lookAhead() {
+  private lookAhead() {
     return this.input.charAt(this.position + 1);
   }
 
-  eof() {
-    return this.peek() === '';
+  private eof() {
+    return this.peek() === "";
   }
 
-  isWhitespace(char) {
+  private isWhitespace(char) {
     return /\s/.test(char);
   }
 
-  isDigit(char) {
+  private isDigit(char) {
     return /\d/.test(char);
   }
 
-  isAlpha(char) {
+  private isAlpha(char) {
     return /[a-z]/i.test(char);
   }
 
-  skipWhitespace() {
+  private skipWhitespace() {
     while (this.isWhitespace(this.peek())) {
       this.next();
     }
   }
 
-  readNumber() {
-    let str = '';
-    if (this.peek() === '-') {
+  private readNumber() {
+    let str = "";
+    if (this.peek() === "-") {
       str += this.next();
     }
     while (this.isDigit(this.peek())) {
       str += this.next();
     }
-    if (this.peek() === '.' && this.isDigit(this.lookAhead())) {
+    if (this.peek() === "." && this.isDigit(this.lookAhead())) {
       str += this.next();
       while (this.isDigit(this.peek())) {
         str += this.next();
@@ -73,77 +86,77 @@ class Lexer {
     return parseFloat(str);
   }
 
-  readSymbol() {
-    let str = '';
-    if (this.peek() === '_') {
+  private readSymbol() {
+    let str = "";
+    if (this.peek() === "_") {
       return this.next();
     }
-    while (this.isAlpha(this.peek()) || (this.peek() === '-' && this.isAlpha(this.lookAhead()))) {
+    while (this.isAlpha(this.peek()) || (this.peek() === "-" && this.isAlpha(this.lookAhead()))) {
       str += this.next();
     }
     return str;
   }
 
-  readString() {
-    let str = '';
+  private readString() {
+    let str = "";
     this.next();
-    while (this.peek() && this.peek() !== '"') {
-      if (this.peek() === '\\' && this.lookAhead() === 'n') {
-        str += '\n';
+    while (this.peek() && this.peek() !== "\"") {
+      if (this.peek() === "\\" && this.lookAhead() === "n") {
+        str += "\n";
         this.next();
         this.next();
       } else {
         str += this.next();
       }
     }
-    if (this.peek() === '"') {
+    if (this.peek() === "'") {
       this.next();
     } else {
-      throw new Error('unterminated string');
+      throw new Error("unterminated string");
     }
     return str;
   }
 
-  readToken() {
+  private readToken() {
     this.skipWhitespace();
     if (this.eof()) {
       return null;
     }
     const char = this.peek();
 
-    if (this.isDigit(char) || (char === '-' && this.isDigit(this.lookAhead()))) {
+    if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
       return {
-        type: 'number',
+        type: "number",
         value: this.readNumber(),
       };
     }
 
-    if (this.isAlpha(char) || char === '_') {
+    if (this.isAlpha(char) || char === "_") {
       return {
-        type: 'symbol',
+        type: "symbol",
         value: this.readSymbol(),
       };
     }
 
     switch (char) {
-      case '(':
+      case "(":
         return {
-          type: 'left-parenthesis',
+          type: "left-parenthesis",
           value: this.next(),
         };
-      case ')':
+      case ")":
         return {
-          type: 'right-parenthesis',
+          type: "right-parenthesis",
           value: this.next(),
         };
-      case '"':
+      case "\"":
         return {
-          type: 'string',
+          type: "string",
           value: this.readString(),
         };
       case "'":
         return {
-          type: 'single-quote',
+          type: "single-quote",
           value: this.next(),
         };
       default:
@@ -151,15 +164,6 @@ class Lexer {
     }
 
     return null;
-  }
-
-  lex() {
-    const tokens = [];
-    let token;
-    while ((token = this.readToken()) !== null) {
-      tokens.push(token);
-    }
-    return tokens;
   }
 }
 
