@@ -40,16 +40,17 @@ class Evaluator {
     let operands: INode[];
     if (operator instanceof SymbolNode && specialForms.includes(operator.value)) {
       operands = node.elements.slice(1);
-      if (operator.value === "if") {
-        return this.evaluateIfOperation(operator, operands, env);
-      } else if (operator.value === "lambda") {
-        return this.evaluateLambdaOperation(operator, operands);
-      } else if (operator.value === "let") {
-        return this.evaluateLetOperation(operator, operands, env);
-      } else if (operator.value === "quote") {
-        return this.evaluateQuoteOperation(operator, operands);
-      } else if (operator.value === "unquote") {
-        return this.evaluateUnquoteOperation(operator, operands, env);
+      switch (operator.value) {
+        case "if":
+          return this.evaluateIfOperation(operator, operands, env);
+        case "lambda":
+          return this.evaluateLambdaOperation(operator, operands);
+        case "let":
+          return this.evaluateLetOperation(operator, operands, env);
+        case "quote":
+          return this.evaluateQuoteOperation(operator, operands);
+        case "unquote":
+          return this.evaluateUnquoteOperation(operator, operands, env);
       }
     }
 

@@ -8,6 +8,7 @@
       "check-accessor",
       "check-constructor"
     ],
+    "prefer-switch": true,
     "typedef": [
       true,
       "call-signature",
