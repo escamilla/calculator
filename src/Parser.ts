@@ -9,7 +9,7 @@ import SymbolNode from "./nodes/SymbolNode";
 class Parser {
   private position: number = 0;
 
-  constructor(public tokens: Token[]) { }
+  constructor(private readonly tokens: Token[]) { }
 
   public parse(): any {
     const result = this.parseExpression();

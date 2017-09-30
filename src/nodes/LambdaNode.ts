@@ -1,5 +1,5 @@
 class LambdaNode {
-  constructor(public parameters: any[], public body: any) { }
+  constructor(public readonly parameters: any[], public readonly body: any) { }
 
   public toString(): string {
     return `(lambda ${this.parameters.toString()} ${this.body.toString()})`;

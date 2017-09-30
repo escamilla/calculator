@@ -10,7 +10,7 @@ import operators from "./operators";
 const specialForms = ["if", "lambda", "let", "quote", "unquote"];
 
 class Evaluator {
-  constructor(private ast: any, private globalEnv: Environment = null) { }
+  constructor(private readonly ast: any, private readonly globalEnv: Environment = null) { }
 
   public evaluate(): any {
     return this.evaluateNode(this.ast, new Environment(this.globalEnv));

@@ -1,7 +1,7 @@
 class Environment {
   public scope: Map<string, any>;
 
-  constructor(public parent: Environment = null) {
+  constructor(public readonly parent: Environment = null) {
     this.scope = new Map();
   }
 

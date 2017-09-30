@@ -1,5 +1,5 @@
 class NumberNode {
-  constructor(public value: number) { }
+  constructor(public readonly value: number) { }
 
   public toString(): string {
     return `${this.value}`;

@@ -1,5 +1,5 @@
 class SymbolNode {
-  constructor(public value: string) { }
+  constructor(public readonly value: string) { }
 
   public toString(): string {
     return `${this.value}`;
