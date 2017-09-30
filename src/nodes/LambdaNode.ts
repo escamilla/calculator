@@ -1,4 +1,4 @@
-class LambdaFunctionNode {
+class LambdaNode {
   constructor(public parameters: any[], public body: any) { }
 
   public toString(): string {
@@ -6,4 +6,4 @@ class LambdaFunctionNode {
   }
 }
 
-export default LambdaFunctionNode;
+export default LambdaNode;

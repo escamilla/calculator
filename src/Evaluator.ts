@@ -1,4 +1,4 @@
-import LambdaFunctionNode from "./nodes/LambdaFunctionNode";
+import LambdaNode from "./nodes/LambdaNode";
 import ListNode from "./nodes/ListNode";
 import NumberNode from "./nodes/NumberNode";
 import StringNode from "./nodes/StringNode";
@@ -19,7 +19,7 @@ class Evaluator {
   private evaluateNode(node: any, env: Environment): any {
     if (node instanceof NumberNode ||
         node instanceof StringNode ||
-        node instanceof LambdaFunctionNode) {
+        node instanceof LambdaNode) {
       return node;
     } else if (node instanceof SymbolNode) {
       return this.evaluateSymbolNode(node, env);
@@ -56,7 +56,7 @@ class Evaluator {
 
     if (operator instanceof SymbolNode) {
       return this.evaluateOperation(operator, operands, env);
-    } else if (operator instanceof LambdaFunctionNode) {
+    } else if (operator instanceof LambdaNode) {
       return this.evaluateLambdaFunction(operator, operands, env);
     }
 
@@ -83,7 +83,7 @@ class Evaluator {
 
     const parameters = operands[0];
     const body = operands[1];
-    return new LambdaFunctionNode(parameters, body);
+    return new LambdaNode(parameters, body);
   }
 
   private evaluateLetOperation(operator: any, operands: any[], env: Environment): any {
