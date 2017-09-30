@@ -1,10 +1,11 @@
 class Environment {
-  constructor(parent = null) {
-    this.parent = parent;
+  public scope: Map<string, any>;
+
+  constructor(public parent: Environment = null) {
     this.scope = new Map();
   }
 
-  get(key) {
+  public get(key: string): any {
     if (this.scope.has(key)) {
       return this.scope.get(key);
     } else if (this.parent !== null) {
@@ -13,10 +14,9 @@ class Environment {
     return null;
   }
 
-  set(key, value) {
+  public set(key: string, value: any): void {
     this.scope.set(key, value);
   }
-
 }
 
-module.exports = Environment;
+export default Environment;

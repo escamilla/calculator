@@ -1,27 +1,22 @@
-const {
-  NumberNode,
-  SymbolNode,
-  StringNode,
-  ListNode,
-  LambdaFunctionNode,
-} = require('./nodes');
+import LambdaFunctionNode from "./nodes/LambdaFunctionNode";
+import ListNode from "./nodes/ListNode";
+import NumberNode from "./nodes/NumberNode";
+import StringNode from "./nodes/StringNode";
+import SymbolNode from "./nodes/SymbolNode";
 
-const Environment = require('./environment');
-const operators = require('./operators');
+import Environment from "./Environment";
+import operators from "./operators";
 
-const specialForms = ['if', 'lambda', 'let', 'quote', 'unquote'];
+const specialForms = ["if", "lambda", "let", "quote", "unquote"];
 
 class Evaluator {
-  constructor(ast, globalEnv = null) {
-    this.ast = ast;
-    this.globalEnv = globalEnv;
-  }
+  constructor(private ast: any, private globalEnv: Environment = null) { }
 
-  evaluate() {
+  public evaluate(): any {
     return this.evaluateNode(this.ast, new Environment(this.globalEnv));
   }
 
-  evaluateNode(node, env) {
+  private evaluateNode(node: any, env: Environment): any {
     if (node instanceof NumberNode ||
         node instanceof StringNode ||
         node instanceof LambdaFunctionNode) {
@@ -34,29 +29,30 @@ class Evaluator {
     throw new Error(`unknown node type: ${node.constructor.name}`);
   }
 
-  evaluateSymbolNode(node, env) {
+  private evaluateSymbolNode(node: any, env: Environment): any {
     return env.get(node.value) || node;
   }
 
-  evaluateListNode(node, env) {
+  private evaluateListNode(node: any, env: Environment): any {
     const operator = this.evaluateNode(node.elements[0], new Environment(env));
 
+    let operands;
     if (operator instanceof SymbolNode && specialForms.includes(operator.value)) {
-      const operands = node.elements.slice(1);
-      if (operator.value === 'if') {
+      operands = node.elements.slice(1);
+      if (operator.value === "if") {
         return this.evaluateIfOperation(operator, operands, env);
-      } else if (operator.value === 'lambda') {
-        return this.evaluateLambdaOperation(operator, operands, env);
-      } else if (operator.value === 'let') {
+      } else if (operator.value === "lambda") {
+        return this.evaluateLambdaOperation(operator, operands);
+      } else if (operator.value === "let") {
         return this.evaluateLetOperation(operator, operands, env);
-      } else if (operator.value === 'quote') {
-        return this.evaluateQuoteOperation(operator, operands, env);
-      } else if (operator.value === 'unquote') {
+      } else if (operator.value === "quote") {
+        return this.evaluateQuoteOperation(operator, operands);
+      } else if (operator.value === "unquote") {
         return this.evaluateUnquoteOperation(operator, operands, env);
       }
     }
 
-    const operands = node.elements.slice(1).map(el => this.evaluateNode(el, new Environment(env)));
+    operands = node.elements.slice(1).map((el: any) => this.evaluateNode(el, new Environment(env)));
 
     if (operator instanceof SymbolNode) {
       return this.evaluateOperation(operator, operands, env);
@@ -64,25 +60,25 @@ class Evaluator {
       return this.evaluateLambdaFunction(operator, operands, env);
     }
 
-    throw new Error('first item of symbolic expression must be a symbol or lambda function');
+    throw new Error("first item of symbolic expression must be a symbol or lambda function");
   }
 
-  evaluateIfOperation(operator, operands, env) {
+  private evaluateIfOperation(operator: any, operands: any[], env: Environment): any {
     const condition = this.evaluateNode(operands[0], env);
     if (!(condition instanceof NumberNode)) {
-      throw new Error('condition in if expression must evaluate to a number representing a boolean value');
+      throw new Error("condition in if expression must evaluate to a number representing a boolean value");
     }
     const outcome = condition.value === 0 ? operands[1] : operands[2];
     return this.evaluateNode(outcome, env);
   }
 
-  evaluateLambdaOperation(operator, operands) {
+  private evaluateLambdaOperation(operator: any, operands: any[]): any {
     if (operands.length !== 2) {
-      throw new Error('lambda operator takes exactly two arguments');
+      throw new Error("lambda operator takes exactly two arguments");
     }
 
     if (!(operands[0] instanceof ListNode && operands[1] instanceof ListNode)) {
-      throw new Error('both arguments to lambda operator must be lists');
+      throw new Error("both arguments to lambda operator must be lists");
     }
 
     const parameters = operands[0];
@@ -90,13 +86,13 @@ class Evaluator {
     return new LambdaFunctionNode(parameters, body);
   }
 
-  evaluateLetOperation(operator, operands, env) {
+  private evaluateLetOperation(operator: any, operands: any[], env: Environment): any {
     if (operands.length !== 2) {
-      throw new Error('let operator takes exactly two arguments');
+      throw new Error("let operator takes exactly two arguments");
     }
 
     if (!(operands[0] instanceof SymbolNode)) {
-      throw new Error('first argument to let operator must be a symbol');
+      throw new Error("first argument to let operator must be a symbol");
     }
 
     const key = operands[0].value;
@@ -108,22 +104,22 @@ class Evaluator {
     return value;
   }
 
-  evaluateQuoteOperation(operator, operands) {
+  private evaluateQuoteOperation(operator: any, operands: any[]): any {
     if (operands.length !== 1) {
-      throw new Error('quote operator takes exactly one argument');
+      throw new Error("quote operator takes exactly one argument");
     }
     return operands[0];
   }
 
-  evaluateUnquoteOperation(operator, operands, env) {
+  private evaluateUnquoteOperation(operator: any, operands: any[], env: Environment): any {
     if (operands.length !== 1) {
-      throw new Error('unquote operator takes exactly one argument');
+      throw new Error("unquote operator takes exactly one argument");
     }
     return this.evaluateNode(operands[0], env);
   }
 
-  evaluateOperation(operator, operands, env) {
-    if (operator.value === 'if') {
+  private evaluateOperation(operator: any, operands: any[], env: Environment): any {
+    if (operator.value === "if") {
       const condition = this.evaluateNode(operands[0], env);
       const outcome = condition.value === 0 ? operands[1] : operands[2];
       return this.evaluateNode(outcome, env);
@@ -136,7 +132,7 @@ class Evaluator {
     throw new Error(`invalid arguments for operator: ${operator.value}`);
   }
 
-  evaluateLambdaFunction(operator, operands, env) {
+  private evaluateLambdaFunction(operator: any, operands: any[], env: Environment): any {
     const parameters = operator.parameters.elements;
     const body = operator.body;
 
@@ -157,4 +153,4 @@ class Evaluator {
   }
 }
 
-module.exports = Evaluator;
+export default Evaluator;
