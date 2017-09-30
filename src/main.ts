@@ -19,7 +19,7 @@ import Parser from "./Parser";
 
 import INode from "./nodes/INode";
 
-function interpret(input: string, environment: Environment = null): INode {
+function interpret(input: string, environment?: Environment): INode {
   const lexer = new Lexer(input);
   const parser = new Parser(lexer.lex());
   const evaluator = new Evaluator(parser.parse(), environment);
@@ -44,7 +44,7 @@ function runFile(filename: string) {
   };
 
   try {
-    const lexer = new Lexer(input);
+    const lexer = new Lexer(input as string);
     const tokens = lexer.lex();
     debugInfo.tokens = tokens;
 
@@ -100,7 +100,7 @@ function runRepl() {
 }
 
 if (argv._.length > 0) {
-  runFile(argv._.shift());
+  runFile(argv._.shift() as string);
 } else {
   runRepl();
 }

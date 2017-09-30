@@ -10,7 +10,7 @@ class Lexer {
 
   public lex(): Token[] {
     const tokens: Token[] = [];
-    let token: Token;
+    let token: Token | null;
     while (true) {
       token = this.readToken();
       if (token === null) {
@@ -115,7 +115,7 @@ class Lexer {
     return str;
   }
 
-  private readToken(): Token {
+  private readToken(): Token | null {
     this.skipWhitespace();
     if (this.eof()) {
       return null;

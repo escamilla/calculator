@@ -11,7 +11,7 @@ import operators from "./operators";
 const specialForms = ["if", "lambda", "let", "quote", "unquote"];
 
 class Evaluator {
-  constructor(private readonly ast: INode, private readonly globalEnv: Environment = null) { }
+  constructor(private readonly ast: INode, private readonly globalEnv?: Environment) { }
 
   public evaluate(): INode {
     return this.evaluateNode(this.ast, new Environment(this.globalEnv));
@@ -99,7 +99,7 @@ class Evaluator {
     const key = (operands[0] as SymbolNode).value;
     const value = this.evaluateNode(operands[1], env);
 
-    if (env.parent !== null) {
+    if (env.parent) {
       env.parent.set(key, value);
     }
     return value;
