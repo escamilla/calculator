@@ -30,7 +30,7 @@ class Lexer {
   }
 
   private next(): string {
-    const char = this.input.charAt(this.position);
+    const char: string = this.input.charAt(this.position);
     this.position += 1;
     if (char === "\n") {
       this.line += 1;
@@ -68,7 +68,7 @@ class Lexer {
   }
 
   private readNumber(): number {
-    let str = "";
+    let str: string = "";
     if (this.peek() === "-") {
       str += this.next();
     }
@@ -85,7 +85,7 @@ class Lexer {
   }
 
   private readSymbol(): string {
-    let str = "";
+    let str: string = "";
     if (this.peek() === "_") {
       return this.next();
     }
@@ -96,7 +96,7 @@ class Lexer {
   }
 
   private readString(): string {
-    let str = "";
+    let str: string = "";
     this.next();
     while (this.peek() && this.peek() !== "\"") {
       if (this.peek() === "\\" && this.lookAhead() === "n") {
@@ -120,7 +120,7 @@ class Lexer {
     if (this.eof()) {
       return null;
     }
-    const char = this.peek();
+    const char: string = this.peek();
 
     if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
       return new Token(TokenType.NUMBER, this.readNumber());

@@ -8,18 +8,18 @@ const operators: any = {
   add: {
     checkArgs(operands: INode[]): boolean {
       return operands.length >= 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return new NumberNode(
-        operands.reduce((acc, operand) => acc + operand.value, 0));
+        operands.reduce((acc: number, operand: INode) => acc + (operand as NumberNode).value, 0));
     },
   },
 
   sub: {
     checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return new NumberNode(operands[0].value - operands[1].value);
@@ -29,18 +29,18 @@ const operators: any = {
   mul: {
     checkArgs(operands: INode[]): boolean {
       return operands.length >= 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return new NumberNode(
-        operands.reduce((acc, operand) => acc * operand.value, 1));
+        operands.reduce((acc: number, operand: INode) => acc * (operand as NumberNode).value, 1));
     },
   },
 
   div: {
     checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return new NumberNode(operands[0].value / operands[1].value);
@@ -50,7 +50,7 @@ const operators: any = {
   mod: {
     checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return new NumberNode(operands[0].value % operands[1].value);
@@ -60,7 +60,7 @@ const operators: any = {
   pow: {
     checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return new NumberNode(Math.pow(operands[0].value, operands[1].value));
@@ -88,7 +88,7 @@ const operators: any = {
   eq: {
     checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return operands[0].value === operands[1].value ?
@@ -99,7 +99,7 @@ const operators: any = {
   lt: {
     checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return operands[0].value < operands[1].value ?
@@ -110,7 +110,7 @@ const operators: any = {
   gt: {
     checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
-        operands.every((operand) => operand instanceof NumberNode);
+        operands.every((operand: INode) => operand instanceof NumberNode);
     },
     method(operands: any[]): NumberNode {
       return operands[0].value > operands[1].value ?
@@ -134,7 +134,7 @@ const operators: any = {
         operands[1] instanceof NumberNode;
     },
     method(operands: any[]): any {
-      const index = operands[1].value - 1;
+      const index: number = operands[1].value - 1;
       return operands[0].elements[index];
     },
   },
@@ -147,10 +147,10 @@ const operators: any = {
         operands[2] instanceof NumberNode;
     },
     method(operands: any[]): ListNode {
-      const { elements } = operands[0];
-      const begin = operands[1].value;
-      const end = operands[2].value;
-      const sliced = elements.slice(begin, end);
+      const elements: INode[] = operands[0].elements;
+      const begin: number = operands[1].value;
+      const end: number = operands[2].value;
+      const sliced: INode[] = elements.slice(begin, end);
       return new ListNode(sliced);
     },
   },

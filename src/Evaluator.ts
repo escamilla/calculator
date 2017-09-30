@@ -8,7 +8,7 @@ import SymbolNode from "./nodes/SymbolNode";
 import Environment from "./Environment";
 import operators from "./operators";
 
-const specialForms = ["if", "lambda", "let", "quote", "unquote"];
+const specialForms: string[] = ["if", "lambda", "let", "quote", "unquote"];
 
 class Evaluator {
   constructor(private readonly ast: INode, private readonly globalEnv?: Environment) { }
@@ -35,9 +35,9 @@ class Evaluator {
   }
 
   private evaluateListNode(node: ListNode, env: Environment): INode {
-    const operator = this.evaluateNode(node.elements[0], new Environment(env));
+    const operator: INode = this.evaluateNode(node.elements[0], new Environment(env));
 
-    let operands;
+    let operands: INode[];
     if (operator instanceof SymbolNode && specialForms.includes(operator.value)) {
       operands = node.elements.slice(1);
       if (operator.value === "if") {
@@ -65,11 +65,11 @@ class Evaluator {
   }
 
   private evaluateIfOperation(operator: SymbolNode, operands: INode[], env: Environment): INode {
-    const condition = this.evaluateNode(operands[0], env);
+    const condition: INode = this.evaluateNode(operands[0], env);
     if (!(condition instanceof NumberNode)) {
       throw new Error("condition in if expression must evaluate to a number representing a boolean value");
     }
-    const outcome = condition.value === 0 ? operands[1] : operands[2];
+    const outcome: INode = condition.value === 0 ? operands[1] : operands[2];
     return this.evaluateNode(outcome, env);
   }
 
@@ -82,8 +82,8 @@ class Evaluator {
       throw new Error("both arguments to lambda operator must be lists");
     }
 
-    const parameters = operands[0] as ListNode;
-    const body = operands[1];
+    const parameters: ListNode = operands[0] as ListNode;
+    const body: INode = operands[1];
     return new LambdaNode(parameters, body);
   }
 
@@ -96,8 +96,8 @@ class Evaluator {
       throw new Error("first argument to let operator must be a symbol");
     }
 
-    const key = (operands[0] as SymbolNode).value;
-    const value = this.evaluateNode(operands[1], env);
+    const key: string = (operands[0] as SymbolNode).value;
+    const value: INode = this.evaluateNode(operands[1], env);
 
     if (env.parent) {
       env.parent.set(key, value);
@@ -120,12 +120,6 @@ class Evaluator {
   }
 
   private evaluateOperation(operator: SymbolNode, operands: INode[], env: Environment): INode {
-    if (operator.value === "if") {
-      const condition = this.evaluateNode(operands[0], env) as NumberNode;
-      const outcome = condition.value === 0 ? operands[1] : operands[2];
-      return this.evaluateNode(outcome, env);
-    }
-
     if (operators[operator.value].checkArgs(operands)) {
       return operators[operator.value].method(operands, env);
     }
@@ -134,19 +128,19 @@ class Evaluator {
   }
 
   private evaluateLambdaFunction(operator: LambdaNode, operands: INode[], env: Environment): INode {
-    const parameters = operator.parameters.elements;
-    const body = operator.body;
+    const parameters: INode[] = operator.parameters.elements;
+    const body: INode = operator.body;
 
-    const expected = parameters.length;
-    const actual = operands.length;
+    const expected: number = parameters.length;
+    const actual: number = operands.length;
     if (expected !== actual) {
       throw new Error(`lambda function takes ${expected} arguments but got ${actual}`);
     }
 
-    const lambdaEnv = new Environment(env);
-    for (let i = 0; i < expected; i += 1) {
-      const key = (parameters[i] as SymbolNode).value;
-      const value = operands[i];
+    const lambdaEnv: Environment = new Environment(env);
+    for (let i: number = 0; i < expected; i += 1) {
+      const key: string = (parameters[i] as SymbolNode).value;
+      const value: INode = operands[i];
       lambdaEnv.set(key, value);
     }
 

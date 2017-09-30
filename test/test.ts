@@ -16,16 +16,26 @@ import NumberNode from "../src/nodes/NumberNode";
 import SymbolNode from "../src/nodes/SymbolNode";
 
 function interpret(input: string): INode {
-  const lexer = new Lexer(input);
+  const lexer: Lexer = new Lexer(input);
   const tokens: Token[] = lexer.lex();
-  const parser = new Parser(tokens);
-  const ast = parser.parse();
-  const evaluator = new Evaluator(ast);
+  const parser: Parser = new Parser(tokens);
+  const ast: INode = parser.parse();
+  const evaluator: Evaluator = new Evaluator(ast);
   return evaluator.evaluate();
 }
 
+interface IPositiveTest {
+  input: string;
+  expected: INode;
+}
+
+interface INegativeTest {
+  input: string;
+  reason: string;
+}
+
 describe("interpret()", () => {
-  const positiveTests = [
+  const positiveTests: IPositiveTest[] = [
     { input: "1", expected: new NumberNode(1) },
     { input: "-1", expected: new NumberNode(-1) },
     { input: "0.1", expected: new NumberNode(0.1) },
@@ -134,14 +144,14 @@ describe("interpret()", () => {
     },
   ];
 
-  positiveTests.forEach((test) => {
+  positiveTests.forEach((test: IPositiveTest) => {
     it(`correctly evaluates ${test.input}`, () => {
-      const actual = interpret(test.input);
+      const actual: INode = interpret(test.input);
       assert.deepEqual(actual, test.expected);
     });
   });
 
-  const negativeTests = [
+  const negativeTests: INegativeTest[] = [
     { input: "(", reason: "unmatched parenthesis" },
     { input: ")", reason: "unmatched parenthesis" },
     { input: "()", reason: "empty symbolic expression" },
@@ -156,7 +166,7 @@ describe("interpret()", () => {
     { input: "1.", reason: "number cannot end with a decimal point" },
   ];
 
-  negativeTests.forEach((test) => {
+  negativeTests.forEach((test: INegativeTest) => {
     it(`throws an error evaluating ${test.input} (${test.reason})`, () => {
       assert.throws(() => {
         interpret(test.input);
@@ -167,41 +177,41 @@ describe("interpret()", () => {
 
 describe("Environment", () => {
   describe("#lookUp", () => {
-    it("returns value from the current scope", (done) => {
-      const env = new Environment();
+    it("returns value from the current scope", (done: MochaDone) => {
+      const env: Environment = new Environment();
       env.set("pi", 3.14);
       assert.strictEqual(env.get("pi"), 3.14);
       done();
     });
 
-    it("returns value from the outer scope", (done) => {
-      const parent = new Environment();
-      const child = new Environment(parent);
+    it("returns value from the outer scope", (done: MochaDone) => {
+      const parent: Environment = new Environment();
+      const child: Environment = new Environment(parent);
       parent.set("pi", 3.14);
       assert.strictEqual(child.get("pi"), 3.14);
       done();
     });
 
-    it("returns value from the outermost scope", (done) => {
-      const grandparent = new Environment();
-      const parent = new Environment(grandparent);
-      const child = new Environment(parent);
+    it("returns value from the outermost scope", (done: MochaDone) => {
+      const grandparent: Environment = new Environment();
+      const parent: Environment = new Environment(grandparent);
+      const child: Environment = new Environment(parent);
       grandparent.set("pi", 3.14);
       assert.strictEqual(child.get("pi"), 3.14);
       done();
     });
 
-    it("cannot return value from inner scope", (done) => {
-      const parent = new Environment();
-      const child = new Environment(parent);
+    it("cannot return value from inner scope", (done: MochaDone) => {
+      const parent: Environment = new Environment();
+      const child: Environment = new Environment(parent);
       child.set("pi", 3.14);
       assert.strictEqual(parent.get("pi"), null);
       done();
     });
 
-    it("can shadow value from the outer scope", (done) => {
-      const parent = new Environment();
-      const child = new Environment(parent);
+    it("can shadow value from the outer scope", (done: MochaDone) => {
+      const parent: Environment = new Environment();
+      const child: Environment = new Environment(parent);
       parent.set("pi", 3.14);
       child.set("pi", 3.142);
       assert.strictEqual(parent.get("pi"), 3.14);

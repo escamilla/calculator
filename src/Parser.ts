@@ -13,7 +13,7 @@ class Parser {
   constructor(private readonly tokens: Token[]) { }
 
   public parse(): INode {
-    const result = this.parseExpression();
+    const result: INode = this.parseExpression();
     if (!this.eof()) {
       throw new Error("Expected end of file after expression");
     }
@@ -25,7 +25,7 @@ class Parser {
   }
 
   private next(): Token {
-    const token = this.tokens[this.position];
+    const token: Token = this.tokens[this.position];
     this.position += 1;
     return token;
   }
@@ -73,7 +73,7 @@ class Parser {
 
   private parseSymbolicExpression(): ListNode {
     this.consumeToken(TokenType.LEFT_PARENTHESIS);
-    const items = [];
+    const items: INode[] = [];
     while (this.peek().type !== TokenType.RIGHT_PARENTHESIS) {
       items.push(this.parseExpression());
     }
