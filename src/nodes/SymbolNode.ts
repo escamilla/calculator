@@ -1,4 +1,6 @@
-class SymbolNode {
+import INode from "./INode";
+
+class SymbolNode implements INode {
   constructor(public readonly value: string) { }
 
   public toString(): string {

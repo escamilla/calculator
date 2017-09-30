@@ -17,7 +17,9 @@ import Evaluator from "./Evaluator";
 import Lexer from "./Lexer";
 import Parser from "./Parser";
 
-function interpret(input: string, environment: Environment = null) {
+import INode from "./nodes/INode";
+
+function interpret(input: string, environment: Environment = null): INode {
   const lexer = new Lexer(input);
   const parser = new Parser(lexer.lex());
   const evaluator = new Evaluator(parser.parse(), environment);

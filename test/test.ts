@@ -10,11 +10,12 @@ import Parser from "../src/Parser";
 
 import Token from "../src/tokens/Token";
 
+import INode from "../src/nodes/INode";
 import ListNode from "../src/nodes/ListNode";
 import NumberNode from "../src/nodes/NumberNode";
 import SymbolNode from "../src/nodes/SymbolNode";
 
-function interpret(input: string): any {
+function interpret(input: string): INode {
   const lexer = new Lexer(input);
   const tokens: Token[] = lexer.lex();
   const parser = new Parser(tokens);

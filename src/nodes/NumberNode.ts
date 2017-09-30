@@ -1,4 +1,6 @@
-class NumberNode {
+import INode from "./INode";
+
+class NumberNode implements INode {
   constructor(public readonly value: number) { }
 
   public toString(): string {

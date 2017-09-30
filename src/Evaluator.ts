@@ -1,3 +1,4 @@
+import INode from "./nodes/INode";
 import LambdaNode from "./nodes/LambdaNode";
 import ListNode from "./nodes/ListNode";
 import NumberNode from "./nodes/NumberNode";
@@ -10,13 +11,13 @@ import operators from "./operators";
 const specialForms = ["if", "lambda", "let", "quote", "unquote"];
 
 class Evaluator {
-  constructor(private readonly ast: any, private readonly globalEnv: Environment = null) { }
+  constructor(private readonly ast: INode, private readonly globalEnv: Environment = null) { }
 
-  public evaluate(): any {
+  public evaluate(): INode {
     return this.evaluateNode(this.ast, new Environment(this.globalEnv));
   }
 
-  private evaluateNode(node: any, env: Environment): any {
+  private evaluateNode(node: INode, env: Environment): INode {
     if (node instanceof NumberNode ||
         node instanceof StringNode ||
         node instanceof LambdaNode) {
@@ -29,11 +30,11 @@ class Evaluator {
     throw new Error(`unknown node type: ${node.constructor.name}`);
   }
 
-  private evaluateSymbolNode(node: any, env: Environment): any {
+  private evaluateSymbolNode(node: SymbolNode, env: Environment): INode {
     return env.get(node.value) || node;
   }
 
-  private evaluateListNode(node: any, env: Environment): any {
+  private evaluateListNode(node: ListNode, env: Environment): INode {
     const operator = this.evaluateNode(node.elements[0], new Environment(env));
 
     let operands;
@@ -52,7 +53,7 @@ class Evaluator {
       }
     }
 
-    operands = node.elements.slice(1).map((el: any) => this.evaluateNode(el, new Environment(env)));
+    operands = node.elements.slice(1).map((el: INode) => this.evaluateNode(el, new Environment(env)));
 
     if (operator instanceof SymbolNode) {
       return this.evaluateOperation(operator, operands, env);
@@ -63,7 +64,7 @@ class Evaluator {
     throw new Error("first item of symbolic expression must be a symbol or lambda function");
   }
 
-  private evaluateIfOperation(operator: any, operands: any[], env: Environment): any {
+  private evaluateIfOperation(operator: SymbolNode, operands: INode[], env: Environment): INode {
     const condition = this.evaluateNode(operands[0], env);
     if (!(condition instanceof NumberNode)) {
       throw new Error("condition in if expression must evaluate to a number representing a boolean value");
@@ -72,7 +73,7 @@ class Evaluator {
     return this.evaluateNode(outcome, env);
   }
 
-  private evaluateLambdaOperation(operator: any, operands: any[]): any {
+  private evaluateLambdaOperation(operator: SymbolNode, operands: INode[]): INode {
     if (operands.length !== 2) {
       throw new Error("lambda operator takes exactly two arguments");
     }
@@ -81,12 +82,12 @@ class Evaluator {
       throw new Error("both arguments to lambda operator must be lists");
     }
 
-    const parameters = operands[0];
+    const parameters = operands[0] as ListNode;
     const body = operands[1];
     return new LambdaNode(parameters, body);
   }
 
-  private evaluateLetOperation(operator: any, operands: any[], env: Environment): any {
+  private evaluateLetOperation(operator: SymbolNode, operands: INode[], env: Environment): INode {
     if (operands.length !== 2) {
       throw new Error("let operator takes exactly two arguments");
     }
@@ -95,7 +96,7 @@ class Evaluator {
       throw new Error("first argument to let operator must be a symbol");
     }
 
-    const key = operands[0].value;
+    const key = (operands[0] as SymbolNode).value;
     const value = this.evaluateNode(operands[1], env);
 
     if (env.parent !== null) {
@@ -104,23 +105,23 @@ class Evaluator {
     return value;
   }
 
-  private evaluateQuoteOperation(operator: any, operands: any[]): any {
+  private evaluateQuoteOperation(operator: SymbolNode, operands: INode[]): INode {
     if (operands.length !== 1) {
       throw new Error("quote operator takes exactly one argument");
     }
     return operands[0];
   }
 
-  private evaluateUnquoteOperation(operator: any, operands: any[], env: Environment): any {
+  private evaluateUnquoteOperation(operator: SymbolNode, operands: INode[], env: Environment): INode {
     if (operands.length !== 1) {
       throw new Error("unquote operator takes exactly one argument");
     }
     return this.evaluateNode(operands[0], env);
   }
 
-  private evaluateOperation(operator: any, operands: any[], env: Environment): any {
+  private evaluateOperation(operator: SymbolNode, operands: INode[], env: Environment): INode {
     if (operator.value === "if") {
-      const condition = this.evaluateNode(operands[0], env);
+      const condition = this.evaluateNode(operands[0], env) as NumberNode;
       const outcome = condition.value === 0 ? operands[1] : operands[2];
       return this.evaluateNode(outcome, env);
     }
@@ -132,7 +133,7 @@ class Evaluator {
     throw new Error(`invalid arguments for operator: ${operator.value}`);
   }
 
-  private evaluateLambdaFunction(operator: any, operands: any[], env: Environment): any {
+  private evaluateLambdaFunction(operator: LambdaNode, operands: INode[], env: Environment): INode {
     const parameters = operator.parameters.elements;
     const body = operator.body;
 
@@ -144,7 +145,7 @@ class Evaluator {
 
     const lambdaEnv = new Environment(env);
     for (let i = 0; i < expected; i += 1) {
-      const key = parameters[i].value;
+      const key = (parameters[i] as SymbolNode).value;
       const value = operands[i];
       lambdaEnv.set(key, value);
     }

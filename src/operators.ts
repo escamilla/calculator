@@ -1,11 +1,12 @@
 /* tslint:disable:object-literal-sort-keys */
 
+import INode from "./nodes/INode";
 import ListNode from "./nodes/ListNode";
 import NumberNode from "./nodes/NumberNode";
 
 const operators: any = {
   add: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length >= 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -16,7 +17,7 @@ const operators: any = {
   },
 
   sub: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -26,7 +27,7 @@ const operators: any = {
   },
 
   mul: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length >= 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -37,7 +38,7 @@ const operators: any = {
   },
 
   div: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -47,7 +48,7 @@ const operators: any = {
   },
 
   mod: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -57,7 +58,7 @@ const operators: any = {
   },
 
   pow: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -67,7 +68,7 @@ const operators: any = {
   },
 
   list: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length > 0;
     },
     method(operands: any[]): ListNode {
@@ -76,7 +77,7 @@ const operators: any = {
   },
 
   sequence: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length >= 1;
     },
     method(operands: any[]): any {
@@ -85,7 +86,7 @@ const operators: any = {
   },
 
   eq: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -96,7 +97,7 @@ const operators: any = {
   },
 
   lt: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -107,7 +108,7 @@ const operators: any = {
   },
 
   gt: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands.every((operand) => operand instanceof NumberNode);
     },
@@ -118,7 +119,7 @@ const operators: any = {
   },
 
   length: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 1 && operands[0] instanceof ListNode;
     },
     method(operands: any[]): NumberNode {
@@ -127,7 +128,7 @@ const operators: any = {
   },
 
   nth: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands[0] instanceof ListNode &&
         operands[1] instanceof NumberNode;
@@ -139,7 +140,7 @@ const operators: any = {
   },
 
   slice: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 3 &&
         operands[0] instanceof ListNode &&
         operands[1] instanceof NumberNode &&
@@ -155,7 +156,7 @@ const operators: any = {
   },
 
   concat: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 2 &&
         operands[0] instanceof ListNode &&
         operands[1] instanceof ListNode;
@@ -166,7 +167,7 @@ const operators: any = {
   },
 
   print: {
-    checkArgs(operands: any[]): boolean {
+    checkArgs(operands: INode[]): boolean {
       return operands.length === 1;
     },
     method(operands: any[]): any {
