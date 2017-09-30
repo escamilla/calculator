@@ -1,6 +1,6 @@
-# Squirrel.js
+# Squirrel.ts
 
-A JavaScript rewrite (with some changes) of [Squirrel](https://github.com/escamilla/squirrel), an expression-oriented programming language I wrote in C#.
+A TypeScript rewrite (with some changes) of [Squirrel](https://github.com/escamilla/squirrel), an expression-oriented programming language I wrote in C#.
 
 ## Usage
 
