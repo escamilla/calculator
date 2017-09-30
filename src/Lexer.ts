@@ -2,16 +2,11 @@ import Token from "./tokens/Token";
 import TokenType from "./tokens/TokenType";
 
 class Lexer {
-  public position;
-  public line;
-  public column;
+  private position: number = 0;
+  private line: number = 1;
+  private column: number = 1;
 
-  constructor(public input) {
-    this.input = input;
-    this.position = 0;
-    this.line = 1;
-    this.column = 1;
-  }
+  constructor(private input: string) { }
 
   public lex(): Token[] {
     const tokens: Token[] = [];
@@ -26,15 +21,15 @@ class Lexer {
     return tokens;
   }
 
-  private die(message) {
+  private die(message: string): never {
     throw new Error(`${message} (${this.line}:${this.column})`);
   }
 
-  private peek() {
+  private peek(): string {
     return this.input.charAt(this.position);
   }
 
-  private next() {
+  private next(): string {
     const char = this.input.charAt(this.position);
     this.position += 1;
     if (char === "\n") {
@@ -46,33 +41,33 @@ class Lexer {
     return char;
   }
 
-  private lookAhead() {
+  private lookAhead(): string {
     return this.input.charAt(this.position + 1);
   }
 
-  private eof() {
+  private eof(): boolean {
     return this.peek() === "";
   }
 
-  private isWhitespace(char) {
+  private isWhitespace(char: string): boolean {
     return /\s/.test(char);
   }
 
-  private isDigit(char) {
+  private isDigit(char: string): boolean {
     return /\d/.test(char);
   }
 
-  private isAlpha(char) {
+  private isAlpha(char: string): boolean {
     return /[a-z]/i.test(char);
   }
 
-  private skipWhitespace() {
+  private skipWhitespace(): void {
     while (this.isWhitespace(this.peek())) {
       this.next();
     }
   }
 
-  private readNumber() {
+  private readNumber(): number {
     let str = "";
     if (this.peek() === "-") {
       str += this.next();
@@ -89,7 +84,7 @@ class Lexer {
     return parseFloat(str);
   }
 
-  private readSymbol() {
+  private readSymbol(): string {
     let str = "";
     if (this.peek() === "_") {
       return this.next();
@@ -100,7 +95,7 @@ class Lexer {
     return str;
   }
 
-  private readString() {
+  private readString(): string {
     let str = "";
     this.next();
     while (this.peek() && this.peek() !== "\"") {

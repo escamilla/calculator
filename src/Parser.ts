@@ -7,13 +7,11 @@ import StringNode from "./nodes/StringNode";
 import SymbolNode from "./nodes/SymbolNode";
 
 class Parser {
-  public position;
+  private position: number = 0;
 
-  constructor(public tokens: Token[]) {
-    this.position = 0;
-  }
+  constructor(public tokens: Token[]) { }
 
-  public parse() {
+  public parse(): any {
     const result = this.parseExpression();
     if (!this.eof()) {
       throw new Error("Expected end of file after expression");
@@ -31,7 +29,7 @@ class Parser {
     return token;
   }
 
-  private eof() {
+  private eof(): boolean {
     return this.position >= this.tokens.length;
   }
 
@@ -43,7 +41,7 @@ class Parser {
     throw new Error(`Expected token of type ${expectedType} but got token of type ${token.type}`);
   }
 
-  private parseExpression() {
+  private parseExpression(): any {
     switch (this.peek().type) {
       case TokenType.LEFT_PARENTHESIS:
         return this.parseSymbolicExpression();
@@ -60,19 +58,19 @@ class Parser {
     }
   }
 
-  private parseNumber() {
+  private parseNumber(): NumberNode {
     return new NumberNode(this.consumeToken(TokenType.NUMBER).value);
   }
 
-  private parseSymbol() {
+  private parseSymbol(): SymbolNode {
     return new SymbolNode(this.consumeToken(TokenType.SYMBOL).value);
   }
 
-  private parseString() {
+  private parseString(): StringNode {
     return new StringNode(this.consumeToken(TokenType.STRING).value);
   }
 
-  private parseSymbolicExpression() {
+  private parseSymbolicExpression(): ListNode {
     this.consumeToken(TokenType.LEFT_PARENTHESIS);
     const items = [];
     while (this.peek().type !== TokenType.RIGHT_PARENTHESIS) {
@@ -82,7 +80,7 @@ class Parser {
     return new ListNode(items);
   }
 
-  private parseQuotedExpression() {
+  private parseQuotedExpression(): ListNode {
     this.consumeToken(TokenType.SINGLE_QUOTE);
     return new ListNode([new SymbolNode("quote"), this.parseExpression()]);
   }

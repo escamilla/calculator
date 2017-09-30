@@ -1,10 +1,7 @@
 class LambdaFunctionNode {
-  constructor(public parameters, public body) {
-    this.parameters = parameters;
-    this.body = body;
-  }
+  constructor(public parameters: any[], public body: any) { }
 
-  public toString() {
+  public toString(): string {
     return `(lambda ${this.parameters.toString()} ${this.body.toString()})`;
   }
 }

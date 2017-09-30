@@ -17,14 +17,14 @@ import Evaluator from "./Evaluator";
 import Lexer from "./Lexer";
 import Parser from "./Parser";
 
-function interpret(input, environment = null) {
+function interpret(input: string, environment: Environment = null) {
   const lexer = new Lexer(input);
   const parser = new Parser(lexer.lex());
   const evaluator = new Evaluator(parser.parse(), environment);
   return evaluator.evaluate();
 }
 
-function runFile(filename) {
+function runFile(filename: string) {
   let input;
   try {
     input = fs.readFileSync(filename, "utf8");
@@ -33,7 +33,7 @@ function runFile(filename) {
     process.exit();
   }
 
-  const debugInfo = {
+  const debugInfo: any = {
     input,
     tokens: undefined,
     ast: undefined,

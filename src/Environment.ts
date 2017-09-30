@@ -1,12 +1,11 @@
 class Environment {
-  public scope: Map<any, any>;
+  public scope: Map<string, any>;
 
-  constructor(public parent = null) {
-    this.parent = parent;
+  constructor(public parent: Environment = null) {
     this.scope = new Map();
   }
 
-  public get(key) {
+  public get(key: string): any {
     if (this.scope.has(key)) {
       return this.scope.get(key);
     } else if (this.parent !== null) {
@@ -15,7 +14,7 @@ class Environment {
     return null;
   }
 
-  public set(key, value) {
+  public set(key: string, value: any): void {
     this.scope.set(key, value);
   }
 }

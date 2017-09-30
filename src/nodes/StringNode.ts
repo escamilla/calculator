@@ -1,9 +1,7 @@
 class StringNode {
-  constructor(public value) {
-    this.value = value;
-  }
+  constructor(public value: string) { }
 
-  public toString() {
+  public toString(): string {
     return `"${this.value}"`;
   }
 }

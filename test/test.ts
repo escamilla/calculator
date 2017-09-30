@@ -14,7 +14,7 @@ import ListNode from "../src/nodes/ListNode";
 import NumberNode from "../src/nodes/NumberNode";
 import SymbolNode from "../src/nodes/SymbolNode";
 
-function interpret(input) {
+function interpret(input: string): any {
   const lexer = new Lexer(input);
   const tokens: Token[] = lexer.lex();
   const parser = new Parser(tokens);

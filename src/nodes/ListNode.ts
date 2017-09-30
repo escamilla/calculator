@@ -1,9 +1,7 @@
 class ListNode {
-  constructor(public elements) {
-    this.elements = elements;
-  }
+  constructor(public elements: any[]) { }
 
-  public toString() {
+  public toString(): string {
     return `(${this.elements.map((element) => element.toString()).join(" ")})`;
   }
 }

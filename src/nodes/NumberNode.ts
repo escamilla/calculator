@@ -1,9 +1,7 @@
 class NumberNode {
-  constructor(public value) {
-    this.value = value;
-  }
+  constructor(public value: number) { }
 
-  public toString() {
+  public toString(): string {
     return `${this.value}`;
   }
 }
