@@ -3,6 +3,11 @@
     "tslint:recommended"
   ],
   "rules": {
+    "member-access": [
+      true,
+      "check-accessor",
+      "check-constructor"
+    ],
     "typedef": [
       true,
       "call-signature",

@@ -11,7 +11,7 @@ import operators from "./operators";
 const specialForms: string[] = ["if", "lambda", "let", "quote", "unquote"];
 
 class Evaluator {
-  constructor(private readonly ast: INode, private readonly globalEnv?: Environment) { }
+  public constructor(private readonly ast: INode, private readonly globalEnv?: Environment) { }
 
   public evaluate(): INode {
     return this.evaluateNode(this.ast, new Environment(this.globalEnv));

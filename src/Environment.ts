@@ -3,7 +3,7 @@ import INode from "./nodes/INode";
 class Environment {
   private scope: Map<string, INode> = new Map();
 
-  constructor(public readonly parent?: Environment) { }
+  public constructor(public readonly parent?: Environment) { }
 
   public get(key: string): INode | null {
     if (this.scope.has(key)) {

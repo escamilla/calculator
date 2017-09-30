@@ -10,7 +10,7 @@ import SymbolNode from "./nodes/SymbolNode";
 class Parser {
   private position: number = 0;
 
-  constructor(private readonly tokens: Token[]) { }
+  public constructor(private readonly tokens: Token[]) { }
 
   public parse(): INode {
     const result: INode = this.parseExpression();

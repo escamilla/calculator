@@ -6,7 +6,7 @@ class Lexer {
   private line: number = 1;
   private column: number = 1;
 
-  constructor(private readonly input: string) { }
+  public constructor(private readonly input: string) { }
 
   public lex(): Token[] {
     const tokens: Token[] = [];
