@@ -5,9 +5,10 @@
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
   "repository": "escamilla/squirrel.js",
   "scripts": {
-    "eval": "npm run build && node dist/main.js",
     "build": "tsc",
-    "test": "mocha -r ts-node/register test/**/*.ts"
+    "test": "mocha -r ts-node/register test/**/*.ts",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "eval": "npm run build && node dist/main.js"
   },
   "private": true,
   "devDependencies": {
