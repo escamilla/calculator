@@ -6,7 +6,9 @@ import StringNode from "./nodes/StringNode";
 import SymbolNode from "./nodes/SymbolNode";
 
 import Environment from "./Environment";
-import operators from "./operators";
+
+import CoreFunction from "./functions/CoreFunction";
+import coreFunctions from "./functions/coreFunctions";
 
 const specialForms: string[] = ["if", "lambda", "let", "quote", "unquote"];
 
@@ -121,8 +123,9 @@ class Evaluator {
   }
 
   private evaluateOperation(operator: SymbolNode, operands: INode[], env: Environment): INode {
-    if (operators[operator.value].checkArgs(operands)) {
-      return operators[operator.value].method(operands, env);
+    if (coreFunctions.has(operator.value)) {
+      const coreFunction: CoreFunction = coreFunctions.get(operator.value) as CoreFunction;
+      return coreFunction.apply(null, operands);
     }
 
     throw new Error(`invalid arguments for operator: ${operator.value}`);

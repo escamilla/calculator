@@ -42,7 +42,7 @@ describe("interpret()", () => {
     { input: "-0.1", expected: new NumberNode(-0.1) },
     { input: "(add 1 2)", expected: new NumberNode(3) },
     { input: "(sub 3 2)", expected: new NumberNode(1) },
-    { input: "(mul 2 3)", expected: new NumberNode(6) },
+    { input: "(mul 3 4)", expected: new NumberNode(12) },
     { input: "(div 6 3)", expected: new NumberNode(2) },
     { input: "(mod 9 6)", expected: new NumberNode(3) },
     { input: "(pow 2 3)", expected: new NumberNode(8) },
