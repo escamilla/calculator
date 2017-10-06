@@ -67,6 +67,31 @@ class Lexer {
     }
   }
 
+  private skipComment(): void {
+    const lineNumber: number = this.line;
+    const columnNumber: number = this.column;
+    while (!this.eof()) {
+      if (this.peek() === "]") {
+        this.next();
+        return;
+      }
+      this.next();
+    }
+    this.die(`unterminated comment starting at ${lineNumber}:${columnNumber}`);
+  }
+
+  private skipWhitespaceAndComments(): void {
+    while (true) {
+      if (this.isWhitespace(this.peek())) {
+        this.skipWhitespace();
+      } else if (this.peek() === "[") {
+        this.skipComment();
+      } else {
+        break;
+      }
+    }
+  }
+
   private readNumber(): number {
     let str: string = "";
     if (this.peek() === "-") {
@@ -116,10 +141,11 @@ class Lexer {
   }
 
   private readToken(): Token | null {
-    this.skipWhitespace();
+    this.skipWhitespaceAndComments();
     if (this.eof()) {
       return null;
     }
+
     const char: string = this.peek();
 
     if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
