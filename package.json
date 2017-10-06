@@ -1,24 +1,33 @@
 {
   "name": "squirrel",
   "version": "0.0.1",
+  "description": "An expression-oriented programming language inspired by Lisp",
   "license": "MIT",
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
-  "repository": "escamilla/squirrel.js",
+  "repository": "https://github.com/escamilla/squirrel.ts",
+  "private": true,
   "scripts": {
     "build": "tsc",
-    "test": "mocha -r ts-node/register test/**/*.ts",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "test": "jest",
+    "lint": "tslint -p tsconfig.json",
     "eval": "npm run build && node dist/main.js"
   },
-  "private": true,
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
+  },
   "devDependencies": {
-    "@types/chai": "^4.0.4",
+    "@types/jest": "^21.1.2",
     "@types/minimist": "^1.2.0",
-    "@types/mocha": "^2.2.43",
-    "@types/node": "^8.0.31",
-    "chai": "^4.1.2",
-    "mocha": "^3.2.0",
-    "ts-node": "^3.3.0",
+    "@types/node": "^8.0.33",
+    "jest": "^21.2.1",
+    "ts-jest": "^21.1.0",
     "tslint": "^5.7.0",
     "typescript": "^2.5.3"
   },
