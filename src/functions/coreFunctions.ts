@@ -5,9 +5,9 @@ import ListNode from "../nodes/ListNode";
 import NumberNode from "../nodes/NumberNode";
 
 function add(...args: INode[]): INode {
-  return args.reduce((sum: NumberNode, operand: NumberNode) => {
-    return new NumberNode(sum.value + operand.value);
-  }, new NumberNode(0));
+  const arg0: NumberNode = args[0] as NumberNode;
+  const arg1: NumberNode = args[1] as NumberNode;
+  return new NumberNode(arg0.value + arg1.value);
 }
 
 function sub(...args: INode[]): INode {
@@ -17,9 +17,9 @@ function sub(...args: INode[]): INode {
 }
 
 function mul(...args: INode[]): INode {
-  return args.reduce((product: NumberNode, operand: NumberNode) => {
-    return new NumberNode(product.value * operand.value);
-  }, new NumberNode(1));
+  const arg0: NumberNode = args[0] as NumberNode;
+  const arg1: NumberNode = args[1] as NumberNode;
+  return new NumberNode(arg0.value * arg1.value);
 }
 
 function div(...args: INode[]): INode {
