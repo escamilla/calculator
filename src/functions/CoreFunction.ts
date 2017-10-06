@@ -1,5 +1,5 @@
-import INode from "../nodes/INode";
+import Node from "../nodes/Node";
 
-type CoreFunction = (...args: INode[]) => INode;
+type CoreFunction = (...args: Node[]) => Node;
 
 export default CoreFunction;

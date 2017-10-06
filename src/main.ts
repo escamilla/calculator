@@ -17,11 +17,11 @@ import Evaluator from "./Evaluator";
 import Lexer from "./Lexer";
 import Parser from "./Parser";
 
-import INode from "./nodes/INode";
+import Node from "./nodes/Node";
 
 import Token from "./tokens/Token";
 
-function interpret(input: string, environment?: Environment): INode {
+function interpret(input: string, environment?: Environment): Node {
   const lexer: Lexer = new Lexer(input);
   const parser: Parser = new Parser(lexer.lex());
   const evaluator: Evaluator = new Evaluator(parser.parse(), environment);
@@ -51,11 +51,11 @@ function runFile(filename: string): void {
     debugInfo.tokens = tokens;
 
     const parser: Parser = new Parser(tokens);
-    const ast: INode = parser.parse();
+    const ast: Node = parser.parse();
     debugInfo.ast = ast;
 
     const evaluator: Evaluator = new Evaluator(ast);
-    const output: INode = evaluator.evaluate();
+    const output: Node = evaluator.evaluate();
     debugInfo.output = output;
     debugInfo.prettyOutput = output.toString();
   } catch (e) {
@@ -84,7 +84,7 @@ function runRepl(): void {
   rl.prompt();
   rl.on("line", (line: any) => {
     if (line.trim()) {
-      let result: INode | undefined;
+      let result: Node | undefined;
       try {
         result = interpret(line, replEnvironment);
       } catch (e) {

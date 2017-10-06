@@ -1,8 +1,8 @@
 import Token from "./tokens/Token";
 import TokenType from "./tokens/TokenType";
 
-import INode from "./nodes/INode";
 import ListNode from "./nodes/ListNode";
+import Node from "./nodes/Node";
 import NumberNode from "./nodes/NumberNode";
 import StringNode from "./nodes/StringNode";
 import SymbolNode from "./nodes/SymbolNode";
@@ -12,8 +12,8 @@ class Parser {
 
   public constructor(private readonly tokens: Token[]) { }
 
-  public parse(): INode {
-    const result: INode = this.parseExpression();
+  public parse(): Node {
+    const result: Node = this.parseExpression();
     if (!this.eof()) {
       throw new Error("Expected end of file after expression");
     }
@@ -42,7 +42,7 @@ class Parser {
     throw new Error(`Expected token of type ${expectedType} but got token of type ${token.type}`);
   }
 
-  private parseExpression(): INode {
+  private parseExpression(): Node {
     switch (this.peek().type) {
       case TokenType.LEFT_PARENTHESIS:
         return this.parseSymbolicExpression();
@@ -73,7 +73,7 @@ class Parser {
 
   private parseSymbolicExpression(): ListNode {
     this.consumeToken(TokenType.LEFT_PARENTHESIS);
-    const items: INode[] = [];
+    const items: Node[] = [];
     while (this.peek().type !== TokenType.RIGHT_PARENTHESIS) {
       items.push(this.parseExpression());
     }

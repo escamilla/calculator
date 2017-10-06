@@ -7,23 +7,23 @@ import Parser from "../src/Parser";
 
 import Token from "../src/tokens/Token";
 
-import INode from "../src/nodes/INode";
 import ListNode from "../src/nodes/ListNode";
+import Node from "../src/nodes/Node";
 import NumberNode from "../src/nodes/NumberNode";
 import SymbolNode from "../src/nodes/SymbolNode";
 
-function interpret(input: string): INode {
+function interpret(input: string): Node {
   const lexer: Lexer = new Lexer(input);
   const tokens: Token[] = lexer.lex();
   const parser: Parser = new Parser(tokens);
-  const ast: INode = parser.parse();
+  const ast: Node = parser.parse();
   const evaluator: Evaluator = new Evaluator(ast);
   return evaluator.evaluate();
 }
 
 interface IPositiveTestCase {
   input: string;
-  expectedOutput: INode;
+  expectedOutput: Node;
 }
 
 interface INegativeTestCase {

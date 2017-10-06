@@ -1,96 +1,96 @@
 import CoreFunction from "./CoreFunction";
 
-import INode from "../nodes/INode";
 import ListNode from "../nodes/ListNode";
+import Node from "../nodes/Node";
 import NumberNode from "../nodes/NumberNode";
 
-function add(...args: INode[]): INode {
+function add(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value + arg1.value);
 }
 
-function sub(...args: INode[]): INode {
+function sub(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value - arg1.value);
 }
 
-function mul(...args: INode[]): INode {
+function mul(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value * arg1.value);
 }
 
-function div(...args: INode[]): INode {
+function div(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value / arg1.value);
 }
 
-function mod(...args: INode[]): INode {
+function mod(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value % arg1.value);
 }
 
-function pow(...args: INode[]): INode {
+function pow(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(Math.pow(arg0.value, arg1.value));
 }
 
-function list(...args: INode[]): INode {
+function list(...args: Node[]): Node {
   return new ListNode(args);
 }
 
-function sequence(...args: INode[]): INode {
+function sequence(...args: Node[]): Node {
   return args[args.length - 1];
 }
 
-function eq(...args: INode[]): INode {
+function eq(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return arg0.value === arg1.value ? new NumberNode(0) : new NumberNode(1);
 }
 
-function lt(...args: INode[]): INode {
+function lt(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return arg0.value < arg1.value ? new NumberNode(0) : new NumberNode(1);
 }
 
-function gt(...args: INode[]): INode {
+function gt(...args: Node[]): Node {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return arg0.value > arg1.value ? new NumberNode(0) : new NumberNode(1);
 }
 
-function length(...args: INode[]): INode {
+function length(...args: Node[]): Node {
   const arg0: ListNode = args[0] as ListNode;
   return new NumberNode(arg0.elements.length);
 }
 
-function nth(...args: INode[]): INode {
+function nth(...args: Node[]): Node {
   const arg0: ListNode = args[0] as ListNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return arg0.elements[arg1.value - 1];
 }
 
-function slice(...args: INode[]): INode {
+function slice(...args: Node[]): Node {
   const arg0: ListNode = args[0] as ListNode;
   const arg1: NumberNode = args[1] as NumberNode;
   const arg2: NumberNode = args[2] as NumberNode;
   return new ListNode(arg0.elements.slice(arg1.value, arg2.value));
 }
 
-function concat(...args: INode[]): INode {
+function concat(...args: Node[]): Node {
   const arg0: ListNode = args[0] as ListNode;
   const arg1: ListNode = args[1] as ListNode;
   return new ListNode(arg0.elements.concat(arg1.elements));
 }
 
-function print(...args: INode[]): INode {
+function print(...args: Node[]): Node {
   console.log(args[0].toString()); // tslint:disable-line:no-console
   return args[0];
 }

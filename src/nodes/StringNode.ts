@@ -1,7 +1,9 @@
-import INode from "./INode";
+import Node from "./Node";
 
-class StringNode implements INode {
-  public constructor(public readonly value: string) { }
+class StringNode extends Node {
+  public constructor(public readonly value: string) {
+    super();
+  }
 
   public toString(): string {
     return `"${this.value}"`;

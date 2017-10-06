@@ -1,10 +1,12 @@
-import INode from "./INode";
+import Node from "./Node";
 
-class ListNode implements INode {
-  public constructor(public readonly elements: INode[]) { }
+class ListNode extends Node {
+  public constructor(public readonly elements: Node[]) {
+    super();
+  }
 
   public toString(): string {
-    return `(${this.elements.map((element: INode) => element.toString()).join(" ")})`;
+    return `(${this.elements.map((element: Node) => element.toString()).join(" ")})`;
   }
 }
 
