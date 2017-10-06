@@ -1,46 +1,47 @@
 import CoreFunction from "./CoreFunction";
 
+import BooleanNode from "../nodes/BooleanNode";
 import ListNode from "../nodes/ListNode";
 import Node from "../nodes/Node";
 import NumberNode from "../nodes/NumberNode";
 
-function add(...args: Node[]): Node {
+function add(...args: Node[]): NumberNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value + arg1.value);
 }
 
-function sub(...args: Node[]): Node {
+function sub(...args: Node[]): NumberNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value - arg1.value);
 }
 
-function mul(...args: Node[]): Node {
+function mul(...args: Node[]): NumberNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value * arg1.value);
 }
 
-function div(...args: Node[]): Node {
+function div(...args: Node[]): NumberNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value / arg1.value);
 }
 
-function mod(...args: Node[]): Node {
+function mod(...args: Node[]): NumberNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(arg0.value % arg1.value);
 }
 
-function pow(...args: Node[]): Node {
+function pow(...args: Node[]): NumberNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
   return new NumberNode(Math.pow(arg0.value, arg1.value));
 }
 
-function list(...args: Node[]): Node {
+function list(...args: Node[]): ListNode {
   return new ListNode(args);
 }
 
@@ -48,22 +49,22 @@ function sequence(...args: Node[]): Node {
   return args[args.length - 1];
 }
 
-function eq(...args: Node[]): Node {
+function eq(...args: Node[]): BooleanNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
-  return arg0.value === arg1.value ? new NumberNode(0) : new NumberNode(1);
+  return new BooleanNode(arg0.value === arg1.value);
 }
 
-function lt(...args: Node[]): Node {
+function lt(...args: Node[]): BooleanNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
-  return arg0.value < arg1.value ? new NumberNode(0) : new NumberNode(1);
+  return new BooleanNode(arg0.value < arg1.value);
 }
 
-function gt(...args: Node[]): Node {
+function gt(...args: Node[]): BooleanNode {
   const arg0: NumberNode = args[0] as NumberNode;
   const arg1: NumberNode = args[1] as NumberNode;
-  return arg0.value > arg1.value ? new NumberNode(0) : new NumberNode(1);
+  return new BooleanNode(arg0.value > arg1.value);
 }
 
 function length(...args: Node[]): Node {

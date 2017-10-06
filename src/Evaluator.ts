@@ -1,3 +1,4 @@
+import BooleanNode from "./nodes/BooleanNode";
 import LambdaNode from "./nodes/LambdaNode";
 import ListNode from "./nodes/ListNode";
 import Node from "./nodes/Node";
@@ -13,10 +14,16 @@ import coreFunctions from "./functions/coreFunctions";
 const specialForms: string[] = ["if", "lambda", "let", "quote", "unquote"];
 
 class Evaluator {
-  public constructor(private readonly ast: Node, private readonly globalEnv?: Environment) { }
+  private evaluatorEnv: Environment;
+
+  public constructor(private readonly ast: Node, parentEnv?: Environment) {
+    this.evaluatorEnv = new Environment(parentEnv);
+    this.evaluatorEnv.set("true", new BooleanNode(true));
+    this.evaluatorEnv.set("false", new BooleanNode(false));
+  }
 
   public evaluate(): Node {
-    return this.evaluateNode(this.ast, new Environment(this.globalEnv));
+    return this.evaluateNode(this.ast, new Environment(this.evaluatorEnv));
   }
 
   private evaluateNode(node: Node, env: Environment): Node {
@@ -69,10 +76,10 @@ class Evaluator {
 
   private evaluateIfOperation(operator: SymbolNode, operands: Node[], env: Environment): Node {
     const condition: Node = this.evaluateNode(operands[0], env);
-    if (!(condition instanceof NumberNode)) {
-      throw new Error("condition in if expression must evaluate to a number representing a boolean value");
+    if (!(condition instanceof BooleanNode)) {
+      throw new Error("test condition in if expression must evaluate to a boolean value");
     }
-    const outcome: Node = condition.value === 0 ? operands[1] : operands[2];
+    const outcome: Node = condition.value ? operands[1] : operands[2];
     return this.evaluateNode(outcome, env);
   }
 

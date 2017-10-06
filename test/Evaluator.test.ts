@@ -7,6 +7,7 @@ import Parser from "../src/Parser";
 
 import Token from "../src/tokens/Token";
 
+import BooleanNode from "../src/nodes/BooleanNode";
 import ListNode from "../src/nodes/ListNode";
 import Node from "../src/nodes/Node";
 import NumberNode from "../src/nodes/NumberNode";
@@ -112,16 +113,16 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: "(sequence (let x 1) (let y 2) ((lambda () (add x y))))", expectedOutput: new NumberNode(3) },
   { input: "(sequence (let x 1) ((lambda (x y) (add x y)) 2 2))", expectedOutput: new NumberNode(4) },
   { input: "(sequence (let square (lambda (x) (mul x x))) (square 3))", expectedOutput: new NumberNode(9) },
-  { input: "(eq 0 1)", expectedOutput: new NumberNode(1) },
-  { input: "(eq 1 1)", expectedOutput: new NumberNode(0) },
-  { input: "(lt 0 1)", expectedOutput: new NumberNode(0) },
-  { input: "(lt 1 0)", expectedOutput: new NumberNode(1) },
-  { input: "(lt 1 1)", expectedOutput: new NumberNode(1) },
-  { input: "(gt 0 1)", expectedOutput: new NumberNode(1) },
-  { input: "(gt 1 0)", expectedOutput: new NumberNode(0) },
-  { input: "(gt 1 1)", expectedOutput: new NumberNode(1) },
-  { input: "(if (lt 0 1) true false)", expectedOutput: new SymbolNode("true") },
-  { input: "(if (gt 0 1) true false)", expectedOutput: new SymbolNode("false") },
+  { input: "(eq 0 1)", expectedOutput: new BooleanNode(false) },
+  { input: "(eq 1 1)", expectedOutput: new BooleanNode(true) },
+  { input: "(lt 0 1)", expectedOutput: new BooleanNode(true) },
+  { input: "(lt 1 0)", expectedOutput: new BooleanNode(false) },
+  { input: "(lt 1 1)", expectedOutput: new BooleanNode(false) },
+  { input: "(gt 0 1)", expectedOutput: new BooleanNode(false) },
+  { input: "(gt 1 0)", expectedOutput: new BooleanNode(true) },
+  { input: "(gt 1 1)", expectedOutput: new BooleanNode(false) },
+  { input: "(if (lt 0 1) true false)", expectedOutput: new BooleanNode(true) },
+  { input: "(if (gt 0 1) true false)", expectedOutput: new BooleanNode(false) },
   { input: "(length '())", expectedOutput: new NumberNode(0) },
   { input: "(length '(a b c))", expectedOutput: new NumberNode(3) },
   { input: "(nth '(a b c) 2)", expectedOutput: new SymbolNode("b") },

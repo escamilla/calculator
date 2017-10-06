@@ -39,22 +39,22 @@ Returns `x` raised to the power of `y`.
 Comparison Functions
 ====================
 
-## (eq x:number y:number): number
-Returns `0` if `x` equals `y`. Otherwise, returns `1`.
+## (eq x:number y:number): boolean
+Returns `true` if `x` equals `y`. Otherwise, returns `false`.
 ```
-(eq (add 1 2) 3) [ 0 ]
-```
-
-## (lt x:number y:number): number
-Returns `0` if `x` is less than `y`. Otherwise, returns `1`.
-```
-(lt 1 2) [ 0 ]
+(eq (add 1 2) 3) [ true ]
 ```
 
-## (gt x:number y:number): number
-Returns `0` if `x` is greater than `y`. Otherwise, returns `1`.
+## (lt x:number y:number): boolean
+Returns `true` if `x` is less than `y`. Otherwise, returns `false`.
 ```
-(gt 1 2) [ 1 ]
+(lt 1 2) [ true ]
+```
+
+## (gt x:number y:number): boolean
+Returns `true` if `x` is greater than `y`. Otherwise, returns `false`.
+```
+(gt 1 2) [ false ]
 ```
 
 List Functions

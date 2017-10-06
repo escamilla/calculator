@@ -1,9 +1,5 @@
 (sequence
 
-  (let true 0)
-
-  (let false 1)
-
   (let not
     (lambda (x)
       (if x
