@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "tslint:recommended"
-  ],
+  "extends": "tslint:latest",
   "rules": {
     "member-access": [
       true,
