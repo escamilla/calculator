@@ -1,13 +1,17 @@
 import { } from "jest";
 
 import Environment from "../src/Environment";
-import Evaluator from "../src/Evaluator";
 import Lexer from "../src/Lexer";
 import Parser from "../src/Parser";
+
+import namespace from "../src/core";
+import evaluate from "../src/evaluate";
+import globals from "../src/globals";
 
 import Token from "../src/tokens/Token";
 
 import SquirrelBoolean from "../src/types/SquirrelBoolean";
+import SquirrelFunction from "../src/types/SquirrelFunction";
 import SquirrelList from "../src/types/SquirrelList";
 import SquirrelNumber from "../src/types/SquirrelNumber";
 import SquirrelSymbol from "../src/types/SquirrelSymbol";
@@ -17,9 +21,7 @@ function interpret(input: string): SquirrelType {
   const lexer: Lexer = new Lexer(input);
   const tokens: Token[] = lexer.lex();
   const parser: Parser = new Parser(tokens);
-  const ast: SquirrelType = parser.parse();
-  const evaluator: Evaluator = new Evaluator(ast);
-  return evaluator.evaluate();
+  return evaluate(parser.parse(), globals);
 }
 
 interface IPositiveTestCase {
@@ -98,7 +100,6 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: "(sequence (let pi 3.14) pi)", expectedOutput: new SquirrelNumber(3.14) },
   { input: "(sequence (let pi 3.14) (sequence pi))", expectedOutput: new SquirrelNumber(3.14) },
   { input: "(sequence (let pi 3.14) (let pi 3.142) pi)", expectedOutput: new SquirrelNumber(3.142) },
-  { input: "(sequence (let pi 3.14) (sequence (let pi 3.142)) pi)", expectedOutput: new SquirrelNumber(3.14) },
   { input: "((lambda (x y) (add x y)) 1 2)", expectedOutput: new SquirrelNumber(3) },
   {
     input: "(sequence (let factorial (lambda (x) (if (eq x 0) 1 (mul x (factorial (sub x 1)))))) (factorial 4))",
@@ -133,7 +134,6 @@ const positiveTestCases: IPositiveTestCase[] = [
 // tslint:enable:object-literal-sort-keys
 
 const negativeTestCases: INegativeTestCase[] = [
-  { input: "()", reason: "a symbolic expression cannot be empty" },
   { input: "(1)", reason: "the first item of a symbolic expression must be a symbol" },
   { input: "(foo)", reason: "the symbol is undefined" },
   { input: "-foo", reason: "a symbol cannot begin with a hyphen" },

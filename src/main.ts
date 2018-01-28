@@ -13,19 +13,20 @@ const argv: parseArgs.ParsedArgs = parseArgs(process.argv.slice(2), {
 });
 
 import Environment from "./Environment";
-import Evaluator from "./Evaluator";
 import Lexer from "./Lexer";
 import Parser from "./Parser";
+
+import evaluate from "./evaluate";
+import globals from "./globals";
 
 import SquirrelType from "./types/SquirrelType";
 
 import Token from "./tokens/Token";
 
-function interpret(input: string, environment?: Environment): SquirrelType {
+function interpret(input: string, environment: Environment): SquirrelType {
   const lexer: Lexer = new Lexer(input);
   const parser: Parser = new Parser(lexer.lex());
-  const evaluator: Evaluator = new Evaluator(parser.parse(), environment);
-  return evaluator.evaluate();
+  return evaluate(parser.parse(), environment);
 }
 
 function runFile(filename: string): void {
@@ -54,8 +55,7 @@ function runFile(filename: string): void {
     const ast: SquirrelType = parser.parse();
     debugInfo.ast = ast;
 
-    const evaluator: Evaluator = new Evaluator(ast);
-    const output: SquirrelType = evaluator.evaluate();
+    const output: SquirrelType = evaluate(ast, globals);
     debugInfo.output = output;
     debugInfo.prettyOutput = output.toString();
   } catch (e) {
@@ -78,7 +78,7 @@ function runRepl(): void {
     output: process.stdout,
   });
 
-  const replEnvironment: Environment = new Environment();
+  const replEnv: Environment = new Environment(globals);
 
   console.log("tip: _ (underscore) always contains the result of the most recently evaluated expression");
   rl.prompt();
@@ -86,12 +86,12 @@ function runRepl(): void {
     if (line.trim()) {
       let result: SquirrelType | undefined;
       try {
-        result = interpret(line, replEnvironment);
+        result = interpret(line, replEnv);
       } catch (e) {
         console.log(e.message);
       }
       if (result) {
-        replEnvironment.set("_", result);
+        replEnv.set("_", result);
         console.log(result.toString());
       }
     }
