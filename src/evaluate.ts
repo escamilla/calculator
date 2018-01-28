@@ -1,12 +1,12 @@
 // tslint:disable:prefer-switch
 
+import Environment from "./Environment";
+
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
 import SquirrelList from "./types/SquirrelList";
 import SquirrelSymbol from "./types/SquirrelSymbol";
 import SquirrelType from "./types/SquirrelType";
-
-import Environment from "./Environment";
 
 function evaluate(input: SquirrelType, env: Environment): SquirrelType {
   if (!(input instanceof SquirrelList)) {
@@ -19,7 +19,10 @@ function evaluate(input: SquirrelType, env: Environment): SquirrelType {
 
   const head: SquirrelType = input.elements[0];
   if (head instanceof SquirrelSymbol) {
-    if (head.name === "if") {
+    if (head.name === "eval") {
+      const expr: SquirrelType = evaluate(input.elements[1], env);
+      return evaluate(expr, env);
+    } else if (head.name === "if") {
       const condition: SquirrelType = input.elements[1];
       const result: SquirrelType = evaluate(condition, env);
       if (result instanceof SquirrelBoolean) {

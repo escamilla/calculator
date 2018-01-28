@@ -1,7 +1,13 @@
+import * as fs from "fs";
+
+import Lexer from "./Lexer";
+import Parser from "./Parser";
+
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
 import SquirrelList from "./types/SquirrelList";
 import SquirrelNumber from "./types/SquirrelNumber";
+import SquirrelString from "./types/SquirrelString";
 import SquirrelType from "./types/SquirrelType";
 
 const namespace: Map<string, SquirrelFunction> = new Map();
@@ -127,6 +133,25 @@ namespace.set("print", new SquirrelFunction(
     // tslint:disable-next-line:no-console
     console.log(args[0].toString());
     return args[0];
+  },
+));
+
+// Takes a string and parses it as Squirrel code without evaluating it
+namespace.set("parse-string", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelType => {
+    const input: SquirrelString = args[0] as SquirrelString;
+    const lexer: Lexer = new Lexer(input.value);
+    const parser: Parser = new Parser(lexer.lex());
+    return parser.parse();
+  },
+));
+
+// Takes a file name and returns the contents of the file as a string
+namespace.set("read-file", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelString => {
+    const path: string = (args[0] as SquirrelString).value;
+    const contents: string = fs.readFileSync(path).toString();
+    return new SquirrelString(contents);
   },
 ));
 
