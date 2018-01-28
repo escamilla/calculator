@@ -132,7 +132,7 @@ class Lexer {
         str += this.next();
       }
     }
-    if (this.peek() === "'") {
+    if (this.peek() === "\"") {
       this.next();
     } else {
       throw new Error("unterminated string");
