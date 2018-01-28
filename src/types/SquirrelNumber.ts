@@ -1,8 +1,5 @@
-import Node from "./Node";
-
-class NumberNode extends Node {
+class SquirrelNumber {
   public constructor(public readonly value: number) {
-    super();
   }
 
   public toString(): string {
@@ -10,4 +7,4 @@ class NumberNode extends Node {
   }
 }
 
-export default NumberNode;
+export default SquirrelNumber;

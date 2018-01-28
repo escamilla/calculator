@@ -7,24 +7,24 @@ import Parser from "../src/Parser";
 
 import Token from "../src/tokens/Token";
 
-import BooleanNode from "../src/nodes/BooleanNode";
-import ListNode from "../src/nodes/ListNode";
-import Node from "../src/nodes/Node";
-import NumberNode from "../src/nodes/NumberNode";
-import SymbolNode from "../src/nodes/SymbolNode";
+import SquirrelBoolean from "../src/types/SquirrelBoolean";
+import SquirrelList from "../src/types/SquirrelList";
+import SquirrelNumber from "../src/types/SquirrelNumber";
+import SquirrelSymbol from "../src/types/SquirrelSymbol";
+import SquirrelType from "../src/types/SquirrelType";
 
-function interpret(input: string): Node {
+function interpret(input: string): SquirrelType {
   const lexer: Lexer = new Lexer(input);
   const tokens: Token[] = lexer.lex();
   const parser: Parser = new Parser(tokens);
-  const ast: Node = parser.parse();
+  const ast: SquirrelType = parser.parse();
   const evaluator: Evaluator = new Evaluator(ast);
   return evaluator.evaluate();
 }
 
 interface IPositiveTestCase {
   input: string;
-  expectedOutput: Node;
+  expectedOutput: SquirrelType;
 }
 
 interface INegativeTestCase {
@@ -34,104 +34,108 @@ interface INegativeTestCase {
 
 // tslint:disable:object-literal-sort-keys
 const positiveTestCases: IPositiveTestCase[] = [
-  { input: "1", expectedOutput: new NumberNode(1) },
-  { input: "-1", expectedOutput: new NumberNode(-1) },
-  { input: "0.1", expectedOutput: new NumberNode(0.1) },
-  { input: "-0.1", expectedOutput: new NumberNode(-0.1) },
-  { input: "(add 1 2)", expectedOutput: new NumberNode(3) },
-  { input: "(sub 3 2)", expectedOutput: new NumberNode(1) },
-  { input: "(mul 3 4)", expectedOutput: new NumberNode(12) },
-  { input: "(div 6 3)", expectedOutput: new NumberNode(2) },
-  { input: "(mod 9 6)", expectedOutput: new NumberNode(3) },
-  { input: "(pow 2 3)", expectedOutput: new NumberNode(8) },
-  { input: "(add (add 1 2) 3)", expectedOutput: new NumberNode(6) },
-  { input: "foo", expectedOutput: new SymbolNode("foo") },
-  { input: "foo-bar", expectedOutput: new SymbolNode("foo-bar") },
-  { input: "fooBar", expectedOutput: new SymbolNode("fooBar") },
-  { input: "'1", expectedOutput: new NumberNode(1) },
-  { input: "'-1", expectedOutput: new NumberNode(-1) },
-  { input: "'0.1", expectedOutput: new NumberNode(0.1) },
-  { input: "'-0.1", expectedOutput: new NumberNode(-0.1) },
-  { input: "'foo", expectedOutput: new SymbolNode("foo") },
-  { input: "'foo-bar", expectedOutput: new SymbolNode("foo-bar") },
-  { input: "'fooBar", expectedOutput: new SymbolNode("fooBar") },
+  { input: "1", expectedOutput: new SquirrelNumber(1) },
+  { input: "-1", expectedOutput: new SquirrelNumber(-1) },
+  { input: "0.1", expectedOutput: new SquirrelNumber(0.1) },
+  { input: "-0.1", expectedOutput: new SquirrelNumber(-0.1) },
+  { input: "(add 1 2)", expectedOutput: new SquirrelNumber(3) },
+  { input: "(sub 3 2)", expectedOutput: new SquirrelNumber(1) },
+  { input: "(mul 3 4)", expectedOutput: new SquirrelNumber(12) },
+  { input: "(div 6 3)", expectedOutput: new SquirrelNumber(2) },
+  { input: "(mod 9 6)", expectedOutput: new SquirrelNumber(3) },
+  { input: "(pow 2 3)", expectedOutput: new SquirrelNumber(8) },
+  { input: "(add (add 1 2) 3)", expectedOutput: new SquirrelNumber(6) },
+  { input: "foo", expectedOutput: new SquirrelSymbol("foo") },
+  { input: "foo-bar", expectedOutput: new SquirrelSymbol("foo-bar") },
+  { input: "fooBar", expectedOutput: new SquirrelSymbol("fooBar") },
+  { input: "'1", expectedOutput: new SquirrelNumber(1) },
+  { input: "'-1", expectedOutput: new SquirrelNumber(-1) },
+  { input: "'0.1", expectedOutput: new SquirrelNumber(0.1) },
+  { input: "'-0.1", expectedOutput: new SquirrelNumber(-0.1) },
+  { input: "'foo", expectedOutput: new SquirrelSymbol("foo") },
+  { input: "'foo-bar", expectedOutput: new SquirrelSymbol("foo-bar") },
+  { input: "'fooBar", expectedOutput: new SquirrelSymbol("fooBar") },
   {
     input: "'(add 1 2)",
-    expectedOutput: new ListNode([
-      new SymbolNode("add"),
-      new NumberNode(1),
-      new NumberNode(2),
+    expectedOutput: new SquirrelList([
+      new SquirrelSymbol("add"),
+      new SquirrelNumber(1),
+      new SquirrelNumber(2),
     ]),
   },
   {
     input: "'(add (add 1 2) 3)",
-    expectedOutput: new ListNode([
-      new SymbolNode("add"),
-      new ListNode([
-        new SymbolNode("add"),
-        new NumberNode(1),
-        new NumberNode(2),
+    expectedOutput: new SquirrelList([
+      new SquirrelSymbol("add"),
+      new SquirrelList([
+        new SquirrelSymbol("add"),
+        new SquirrelNumber(1),
+        new SquirrelNumber(2),
       ]),
-      new NumberNode(3),
+      new SquirrelNumber(3),
     ]),
   },
   {
     input: "(list a b c)",
-    expectedOutput: new ListNode([
-      new SymbolNode("a"),
-      new SymbolNode("b"),
-      new SymbolNode("c"),
+    expectedOutput: new SquirrelList([
+      new SquirrelSymbol("a"),
+      new SquirrelSymbol("b"),
+      new SquirrelSymbol("c"),
     ]),
   },
-  { input: "(quote foo)", expectedOutput: new SymbolNode("foo") },
+  { input: "(quote foo)", expectedOutput: new SquirrelSymbol("foo") },
   {
     input: "(quote (add 1 2))",
-    expectedOutput: new ListNode([
-      new SymbolNode("add"),
-      new NumberNode(1),
-      new NumberNode(2),
+    expectedOutput: new SquirrelList([
+      new SquirrelSymbol("add"),
+      new SquirrelNumber(1),
+      new SquirrelNumber(2),
     ]),
   },
-  { input: "(unquote 'foo)", expectedOutput: new SymbolNode("foo") },
+  { input: "(unquote 'foo)", expectedOutput: new SquirrelSymbol("foo") },
   {
     input: "(unquote '(add 1 2))",
-    expectedOutput: new ListNode([
-      new SymbolNode("add"),
-      new NumberNode(1),
-      new NumberNode(2),
+    expectedOutput: new SquirrelList([
+      new SquirrelSymbol("add"),
+      new SquirrelNumber(1),
+      new SquirrelNumber(2),
     ]),
   },
-  { input: "(sequence (add 1 2) (add 2 3))", expectedOutput: new NumberNode(5) },
-  { input: "((sequence add) 1 2)", expectedOutput: new NumberNode(3) },
-  { input: "(let pi 3.14)", expectedOutput: new NumberNode(3.14) },
-  { input: "(sequence (let pi 3.14) pi)", expectedOutput: new NumberNode(3.14) },
-  { input: "(sequence (let pi 3.14) (sequence pi))", expectedOutput: new NumberNode(3.14) },
-  { input: "(sequence (let pi 3.14) (let pi 3.142) pi)", expectedOutput: new NumberNode(3.142) },
-  { input: "(sequence (let pi 3.14) (sequence (let pi 3.142)) pi)", expectedOutput: new NumberNode(3.14) },
-  { input: "((lambda (x y) (add x y)) 1 2)", expectedOutput: new NumberNode(3) },
-  { input: "(sequence (let x 1) ((lambda (y) (add x y)) 2))", expectedOutput: new NumberNode(3) },
-  { input: "(sequence (let x 1) (let y 2) ((lambda () (add x y))))", expectedOutput: new NumberNode(3) },
-  { input: "(sequence (let x 1) ((lambda (x y) (add x y)) 2 2))", expectedOutput: new NumberNode(4) },
-  { input: "(sequence (let square (lambda (x) (mul x x))) (square 3))", expectedOutput: new NumberNode(9) },
-  { input: "(eq 0 1)", expectedOutput: new BooleanNode(false) },
-  { input: "(eq 1 1)", expectedOutput: new BooleanNode(true) },
-  { input: "(lt 0 1)", expectedOutput: new BooleanNode(true) },
-  { input: "(lt 1 0)", expectedOutput: new BooleanNode(false) },
-  { input: "(lt 1 1)", expectedOutput: new BooleanNode(false) },
-  { input: "(gt 0 1)", expectedOutput: new BooleanNode(false) },
-  { input: "(gt 1 0)", expectedOutput: new BooleanNode(true) },
-  { input: "(gt 1 1)", expectedOutput: new BooleanNode(false) },
-  { input: "(if (lt 0 1) true false)", expectedOutput: new BooleanNode(true) },
-  { input: "(if (gt 0 1) true false)", expectedOutput: new BooleanNode(false) },
-  { input: "(length '())", expectedOutput: new NumberNode(0) },
-  { input: "(length '(a b c))", expectedOutput: new NumberNode(3) },
-  { input: "(nth '(a b c) 2)", expectedOutput: new SymbolNode("b") },
+  { input: "(sequence (add 1 2) (add 2 3))", expectedOutput: new SquirrelNumber(5) },
+  { input: "((sequence add) 1 2)", expectedOutput: new SquirrelNumber(3) },
+  { input: "(let pi 3.14)", expectedOutput: new SquirrelNumber(3.14) },
+  { input: "(sequence (let pi 3.14) pi)", expectedOutput: new SquirrelNumber(3.14) },
+  { input: "(sequence (let pi 3.14) (sequence pi))", expectedOutput: new SquirrelNumber(3.14) },
+  { input: "(sequence (let pi 3.14) (let pi 3.142) pi)", expectedOutput: new SquirrelNumber(3.142) },
+  { input: "(sequence (let pi 3.14) (sequence (let pi 3.142)) pi)", expectedOutput: new SquirrelNumber(3.14) },
+  { input: "((lambda (x y) (add x y)) 1 2)", expectedOutput: new SquirrelNumber(3) },
+  {
+    input: "(sequence (let factorial (lambda (x) (if (eq x 0) 1 (mul x (factorial (sub x 1)))))) (factorial 4))",
+    expectedOutput: new SquirrelNumber(24),
+  },
+  { input: "(sequence (let x 1) ((lambda (y) (add x y)) 2))", expectedOutput: new SquirrelNumber(3) },
+  { input: "(sequence (let x 1) (let y 2) ((lambda () (add x y))))", expectedOutput: new SquirrelNumber(3) },
+  { input: "(sequence (let x 1) ((lambda (x y) (add x y)) 2 2))", expectedOutput: new SquirrelNumber(4) },
+  { input: "(sequence (let square (lambda (x) (mul x x))) (square 3))", expectedOutput: new SquirrelNumber(9) },
+  { input: "(eq 0 1)", expectedOutput: new SquirrelBoolean(false) },
+  { input: "(eq 1 1)", expectedOutput: new SquirrelBoolean(true) },
+  { input: "(lt 0 1)", expectedOutput: new SquirrelBoolean(true) },
+  { input: "(lt 1 0)", expectedOutput: new SquirrelBoolean(false) },
+  { input: "(lt 1 1)", expectedOutput: new SquirrelBoolean(false) },
+  { input: "(gt 0 1)", expectedOutput: new SquirrelBoolean(false) },
+  { input: "(gt 1 0)", expectedOutput: new SquirrelBoolean(true) },
+  { input: "(gt 1 1)", expectedOutput: new SquirrelBoolean(false) },
+  { input: "(if (lt 0 1) true false)", expectedOutput: new SquirrelBoolean(true) },
+  { input: "(if (gt 0 1) true false)", expectedOutput: new SquirrelBoolean(false) },
+  { input: "(length '())", expectedOutput: new SquirrelNumber(0) },
+  { input: "(length '(a b c))", expectedOutput: new SquirrelNumber(3) },
+  { input: "(nth '(a b c) 2)", expectedOutput: new SquirrelSymbol("b") },
   {
     input: "(concat '(a) '(b c))",
-    expectedOutput: new ListNode([
-      new SymbolNode("a"),
-      new SymbolNode("b"),
-      new SymbolNode("c"),
+    expectedOutput: new SquirrelList([
+      new SquirrelSymbol("a"),
+      new SquirrelSymbol("b"),
+      new SquirrelSymbol("c"),
     ]),
   },
 ];

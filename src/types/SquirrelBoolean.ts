@@ -1,8 +1,5 @@
-import Node from "./Node";
-
-class BooleanNode extends Node {
+class SquirrelBoolean {
   public constructor(public readonly value: boolean) {
-    super();
   }
 
   public toString(): string {
@@ -10,4 +7,4 @@ class BooleanNode extends Node {
   }
 }
 
-export default BooleanNode;
+export default SquirrelBoolean;
