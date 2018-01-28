@@ -62,8 +62,6 @@ class Evaluator {
           return this.evaluateLetOperation(operator, operands, env);
         case "quote":
           return this.evaluateQuoteOperation(operator, operands);
-        case "unquote":
-          return this.evaluateUnquoteOperation(operator, operands, env);
       }
     }
 
@@ -137,13 +135,6 @@ class Evaluator {
       throw new Error("quote operator takes exactly one argument");
     }
     return operands[0];
-  }
-
-  private evaluateUnquoteOperation(operator: SquirrelSymbol, operands: SquirrelType[], env: Environment): SquirrelType {
-    if (operands.length !== 1) {
-      throw new Error("unquote operator takes exactly one argument");
-    }
-    return this.evaluateNode(operands[0], env);
   }
 }
 

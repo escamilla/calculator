@@ -92,15 +92,6 @@ const positiveTestCases: IPositiveTestCase[] = [
       new SquirrelNumber(2),
     ]),
   },
-  { input: "(unquote 'foo)", expectedOutput: new SquirrelSymbol("foo") },
-  {
-    input: "(unquote '(add 1 2))",
-    expectedOutput: new SquirrelList([
-      new SquirrelSymbol("add"),
-      new SquirrelNumber(1),
-      new SquirrelNumber(2),
-    ]),
-  },
   { input: "(sequence (add 1 2) (add 2 3))", expectedOutput: new SquirrelNumber(5) },
   { input: "((sequence add) 1 2)", expectedOutput: new SquirrelNumber(3) },
   { input: "(let pi 3.14)", expectedOutput: new SquirrelNumber(3.14) },
