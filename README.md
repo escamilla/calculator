@@ -23,7 +23,7 @@ Usage
 npm start
 
 # run a Squirrel program
-npm start examples/functions.sq
+npm start examples/life.sq
 ```
 
 Resources
