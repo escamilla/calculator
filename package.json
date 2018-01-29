@@ -8,9 +8,9 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "start": "npm run build && node dist/main.js",
     "test": "jest",
-    "lint": "tslint -p tsconfig.json",
-    "eval": "npm run build && node dist/main.js"
+    "lint": "tslint -p tsconfig.json"
   },
   "jest": {
     "transform": {
@@ -31,7 +31,5 @@
     "tslint": "^5.9.1",
     "typescript": "^2.6.2"
   },
-  "dependencies": {
-    "minimist": "^1.2.0"
-  }
+  "dependencies": {}
 }

@@ -19,17 +19,11 @@ Sample
 Usage
 -----
 ```
-# run the Squirrel REPL
-npm run eval
+# run a Squirrel shell
+npm start
 
-# run a Squirrel program and display the results
-npm run eval <path>
-
-# use the `-v | --verbose` flag to show more details including the parse tree
-npm run eval -- -v <path>
-
-# run the included implementation of Conway's Game of Life
-npm run eval examples/functions.sq
+# run a Squirrel program
+npm start examples/functions.sq
 ```
 
 Resources
