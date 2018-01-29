@@ -120,7 +120,7 @@ namespace.set("slice", new SquirrelFunction(
   },
 ));
 
-namespace.set("concat", new SquirrelFunction(
+namespace.set("join", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelList => {
     const list1: SquirrelList = args[0] as SquirrelList;
     const list2: SquirrelList = args[1] as SquirrelList;
@@ -133,6 +133,14 @@ namespace.set("print", new SquirrelFunction(
     // tslint:disable-next-line:no-console
     console.log(args[0].toString());
     return args[0];
+  },
+));
+
+namespace.set("concat", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelString => {
+    const castedArgs: SquirrelString[] = args.map((arg: SquirrelType) => arg as SquirrelString);
+    const strings: string[] = castedArgs.map((arg: SquirrelString) => arg.value);
+    return new SquirrelString(strings.join(""));
   },
 ));
 

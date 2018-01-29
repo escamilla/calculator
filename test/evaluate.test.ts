@@ -14,6 +14,7 @@ import SquirrelBoolean from "../src/types/SquirrelBoolean";
 import SquirrelFunction from "../src/types/SquirrelFunction";
 import SquirrelList from "../src/types/SquirrelList";
 import SquirrelNumber from "../src/types/SquirrelNumber";
+import SquirrelString from "../src/types/SquirrelString";
 import SquirrelSymbol from "../src/types/SquirrelSymbol";
 import SquirrelType from "../src/types/SquirrelType";
 
@@ -123,15 +124,18 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: "(length '(a b c))", expectedOutput: new SquirrelNumber(3) },
   { input: "(nth '(a b c) 2)", expectedOutput: new SquirrelSymbol("b") },
   {
-    input: "(concat '(a) '(b c))",
+    input: "(join '(a) '(b c))",
     expectedOutput: new SquirrelList([
       new SquirrelSymbol("a"),
       new SquirrelSymbol("b"),
       new SquirrelSymbol("c"),
     ]),
   },
+  {
+    input: `(concat "a" "b" "c")`,
+    expectedOutput: new SquirrelString("abc"),
+  },
 ];
-// tslint:enable:object-literal-sort-keys
 
 const negativeTestCases: INegativeTestCase[] = [
   { input: "(1)", reason: "the first item of a symbolic expression must be a symbol" },

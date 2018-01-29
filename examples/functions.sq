@@ -82,7 +82,7 @@
     (lambda (x)
       (if (le x 0)
         '()
-        (concat
+        (join
           (range (sub x 1))
           (list x)
         )
@@ -94,7 +94,7 @@
     (lambda (array function)
       (if (is-empty array)
         '()
-        (concat
+        (join
           (list (function (head array)))
           (map (tail array) function)
         )
@@ -106,7 +106,7 @@
     (lambda (array function)
       (if (is-empty array)
         '()
-        (concat
+        (join
           (if (function (head array))
             (list (head array))
             '()
@@ -175,7 +175,7 @@
     (lambda (array)
       (if (is-empty array)
         '()
-        (concat
+        (join
           (reverse (tail array))
           (list (head array))
         )
