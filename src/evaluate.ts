@@ -35,19 +35,24 @@ function evaluate(input: SquirrelType, env: Environment): SquirrelType {
         throw new Error("test condition in if expression must evaluate to a boolean value");
       }
     } else if (head.name === "lambda") {
-      return ((): SquirrelType => {
-        const binds: SquirrelList = input.elements[1] as SquirrelList;
-        const functionParams: SquirrelSymbol[] = binds.elements.map((item: SquirrelType) => {
-          if (!(item instanceof SquirrelSymbol)) {
-            throw new Error("expected list of symbols for function parameters");
-          }
-          return item as SquirrelSymbol;
-        });
-        const functionBody: SquirrelType = input.elements[2];
-        return new SquirrelFunction((functionArgs: SquirrelType[]): SquirrelType => {
-          return evaluate(functionBody, new Environment(env, functionParams, functionArgs));
-        });
-      })();
+      const binds: SquirrelList = input.elements[1] as SquirrelList;
+      const functionParams: SquirrelSymbol[] = binds.elements.map((item: SquirrelType) => {
+        if (!(item instanceof SquirrelSymbol)) {
+          throw new Error("expected list of symbols for function parameters");
+        }
+        return item as SquirrelSymbol;
+      });
+      const functionBody: SquirrelType = input.elements[2];
+
+      const newFunction: SquirrelFunction = new SquirrelFunction((functionArgs: SquirrelType[]): SquirrelType => {
+        return evaluate(functionBody, new Environment(env, functionParams, functionArgs));
+      });
+
+      newFunction.isUserDefined = true;
+      newFunction.params = functionParams;
+      newFunction.body = functionBody;
+
+      return newFunction;
     } else if (head.name === "let") {
       const key: string = (input.elements[1] as SquirrelSymbol).name;
       const value: SquirrelType = evaluate(input.elements[2], env);

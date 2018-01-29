@@ -1,13 +1,10 @@
 import SquirrelSymbol from "./SquirrelSymbol";
 import SquirrelType from "./SquirrelType";
 
-import Environment from "../Environment";
-
 class SquirrelFunction {
   public callable: (args: SquirrelType[]) => SquirrelType;
   public isUserDefined: boolean = false;
   public name: string;
-  public env: Environment;
   public params: SquirrelSymbol[];
   public body: SquirrelType;
 
