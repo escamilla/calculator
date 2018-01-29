@@ -7,9 +7,9 @@ import Parser from "../src/Parser";
 import namespace from "../src/core";
 import evaluate from "../src/evaluate";
 import globals from "../src/globals";
+import interpret from "../src/interpret";
 
 import Token from "../src/tokens/Token";
-
 import SquirrelBoolean from "../src/types/SquirrelBoolean";
 import SquirrelFunction from "../src/types/SquirrelFunction";
 import SquirrelList from "../src/types/SquirrelList";
@@ -17,13 +17,6 @@ import SquirrelNumber from "../src/types/SquirrelNumber";
 import SquirrelString from "../src/types/SquirrelString";
 import SquirrelSymbol from "../src/types/SquirrelSymbol";
 import SquirrelType from "../src/types/SquirrelType";
-
-function interpret(input: string): SquirrelType {
-  const lexer: Lexer = new Lexer(input);
-  const tokens: Token[] = lexer.lex();
-  const parser: Parser = new Parser(tokens);
-  return evaluate(parser.parse(), globals);
-}
 
 interface IPositiveTestCase {
   input: string;
@@ -149,13 +142,13 @@ const negativeTestCases: INegativeTestCase[] = [
 describe("Evaluator.evaluate()", () => {
   positiveTestCases.forEach((testCase: IPositiveTestCase) => {
     test(`the expression \`${testCase.input}\` is evaluated to \`${testCase.expectedOutput.toString()}\``, () => {
-      expect(interpret(testCase.input)).toEqual(testCase.expectedOutput);
+      expect(interpret(testCase.input, globals)).toEqual(testCase.expectedOutput);
     });
   });
 
   negativeTestCases.forEach((testCase: INegativeTestCase) => {
     test(`the expression \`${testCase.input}\` cannot be evaluated because ${testCase.reason}`, () => {
-      expect(() => interpret(testCase.input)).toThrow();
+      expect(() => interpret(testCase.input, globals)).toThrow();
     });
   });
 });

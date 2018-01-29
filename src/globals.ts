@@ -1,12 +1,9 @@
 import Environment from "./Environment";
-import Lexer from "./Lexer";
-import Parser from "./Parser";
-
-import namespace from "./core";
-import evaluate from "./evaluate";
-
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
+
+import namespace from "./core";
+import interpret from "./interpret";
 
 const globals: Environment = new Environment();
 
@@ -17,14 +14,6 @@ namespace.forEach((fn: SquirrelFunction, name: string) => {
   globals.set(name, fn);
 });
 
-const expressions: string[] = [
-  "(let load-file (lambda (path) (eval (parse-string (read-file path)))))",
-];
-
-expressions.forEach((expression: string) => {
-  const lexer: Lexer = new Lexer(expression);
-  const parser: Parser = new Parser(lexer.lex());
-  evaluate(parser.parse(), globals);
-});
+interpret(`(let load-file (lambda (path) (eval (parse-string (concat "(sequence " (read-file path) ")")))))`, globals);
 
 export default globals;

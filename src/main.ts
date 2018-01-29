@@ -13,21 +13,13 @@ const argv: parseArgs.ParsedArgs = parseArgs(process.argv.slice(2), {
 });
 
 import Environment from "./Environment";
-import Lexer from "./Lexer";
-import Parser from "./Parser";
 
-import evaluate from "./evaluate";
 import globals from "./globals";
+import interpret from "./interpret";
 
 import SquirrelType from "./types/SquirrelType";
 
 import Token from "./tokens/Token";
-
-function interpret(input: string, environment: Environment): SquirrelType {
-  const lexer: Lexer = new Lexer(input);
-  const parser: Parser = new Parser(lexer.lex());
-  return evaluate(parser.parse(), environment);
-}
 
 function runFile(filename: string): void {
   let input: string | undefined;
