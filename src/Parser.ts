@@ -1,6 +1,5 @@
 import Token from "./tokens/Token";
 import TokenType from "./tokens/TokenType";
-
 import SquirrelList from "./types/SquirrelList";
 import SquirrelNumber from "./types/SquirrelNumber";
 import SquirrelString from "./types/SquirrelString";

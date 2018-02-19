@@ -2,7 +2,6 @@ import { } from "jest";
 
 import Lexer from "../src/Lexer";
 import Parser from "../src/Parser";
-
 import Token from "../src/tokens/Token";
 
 interface INegativeTestCase {

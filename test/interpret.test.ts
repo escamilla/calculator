@@ -1,7 +1,7 @@
 import { } from "jest";
 
-import globals from "../src/globals";
 import interpret from "../src/interpret";
+import replEnv from "../src/replEnv";
 
 interface IPositiveTestCase {
   input: string;
@@ -82,13 +82,13 @@ const negativeTestCases: INegativeTestCase[] = [
 describe("interpret() follows expected behavior", () => {
   positiveTestCases.forEach((testCase: IPositiveTestCase) => {
     test(`${testCase.input} => ${testCase.expectedOutput}`, () => {
-      expect(interpret(testCase.input, globals).toString()).toEqual(testCase.expectedOutput);
+      expect(interpret(testCase.input, replEnv).toString()).toEqual(testCase.expectedOutput);
     });
   });
 
   negativeTestCases.forEach((testCase: INegativeTestCase) => {
     test(`${testCase.input} cannot be evaluated because ${testCase.reason}`, () => {
-      expect(() => interpret(testCase.input, globals)).toThrow();
+      expect(() => interpret(testCase.input, replEnv)).toThrow();
     });
   });
 });

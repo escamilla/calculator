@@ -2,7 +2,6 @@ import * as fs from "fs";
 
 import Lexer from "./Lexer";
 import Parser from "./Parser";
-
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
 import SquirrelList from "./types/SquirrelList";
@@ -99,7 +98,7 @@ namespace.set("gt", new SquirrelFunction(
 namespace.set("length", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
     const list: SquirrelList = args[0] as SquirrelList;
-    return new SquirrelNumber(list.elements.length);
+    return new SquirrelNumber(list.items.length);
   },
 ));
 
@@ -107,7 +106,7 @@ namespace.set("nth", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
     const list: SquirrelList = args[0] as SquirrelList;
     const n: SquirrelNumber = args[1] as SquirrelNumber;
-    return list.elements[n.value - 1];
+    return list.items[n.value - 1];
   },
 ));
 
@@ -116,7 +115,7 @@ namespace.set("slice", new SquirrelFunction(
     const list: SquirrelList = args[0] as SquirrelList;
     const start: SquirrelNumber = args[1] as SquirrelNumber;
     const end: SquirrelNumber = args[2] as SquirrelNumber;
-    return new SquirrelList(list.elements.slice(start.value, end.value));
+    return new SquirrelList(list.items.slice(start.value, end.value));
   },
 ));
 
@@ -124,7 +123,7 @@ namespace.set("join", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelList => {
     const list1: SquirrelList = args[0] as SquirrelList;
     const list2: SquirrelList = args[1] as SquirrelList;
-    return new SquirrelList(list1.elements.concat(list2.elements));
+    return new SquirrelList(list1.items.concat(list2.items));
   },
 ));
 
@@ -167,4 +166,4 @@ namespace.forEach((fn: SquirrelFunction, name: string) => {
   fn.name = name;
 });
 
-export default namespace;
+export { namespace };

@@ -1,20 +1,27 @@
+import { namespace } from "./core";
 import Environment from "./Environment";
+import evaluate from "./evaluate";
+import interpret from "./interpret";
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
+import SquirrelType from "./types/SquirrelType";
 
-import namespace from "./core";
-import interpret from "./interpret";
+const replEnv: Environment = new Environment();
 
-const globals: Environment = new Environment();
+replEnv.set("eval", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelType => {
+    return evaluate(args[0], replEnv);
+  },
+));
 
-globals.set("true", new SquirrelBoolean(true));
-globals.set("false", new SquirrelBoolean(false));
+replEnv.set("true", new SquirrelBoolean(true));
+replEnv.set("false", new SquirrelBoolean(false));
 
 namespace.forEach((fn: SquirrelFunction, name: string) => {
-  globals.set(name, fn);
+  replEnv.set(name, fn);
 });
 
-interpret(`(let load-file (lambda (path) (eval (parse-string (concat "(sequence " (read-file path) ")")))))`, globals);
+interpret(`(let load-file (lambda (path) (eval (parse-string (concat "(sequence " (read-file path) ")")))))`, replEnv);
 
 const inputs: string[] = [
   // logic functions
@@ -94,7 +101,7 @@ const inputs: string[] = [
 ];
 
 inputs.forEach((input: string) => {
-  interpret(input, globals);
+  interpret(input, replEnv);
 });
 
-export default globals;
+export default replEnv;
