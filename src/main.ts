@@ -2,6 +2,8 @@ import * as readline from "readline";
 
 import interpret from "./interpret";
 import replEnv from "./replEnv";
+import SquirrelList from "./types/SquirrelList";
+import SquirrelString from "./types/SquirrelString";
 import SquirrelType from "./types/SquirrelType";
 
 const rl: readline.ReadLine = readline.createInterface({
@@ -10,6 +12,7 @@ const rl: readline.ReadLine = readline.createInterface({
 });
 
 if (process.argv.length > 2) {
+  replEnv.set("argv", new SquirrelList(process.argv.slice(3).map((value: string) => new SquirrelString(value))));
   interpret(`(load-file "${process.argv[2]}")`, replEnv);
   process.exit(0);
 }
