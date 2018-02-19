@@ -2,28 +2,27 @@ import SquirrelSymbol from "./types/SquirrelSymbol";
 import SquirrelType from "./types/SquirrelType";
 
 class Environment {
-  private scope: Map<string, SquirrelType> = new Map();
+  private data: Map<string, SquirrelType> = new Map();
 
-  public constructor(public readonly parent?: Environment, binds: SquirrelSymbol[] = [], exprs: SquirrelType[] = []) {
-    for (let i: number = 0; i < binds.length; i++) {
-      if (exprs.length < i) {
-        throw new Error("Lengths of binds and exprs lists must be equal");
-      }
-      this.set(binds[i].name, exprs[i]);
+  public constructor(public readonly outerEnv?: Environment,
+                     bindSymbols: SquirrelSymbol[] = [],
+                     bindExpressions: SquirrelType[] = []) {
+    for (let i: number = 0; i < bindSymbols.length; i++) {
+      this.set(bindSymbols[i].name, bindExpressions[i]);
     }
-  }
-
-  public get(key: string): SquirrelType | null {
-    if (this.scope.has(key)) {
-      return this.scope.get(key) as SquirrelType;
-    } else if (this.parent) {
-      return this.parent.get(key);
-    }
-    return null;
   }
 
   public set(key: string, value: SquirrelType): void {
-    this.scope.set(key, value);
+    this.data.set(key, value);
+  }
+
+  public get(key: string): SquirrelType {
+    if (this.data.has(key)) {
+      return this.data.get(key) as SquirrelType;
+    } else if (this.outerEnv) {
+      return this.outerEnv.get(key);
+    }
+    throw new Error(`symbol not bound: ${key}`);
   }
 }
 

@@ -80,7 +80,7 @@
 (let generations
   (lambda (grid count)
     (if (eq 0 count)
-      done
+      '()
       (sequence
         (print-grid grid)
         (print '())
