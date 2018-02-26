@@ -38,14 +38,14 @@ const inputs: string[] = [
   `(let is-empty (lambda (array)
      (eq 0 (length array))))`,
   `(let head (lambda (array)
-     (nth array 1)))`,
+     (nth array 0)))`,
   `(let tail (lambda (array)
      (slice array 1 (add (length array) 1))))`,
   `(let range (lambda (x)
      (if (le x 0)
        '()
        (join (range (sub x 1))
-             (list x)))))`,
+             (list (sub x 1))))))`,
   `(let map (lambda (array function)
      (if (is-empty array)
        '()

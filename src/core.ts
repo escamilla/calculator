@@ -108,7 +108,7 @@ namespace.set("nth", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
     const list: SquirrelList = args[0] as SquirrelList;
     const n: SquirrelNumber = args[1] as SquirrelNumber;
-    return list.items[n.value - 1];
+    return list.items[n.value];
   },
 ));
 
