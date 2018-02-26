@@ -97,18 +97,34 @@ namespace.set("gt", new SquirrelFunction(
   },
 ));
 
+// Takes a list or string and returns its length
 namespace.set("length", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
-    const list: SquirrelList = args[0] as SquirrelList;
-    return new SquirrelNumber(list.items.length);
+    if (args[0] instanceof SquirrelList) {
+      return new SquirrelNumber((args[0] as SquirrelList).items.length);
+    } else if (args[0] instanceof SquirrelString) {
+      return new SquirrelNumber((args[0] as SquirrelString).value.length);
+    } else {
+      throw new Error("length() takes a list or string");
+    }
   },
 ));
 
+// Takes a list or string and an index and returns the nth element or character.
+// Note: indexing is zero-based.
 namespace.set("nth", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
-    const list: SquirrelList = args[0] as SquirrelList;
-    const n: SquirrelNumber = args[1] as SquirrelNumber;
-    return list.items[n.value];
+    const index: SquirrelNumber = args[1] as SquirrelNumber;
+
+    if (args[0] instanceof SquirrelList) {
+      const list: SquirrelList = args[0] as SquirrelList;
+      return list.items[index.value];
+    } else if (args[0] instanceof SquirrelString) {
+      const str: SquirrelString = args[0] as SquirrelString;
+      return new SquirrelString(str.value.charAt(index.value));
+    } else {
+      throw new Error("nth() takes a list or string");
+    }
   },
 ));
 

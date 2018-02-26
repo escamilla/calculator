@@ -65,9 +65,13 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: "(if (gt 0 1) true false)", expectedOutput: "false" },
   { input: "(length '())", expectedOutput: "0" },
   { input: "(length '(a b c))", expectedOutput: "3" },
+  { input: '(length "")', expectedOutput: "0" },
+  { input: '(length "hi")', expectedOutput: "2" },
   { input: "(nth '(a b c) 0)", expectedOutput: "a" },
   { input: "(nth '(a b c) 1)", expectedOutput: "b" },
   { input: "(nth '(a b c) 2)", expectedOutput: "c" },
+  { input: '(nth "hi" 0)', expectedOutput: '"h"' },
+  { input: '(nth "hi" 1)', expectedOutput: '"i"' },
   { input: "(join '(a) '(b c))", expectedOutput: "(a b c)" },
   { input: `(concat "a" "b" "c")`, expectedOutput: `"abc"` },
 ];
