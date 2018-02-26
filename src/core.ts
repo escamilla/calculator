@@ -131,8 +131,7 @@ namespace.set("join", new SquirrelFunction(
 
 namespace.set("print", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
-    // tslint:disable-next-line:no-console
-    console.log(args[0].toString());
+    process.stdout.write(args[0].toString() + "\n");
     return args[0];
   },
 ));

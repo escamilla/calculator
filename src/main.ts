@@ -12,8 +12,7 @@ if (process.argv.length > 2) {
   process.exit(0);
 }
 
-/* tslint:disable:no-console */
-console.log("tip: _ (underscore) always contains the result of the most recently evaluated expression");
+process.stdout.write("tip: _ (underscore) always contains the result of the most recently evaluated expression\n");
 readlineSync.setPrompt("> ");
 while (true) {
   const line: string = readlineSync.prompt();
@@ -22,10 +21,10 @@ while (true) {
     try {
       result = interpret(line, replEnv);
     } catch (e) {
-      console.log(e.message);
+      process.stdout.write(e.message + "\n");
       continue;
     }
     replEnv.set("_", result);
-    console.log(result.toString());
+    process.stdout.write(result.toString() + "\n");
   }
 }
