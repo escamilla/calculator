@@ -1,15 +1,10 @@
-import * as readline from "readline";
+import * as readlineSync from "readline-sync";
 
 import interpret from "./interpret";
 import replEnv from "./replEnv";
 import SquirrelList from "./types/SquirrelList";
 import SquirrelString from "./types/SquirrelString";
 import SquirrelType from "./types/SquirrelType";
-
-const rl: readline.ReadLine = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
 if (process.argv.length > 2) {
   replEnv.set("argv", new SquirrelList(process.argv.slice(3).map((value: string) => new SquirrelString(value))));
@@ -19,21 +14,18 @@ if (process.argv.length > 2) {
 
 /* tslint:disable:no-console */
 console.log("tip: _ (underscore) always contains the result of the most recently evaluated expression");
-rl.prompt();
-rl.on("line", (line: any) => {
+readlineSync.setPrompt("> ");
+while (true) {
+  const line: string = readlineSync.prompt();
   if (line.trim()) {
-    let result: SquirrelType | undefined;
+    let result: SquirrelType;
     try {
       result = interpret(line, replEnv);
     } catch (e) {
       console.log(e.message);
+      continue;
     }
-    if (result) {
-      replEnv.set("_", result);
-      console.log(result.toString());
-    }
+    replEnv.set("_", result);
+    console.log(result.toString());
   }
-  rl.prompt();
-}).on("close", () => {
-  process.exit(0);
-});
+}

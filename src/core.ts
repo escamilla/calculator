@@ -1,5 +1,7 @@
 import * as fs from "fs";
 
+import * as readlineSync from "readline-sync";
+
 import Lexer from "./Lexer";
 import Parser from "./Parser";
 import SquirrelBoolean from "./types/SquirrelBoolean";
@@ -159,6 +161,15 @@ namespace.set("read-file", new SquirrelFunction(
     const path: string = (args[0] as SquirrelString).value;
     const contents: string = fs.readFileSync(path).toString();
     return new SquirrelString(contents);
+  },
+));
+
+// Displays a prompt and reads a line entered by the user
+namespace.set("read-line", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelString => {
+    const prompt: string = (args[0] as SquirrelString).value;
+    const line: string = readlineSync.question(prompt);
+    return new SquirrelString(line);
   },
 ));
 
