@@ -21,83 +21,84 @@ namespace.forEach((fn: SquirrelFunction, name: string) => {
   replEnv.set(name, fn);
 });
 
-interpret(`(let load-file (lambda (path) (eval (parse-string (concat "(sequence " (read-file path) ")")))))`, replEnv);
-
 const inputs: string[] = [
   // logic functions
-  `(let not (lambda (x) (if x false true)))`,
-  `(let and (lambda (x y) (if x y false)))`,
-  `(let or (lambda (x y) (if x true y)))`,
-  `(let le (lambda (x y) (or (lt x y) (eq x y))))`,
-  `(let ge (lambda (x y) (or (gt x y) (eq x y))))`,
+  `(def not (lambda (x) (if x false true)))`,
+  `(def and (lambda (x y) (if x y false)))`,
+  `(def or (lambda (x y) (if x true y)))`,
+  `(def <= (lambda (x y) (or (< x y) (= x y))))`,
+  `(def >= (lambda (x y) (or (> x y) (= x y))))`,
   // math functions
-  `(let is-even (lambda (x) (eq 0 (mod x 2))))`,
-  `(let is-odd (lambda (x) (eq 1 (mod x 2))))`,
-  `(let factorial (lambda (x) (if (eq x 0) 1 (mul x (factorial (sub x 1))))))`,
+  `(def even? (lambda (x) (= 0 (% x 2))))`,
+  `(def odd? (lambda (x) (= 1 (% x 2))))`,
+  `(def factorial (lambda (x) (if (= x 0) 1 (* x (factorial (- x 1))))))`,
   // list functions
-  `(let is-empty (lambda (array)
-     (eq 0 (length array))))`,
-  `(let head (lambda (array)
-     (nth array 0)))`,
-  `(let tail (lambda (array)
-     (slice array 1 (add (length array) 1))))`,
-  `(let range (lambda (x)
-     (if (le x 0)
+  `(def empty? (lambda (collection)
+     (= 0 (length collection))))`,
+  `(def head (lambda (collection)
+     (nth collection 0)))`,
+  `(def tail (lambda (collection)
+     (slice collection 1 (+ (length collection) 1))))`,
+  `(def range (lambda (x)
+     (if (<= x 0)
        '()
-       (join (range (sub x 1))
-             (list (sub x 1))))))`,
-  `(let map (lambda (array function)
-     (if (is-empty array)
+       (join (range (- x 1))
+             (list (- x 1))))))`,
+  `(def map (lambda (function collection)
+     (if (empty? collection)
        '()
-       (join (list (function (head array)))
-             (map (tail array) function)))))`,
-  `(let filter (lambda (array function)
-     (if (is-empty array)
+       (join (list (function (head collection)))
+             (map function (tail collection))))))`,
+  `(def filter (lambda (predicate collection)
+     (if (empty? collection)
        '()
-       (join (if (function (head array))
-               (list (head array))
+       (join (if (predicate (head collection))
+               (list (head collection))
                '())
-             (filter (tail array) function)))))`,
-  `(let some (lambda (array function)
-     (if (is-empty array)
+             (filter predicate (tail collection))))))`,
+  `(def any? (lambda (predicate collection)
+     (if (empty? collection)
        false
-       (if (function (head array))
+       (if (predicate (head collection))
          true
-         (some (tail array) function)))))`,
-  `(let every (lambda (array function)
-     (if (is-empty array)
+         (any? predicate (tail collection))))))`,
+  `(def every? (lambda (predicate collection)
+     (if (empty? collection)
        false
-       (if (function (head array))
+       (if (predicate (head collection))
          true
-         (every (tail array) function)))))`,
-  `(let reduce (lambda (array function accumulator)
-     (if (is-empty array)
-       accumulator
-       (reduce (tail array)
-               function
-               (function accumulator (head array))))))`,
-  `(let sum (lambda (array)
-     (reduce array add 0)))`,
-  `(let product (lambda (array)
-     (reduce array mul 1)))`,
-  `(let includes (lambda (array value)
-     (if (is-empty array)
+         (every? predicate (tail collection))))))`,
+  `(def reduce (lambda (function value collection)
+     (if (empty? collection)
+       value
+       (reduce function
+               (function value (head collection))
+               (tail collection)))))`,
+  `(def sum (lambda (collection)
+     (reduce + 0 collection)))`,
+  `(def product (lambda (collection)
+     (reduce * 1 collection)))`,
+  `(def contains? (lambda (collection value)
+     (if (empty? collection)
        false
-       (if (eq (head array) value)
+       (if (= (head collection) value)
          true
-         (includes (tail array) value)))))`,
-  `(let reverse (lambda (array)
-     (if (is-empty array)
+         (contains? (tail collection) value)))))`,
+  `(def reverse (lambda (collection)
+     (if (empty? collection)
+       collection
+       (join (reverse (tail collection))
+             (list (head collection))))))`,
+  `(def find (lambda (predicate collection)
+     (if (empty? collection)
        '()
-       (join (reverse (tail array))
-             (list (head array))))))`,
-  `(let find (lambda (array function)
-     (if (is-empty array)
-       '()
-       (sequence (let value (head array))
-                 (if (function value)
+       (do (def value (head collection))
+                 (if (predicate value)
                    value
-                   (find (tail array) function))))))`,
+                   (find predicate (tail collection)))))))`,
+  // other functions
+  `(def load-file (lambda (path)
+     (eval (parse-string (concat "(do " (read-file path) ")")))))`,
 ];
 
 inputs.forEach((input: string) => {

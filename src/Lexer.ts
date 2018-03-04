@@ -61,6 +61,10 @@ class Lexer {
     return /[a-z]/i.test(char);
   }
 
+  private isSymbolCharacter(char: string): boolean {
+    return this.isAlpha(char) || "%*+-/<=>?_".includes(char);
+  }
+
   private skipWhitespace(): void {
     while (this.isWhitespace(this.peek())) {
       this.next();
@@ -111,10 +115,7 @@ class Lexer {
 
   private readSymbol(): string {
     let str: string = "";
-    if (this.peek() === "_") {
-      return this.next();
-    }
-    while (this.isAlpha(this.peek()) || (this.peek() === "-" && this.isAlpha(this.lookAhead()))) {
+    while (this.peek() && this.isSymbolCharacter(this.peek())) {
       str += this.next();
     }
     return str;
@@ -152,7 +153,7 @@ class Lexer {
       return new Token(TokenType.NUMBER, this.readNumber());
     }
 
-    if (this.isAlpha(char) || char === "_") {
+    if (this.isSymbolCharacter(char)) {
       return new Token(TokenType.SYMBOL, this.readSymbol());
     }
 
@@ -166,7 +167,7 @@ class Lexer {
       case "'":
         return new Token(TokenType.SINGLE_QUOTE, this.next());
       default:
-        this.die(`unknown character: ${char}`);
+        this.die(`unexpected character: ${char}`);
     }
 
     return null;

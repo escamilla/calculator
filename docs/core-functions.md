@@ -1,108 +1,143 @@
-# Arithmetic Functions
+# Math Functions
 
-## (add x:number y:number): number
+## (+ x y)
 Returns the sum of `x` and `y`.
 ```
-(add 1 2) [ 3 ]
+(+ 1 2) [ 3 ]
 ```
 
-## (sub x:number y:number): number
+## (- x y)
 Returns the difference of `x` and `y`.
 ```
-(sub 3 2) [ 1 ]
+(- 3 2) [ 1 ]
 ```
 
-## (mul x:number y:number): number
+## (* x y)
 Returns the product of `x` and `y`.
 ```
-(mul 2 3) [ 6 ]
+(* 2 3) [ 6 ]
 ```
 
-## (div x:number y:number): number
+## (/ x y)
 Returns the quotient of `x` and `y`.
 ```
-(div 6 3) [ 2 ]
+(/ 6 3) [ 2 ]
+(/ 22 7) [ 3.142857142857143 ]
 ```
 
-## (mod x:number y:number): number
+## (% x y)
 Returns the remainder after division of `x` and `y`.
 ```
-(mod 5 2) [ 1 ]
+(% 5 2) [ 1 ]
 ```
 
-## (pow x:number y:number): number
+## (pow x y)
 Returns `x` raised to the power of `y`.
 ```
 (pow 2 3) [ 8 ]
 ```
 
-Comparison Functions
-====================
+# Comparison Functions
 
-## (eq x:number y:number): boolean
-Returns `true` if `x` equals `y`. Otherwise, returns `false`.
+## (= x y)
+Returns `true` if `x` equals `y`, `false` if not.
 ```
-(eq (add 1 2) 3) [ true ]
-```
-
-## (lt x:number y:number): boolean
-Returns `true` if `x` is less than `y`. Otherwise, returns `false`.
-```
-(lt 1 2) [ true ]
+(= (+ 1 2) 3) [ true ]
+(= (+ 2 2) 5) [ false ]
 ```
 
-## (gt x:number y:number): boolean
-Returns `true` if `x` is greater than `y`. Otherwise, returns `false`.
+## (< x y)
+Returns `true` if `x` is less than `y`, `false` if not.
 ```
-(gt 1 2) [ false ]
-```
-
-List Functions
-==============
-
-## (list ...:any): list
-Returns a list containing the arguments as elements.
-```
-(list a b c) [ (a b c) ]
+(< 2 3) [ true ]
+(< 2 1) [ false ]
 ```
 
-## (length lst:list): number
+## (> x y)
+Returns `true` if `x` is greater than `y`, `false` if not.
+```
+(> 2 1) [ true ]
+(> 2 3) [ false ]
+```
+
+# List Functions
+
+## (list items...)
+Creates a new list containing the items.
+```
+(list 1 2 3) [ (1 2 3) ]
+```
+
+## (length lst)
 Returns the number of elements in `lst`.
 ```
-(len '(a b c)) [ 3 ]
+(length '(a b c)) [ 3 ]
 ```
 
-## (nth lst:list n:number): any
-Returns the `n`th element of `lst`.
+## (nth lst n)
+Returns the `nth` element of `lst`. Indexing is zero-based.
 ```
-(nth '(a b c) 2) [ b ]
+(nth '(a b c) 2) [ c ]
 ```
 
-## (slice lst:list begin:number end:number): list
+## (slice lst begin end)
 Returns a slice of `lst` from index `begin` up to but not including index `end`. Indices are zero-based.
 ```
 (slice '(a b c d e) 1 4) [ (b c d) ]
 ```
 
-## (concat lst1:list lst2:list): list
-Returns the result of concatenating `lst1` and `lst2`.
+## (join lst1 lst2)
+Concatenates the two lists.
 ```
-(concat '(a b c) '(1 2 3)) [ (a b c 1 2 3) ]
+(join '(a b c) '(1 2 3)) [ (a b c 1 2 3) ]
 ```
 
-Other Functions
-===============
+# String Functions
 
-## (sequence ...:any): any
-Returns the value of the last expression in a sequence of expressions. Useful for grouping expressions together.
+## (length string)
+Returns the number of characters in the string.
 ```
-(sequence
-  (let pi 3.14)
+(length "hello") [ 5 ]
+```
+
+## (nth string n)
+Returns the `nth` character of the string. Indexing is zero-based.
+```
+(nth "hello" 1) [ "e" ]
+```
+
+## (concat string1 string2)
+Returns the result of concatenating the two strings.
+```
+(concat "good" "bye") [ "goodbye" ]
+```
+
+# I/O Functions
+
+## (print value)
+Prints and then returns the value.
+```
+(print "Hello, World!\n")
+```
+
+## (parse-string string)
+Parses the string as Squirrel source code and returns the resulting Squirrel data type.
+```
+(eval (parse-string "(+ 1 2)")) [ 3 ]
+```
+
+## (read-file path)
+Returns the contents of the file as a string.
+
+## (read-line prompt)
+Displays the prompt and returns a line entered by the user.
+
+# Other Functions
+
+## (do expr...)
+Evaluates multiple expressions in order and returns the value of the last one.
+```
+(do
+  (def pi 3.14)
   pi) [ 3.14 ]
-```
-
-## (print expr:any): any
-Prints and returns the value of `expr`.
-```
-(print "Hello, World!\n") [ "Hello, World!\n" ]
 ```

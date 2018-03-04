@@ -48,7 +48,7 @@ function evaluate(ast: SquirrelType, env: Environment): SquirrelType {
         newFunction.body = functionBody;
 
         return newFunction;
-      } else if (head.name === "let") {
+      } else if (head.name === "def") {
         const key: string = (ast.items[1] as SquirrelSymbol).name;
         const value: SquirrelType = evaluate(ast.items[2], env);
         env.set(key, value);

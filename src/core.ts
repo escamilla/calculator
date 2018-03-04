@@ -13,7 +13,7 @@ import SquirrelType from "./types/SquirrelType";
 
 const namespace: Map<string, SquirrelFunction> = new Map();
 
-namespace.set("add", new SquirrelFunction(
+namespace.set("+", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -21,7 +21,7 @@ namespace.set("add", new SquirrelFunction(
   },
 ));
 
-namespace.set("sub", new SquirrelFunction(
+namespace.set("-", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -29,7 +29,7 @@ namespace.set("sub", new SquirrelFunction(
   },
 ));
 
-namespace.set("mul", new SquirrelFunction(
+namespace.set("*", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -37,7 +37,7 @@ namespace.set("mul", new SquirrelFunction(
   },
 ));
 
-namespace.set("div", new SquirrelFunction(
+namespace.set("/", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -45,7 +45,7 @@ namespace.set("div", new SquirrelFunction(
   },
 ));
 
-namespace.set("mod", new SquirrelFunction(
+namespace.set("%", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -61,19 +61,7 @@ namespace.set("pow", new SquirrelFunction(
   },
 ));
 
-namespace.set("list", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelList => {
-    return new SquirrelList(args);
-  },
-));
-
-namespace.set("sequence", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelType => {
-    return args[args.length - 1];
-  },
-));
-
-namespace.set("eq", new SquirrelFunction(
+namespace.set("=", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelBoolean => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -81,7 +69,7 @@ namespace.set("eq", new SquirrelFunction(
   },
 ));
 
-namespace.set("lt", new SquirrelFunction(
+namespace.set("<", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelBoolean => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -89,7 +77,7 @@ namespace.set("lt", new SquirrelFunction(
   },
 ));
 
-namespace.set("gt", new SquirrelFunction(
+namespace.set(">", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
     const x: SquirrelNumber = args[0] as SquirrelNumber;
     const y: SquirrelNumber = args[1] as SquirrelNumber;
@@ -97,7 +85,12 @@ namespace.set("gt", new SquirrelFunction(
   },
 ));
 
-// Takes a list or string and returns its length
+namespace.set("list", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelList => {
+    return new SquirrelList(args);
+  },
+));
+
 namespace.set("length", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelNumber => {
     if (args[0] instanceof SquirrelList) {
@@ -105,13 +98,12 @@ namespace.set("length", new SquirrelFunction(
     } else if (args[0] instanceof SquirrelString) {
       return new SquirrelNumber((args[0] as SquirrelString).value.length);
     } else {
+      process.stdout.write(args[0].toString() + "\n");
       throw new Error("length() takes a list or string");
     }
   },
 ));
 
-// Takes a list or string and an index and returns the nth element or character.
-// Note: indexing is zero-based.
 namespace.set("nth", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
     const index: SquirrelNumber = args[1] as SquirrelNumber;
@@ -145,13 +137,6 @@ namespace.set("join", new SquirrelFunction(
   },
 ));
 
-namespace.set("print", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelType => {
-    process.stdout.write(args[0].toString() + "\n");
-    return args[0];
-  },
-));
-
 namespace.set("concat", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelString => {
     const castedArgs: SquirrelString[] = args.map((arg: SquirrelType) => arg as SquirrelString);
@@ -160,7 +145,13 @@ namespace.set("concat", new SquirrelFunction(
   },
 ));
 
-// Takes a string and parses it as Squirrel code without evaluating it
+namespace.set("print", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelType => {
+    process.stdout.write(args[0].toString() + "\n");
+    return args[0];
+  },
+));
+
 namespace.set("parse-string", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
     const input: SquirrelString = args[0] as SquirrelString;
@@ -170,7 +161,6 @@ namespace.set("parse-string", new SquirrelFunction(
   },
 ));
 
-// Takes a file name and returns the contents of the file as a string
 namespace.set("read-file", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelString => {
     const path: string = (args[0] as SquirrelString).value;
@@ -179,12 +169,17 @@ namespace.set("read-file", new SquirrelFunction(
   },
 ));
 
-// Displays a prompt and reads a line entered by the user
 namespace.set("read-line", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelString => {
     const prompt: string = (args[0] as SquirrelString).value;
     const line: string = readlineSync.question(prompt);
     return new SquirrelString(line);
+  },
+));
+
+namespace.set("do", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelType => {
+    return args[args.length - 1];
   },
 ));
 
