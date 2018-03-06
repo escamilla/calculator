@@ -2,7 +2,9 @@ import * as readlineSync from "readline-sync";
 
 import interpret from "./interpret";
 import replEnv from "./replEnv";
+import toString from "./toString";
 import SquirrelList from "./types/SquirrelList";
+import SquirrelNil from "./types/SquirrelNil";
 import SquirrelString from "./types/SquirrelString";
 import SquirrelType from "./types/SquirrelType";
 
@@ -25,6 +27,8 @@ while (true) {
       continue;
     }
     replEnv.set("_", result);
-    process.stdout.write(result.toString() + "\n");
+    if (!(result instanceof SquirrelNil)) {
+      process.stdout.write(toString(result) + "\n");
+    }
   }
 }

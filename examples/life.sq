@@ -11,7 +11,7 @@
     (0 0 0 1 1 0 0 0)))
 
 (def print-grid (lambda (grid)
-  (map (lambda (row) (print row)) grid)))
+  (map (lambda (row) (print-line row)) grid)))
 
 (def get-adjacent-points (lambda (point)
   (do
@@ -61,10 +61,10 @@
 
 (def generate-n-grids (lambda (grid count)
   (if (= 0 count)
-    '()
+    nil
     (do
       (print-grid grid)
-      (print '())
+      (print-line)
       (generate-n-grids (generate-next-grid grid) (- count 1))))))
 
 (generate-n-grids initial-grid 11)

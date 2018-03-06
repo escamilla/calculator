@@ -112,12 +112,21 @@ Returns the result of concatenating the two strings.
 (concat "good" "bye") [ "goodbye" ]
 ```
 
+## (to-string value)
+Returns a string representation of the value that will produce the value when entered into the shell.
+
 # I/O Functions
 
 ## (print value)
-Prints and then returns the value.
+Prints the value to stdout. Returns `nil`.
 ```
 (print "Hello, World!\n")
+```
+
+## (print-line value)
+Prints the value to stdout followed by a newline. Returns `nil`.
+```
+(print-line "Hello, World!")
 ```
 
 ## (parse-string string)

@@ -2,6 +2,7 @@ import { } from "jest";
 
 import interpret from "../src/interpret";
 import replEnv from "../src/replEnv";
+import toString from "../src/toString";
 
 interface IPositiveTestCase {
   input: string;
@@ -88,7 +89,8 @@ const negativeTestCases: INegativeTestCase[] = [
 describe("interpret() follows expected behavior", () => {
   positiveTestCases.forEach((testCase: IPositiveTestCase) => {
     test(`${testCase.input} => ${testCase.expectedOutput}`, () => {
-      expect(interpret(testCase.input, replEnv).toString()).toEqual(testCase.expectedOutput);
+      const actualOutput: string = toString(interpret(testCase.input, replEnv));
+      expect(actualOutput).toEqual(testCase.expectedOutput);
     });
   });
 

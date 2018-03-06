@@ -4,9 +4,11 @@ import * as readlineSync from "readline-sync";
 
 import Lexer from "./Lexer";
 import Parser from "./Parser";
+import toString from "./toString";
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
 import SquirrelList from "./types/SquirrelList";
+import SquirrelNil from "./types/SquirrelNil";
 import SquirrelNumber from "./types/SquirrelNumber";
 import SquirrelString from "./types/SquirrelString";
 import SquirrelType from "./types/SquirrelType";
@@ -145,10 +147,27 @@ namespace.set("concat", new SquirrelFunction(
   },
 ));
 
+namespace.set("to-string", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelString => {
+    return new SquirrelString(toString(args[0]));
+  },
+));
+
 namespace.set("print", new SquirrelFunction(
   (args: SquirrelType[]): SquirrelType => {
-    process.stdout.write(args[0].toString() + "\n");
-    return args[0];
+    process.stdout.write(toString(args[0], true));
+    return new SquirrelNil();
+  },
+));
+
+namespace.set("print-line", new SquirrelFunction(
+  (args: SquirrelType[]): SquirrelType => {
+    if (args.length === 0) {
+      process.stdout.write("\n");
+    } else {
+      process.stdout.write(toString(args[0], true) + "\n");
+    }
+    return new SquirrelNil();
   },
 ));
 

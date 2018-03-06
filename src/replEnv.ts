@@ -4,6 +4,7 @@ import evaluate from "./evaluate";
 import interpret from "./interpret";
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
+import SquirrelNil from "./types/SquirrelNil";
 import SquirrelType from "./types/SquirrelType";
 
 const replEnv: Environment = new Environment();
@@ -14,6 +15,7 @@ replEnv.set("eval", new SquirrelFunction(
   },
 ));
 
+replEnv.set("nil", new SquirrelNil());
 replEnv.set("true", new SquirrelBoolean(true));
 replEnv.set("false", new SquirrelBoolean(false));
 
@@ -91,12 +93,12 @@ const inputs: string[] = [
              (list (head collection))))))`,
   `(def find (lambda (predicate collection)
      (if (empty? collection)
-       '()
+       nil
        (do (def value (head collection))
                  (if (predicate value)
                    value
                    (find predicate (tail collection)))))))`,
-  // other functions
+  // i/o functions
   `(def load-file (lambda (path)
      (eval (parse-string (concat "(do " (read-file path) ")")))))`,
 ];

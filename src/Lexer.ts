@@ -65,6 +65,10 @@ class Lexer {
     return this.isAlpha(char) || "%*+-/<=>?_".includes(char);
   }
 
+  private isEscapeCharacter(char: string): boolean {
+    return 'n"\\'.includes(char);
+  }
+
   private skipWhitespace(): void {
     while (this.isWhitespace(this.peek())) {
       this.next();
@@ -124,16 +128,23 @@ class Lexer {
   private readString(): string {
     let str: string = "";
     this.next();
-    while (this.peek() && this.peek() !== "\"") {
-      if (this.peek() === "\\" && this.lookAhead() === "n") {
-        str += "\n";
+    while (this.peek() && this.peek() !== '"') {
+      if (this.peek() === "\\" && this.isEscapeCharacter(this.lookAhead())) {
+        if (this.lookAhead() === "n") {
+          str += "\n";
+        } else if (this.lookAhead() === '"') {
+          str += '"';
+        } else if (this.lookAhead() === "\\") {
+          str += "\\";
+        }
         this.next();
         this.next();
+        continue;
       } else {
         str += this.next();
       }
     }
-    if (this.peek() === "\"") {
+    if (this.peek() === '"') {
       this.next();
     } else {
       throw new Error("unterminated string");
