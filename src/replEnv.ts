@@ -33,6 +33,8 @@ const inputs: string[] = [
   // math functions
   `(def even? (lambda (x) (= 0 (% x 2))))`,
   `(def odd? (lambda (x) (= 1 (% x 2))))`,
+  `(def abs (lambda (x)
+     (if (< x 0) (- 0 x) x)))`,
   `(def factorial (lambda (x) (if (= x 0) 1 (* x (factorial (- x 1))))))`,
   // list functions
   `(def empty? (lambda (collection)
