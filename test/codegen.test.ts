@@ -24,6 +24,12 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `true`, expectedOutput: true },
   { input: `false`, expectedOutput: false },
   { input: `(1 "string" null true false)`, expectedOutput: [1, "string", null, true, false] },
+  { input: `(+ 1 2)`, expectedOutput: 3 },
+  { input: `(- 3 2)`, expectedOutput: 1 },
+  { input: `(* 2 3)`, expectedOutput: 6 },
+  { input: `(/ 6 3)`, expectedOutput: 2 },
+  { input: `(% 7 3)`, expectedOutput: 1 },
+  { input: `(+ 1 (+ 1 1))`, expectedOutput: 3 },
 ];
 
 describe("codegen() follows expected behavior", () => {

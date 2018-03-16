@@ -1,5 +1,6 @@
 import escapeString from "./escapeString";
 import JavaScriptArray from "./js/JavaScriptArray";
+import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation";
 import JavaScriptBoolean from "./js/JavaScriptBoolean";
 import JavaScriptNode from "./js/JavaScriptNode";
 import JavaScriptNull from "./js/JavaScriptNull";
@@ -13,8 +14,19 @@ import SquirrelString from "./types/SquirrelString";
 import SquirrelSymbol from "./types/SquirrelSymbol";
 import SquirrelType from "./types/SquirrelType";
 
+const binaryOperators: string[] = ["+", "-", "*", "/", "%"];
+
 function codegen(ast: SquirrelType): JavaScriptNode {
   if (ast instanceof SquirrelList) {
+    const head: SquirrelType = ast.items[0];
+    if (head instanceof SquirrelSymbol) {
+      if (binaryOperators.includes(head.name)) {
+        const operator: string = head.name;
+        const leftSide: SquirrelType = ast.items[1];
+        const rightSide: SquirrelType = ast.items[2];
+        return new JavaScriptBinaryOperation(operator, codegen(leftSide), codegen(rightSide));
+      }
+    }
     const items: JavaScriptNode[] = ast.items.map((item: SquirrelType) => codegen(item));
     return new JavaScriptArray(items);
   } else if (ast instanceof SquirrelBoolean) {
@@ -42,6 +54,10 @@ function convertToString(ast: JavaScriptNode): string {
   if (ast instanceof JavaScriptArray) {
     const itemStrings: string[] = ast.items.map((item: JavaScriptNode) => convertToString(item));
     return "[" + itemStrings.join(", ") + "]";
+  } else if (ast instanceof JavaScriptBinaryOperation) {
+    const leftSide: string = convertToString(ast.leftSide);
+    const rightSide: string = convertToString(ast.rightSide);
+    return `(${leftSide} ${ast.operator} ${rightSide})`;
   } else if (ast instanceof JavaScriptBoolean) {
     return ast.value ? "true" : "false";
   } else if (ast instanceof JavaScriptNull) {
