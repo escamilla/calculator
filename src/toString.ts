@@ -1,3 +1,4 @@
+import escapeString from "./escapeString";
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
 import SquirrelList from "./types/SquirrelList";
@@ -29,11 +30,7 @@ function toString(input: SquirrelType, printable: boolean = false): string {
     if (printable) {
       return input.value;
     } else {
-      let str: string = input.value;
-      str = str.replace(/\\/g, "\\\\");
-      str = str.replace(/\n/g, "\\n");
-      str = str.replace(/\"/g, "\\\"");
-      return `"${str}"`;
+      return escapeString(input.value);
     }
   } else if (input instanceof SquirrelSymbol) {
     return input.name;
