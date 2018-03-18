@@ -10,20 +10,31 @@ import {
   toString,
 } from "squirrel-core";
 
+import nodeIOHandler from "./nodeIOHandler";
+
+const loadFileDefinition: string =
+  `(def load-file (lambda (path)
+     (eval (parse-string (concat "(do " (read-file path) ")")))))`;
+interpret(loadFileDefinition, replEnv, nodeIOHandler);
+
 if (process.argv.length > 2) {
   replEnv.set("argv", new SquirrelList(process.argv.slice(3).map((value: string) => new SquirrelString(value))));
-  interpret(`(load-file "${process.argv[2]}")`, replEnv);
+  interpret(`(load-file "${process.argv[2]}")`, replEnv, nodeIOHandler);
   process.exit(0);
 }
 
-process.stdout.write("tip: _ (underscore) always contains the result of the most recently evaluated expression\n");
+process.stdout.write('Enter "exit" or press ^C to exit\n');
+process.stdout.write('Tip: The underscore symbol ("_") always contains the value of the last expression\n');
 readlineSync.setPrompt("> ");
 while (true) {
-  const line: string = readlineSync.prompt();
-  if (line.trim()) {
+  const line: string = readlineSync.prompt().trim();
+  if (line) {
+    if (line === "exit") {
+      process.exit(0);
+    }
     let result: SquirrelType;
     try {
-      result = interpret(line, replEnv);
+      result = interpret(line, replEnv, nodeIOHandler);
     } catch (e) {
       process.stdout.write(e.message + "\n");
       continue;

@@ -1,7 +1,7 @@
 {
   "name": "squirrel-cli",
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "description": "A command line interface for running Squirrel programs",
   "keywords": [
@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "readline-sync": "^1.4.9",
-    "squirrel-core": "^0.1.0"
+    "squirrel-core": "^0.2.0"
   },
   "devDependencies": {
     "@types/jest": "^22.2.0",
