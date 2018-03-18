@@ -1,5 +1,6 @@
 import escapeString from "./escapeString";
 import interpret from "./interpret";
+import IOHandler from "./IOHandler";
 import Lexer from "./Lexer";
 import Parser from "./Parser";
 import replEnv from "./replEnv";
@@ -16,6 +17,7 @@ import SquirrelType from "./types/SquirrelType";
 export {
   escapeString,
   interpret,
+  IOHandler,
   Lexer,
   Parser,
   replEnv,

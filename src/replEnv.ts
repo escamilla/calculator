@@ -102,9 +102,6 @@ const inputs: string[] = [
                  (if (predicate value)
                    value
                    (find predicate (tail collection)))))))`,
-  // i/o functions
-  `(def load-file (lambda (path)
-     (eval (parse-string (concat "(do " (read-file path) ")")))))`,
 ];
 
 inputs.forEach((input: string) => {
