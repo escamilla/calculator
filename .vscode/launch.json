@@ -4,17 +4,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Interpreter",
-      "preLaunchTask": "npm: build",
-      "program": "${workspaceRoot}/dist/main.js",
-      "console": "integratedTerminal"
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Launch Jest",
       "preLaunchTask": "npm: build",
-      "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
       "console": "integratedTerminal"
     }
   ]

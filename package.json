@@ -1,27 +1,48 @@
 {
-  "name": "squirrel",
-  "version": "0.0.1",
-  "description": "An expression-oriented programming language inspired by Lisp",
-  "license": "MIT",
+  "name": "squirrel-core",
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
-  "repository": "https://github.com/escamilla/squirrel.ts",
-  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Squirrel is a dialect of Lisp made for fun",
+  "keywords": [
+    "javascript",
+    "language",
+    "lisp",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/escamilla/squirrel-core.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/main.js",
-    "test": "jest",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint --project .",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ]
   },
   "dependencies": {
     "readline-sync": "^1.4.9"
   },
   "devDependencies": {
-    "@types/jest": "^22.1.0",
-    "@types/node": "^9.4.0",
+    "@types/jest": "^22.2.0",
+    "@types/node": "^9.4.7",
     "@types/readline-sync": "^1.4.3",
-    "jest": "^22.1.4",
-    "ts-jest": "^22.0.1",
+    "jest": "^22.4.2",
+    "ts-jest": "^22.4.1",
     "tslint": "^5.9.1",
-    "typescript": "^2.6.2"
+    "typescript": "^2.7.2"
   }
 }

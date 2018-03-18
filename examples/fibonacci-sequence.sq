@@ -1,9 +1,0 @@
-(def fibonacci-sequence (lambda (max-count)
-  (do
-    (def fibonacci-sequence-iter (lambda (a b numbers current-count)
-      (if (= current-count max-count)
-        numbers
-        (fibonacci-sequence-iter b (+ a b) (join numbers (list a)) (+ current-count 1)))))
-    (fibonacci-sequence-iter 1 1 '() 0))))
-
-(print-line (fibonacci-sequence 10))

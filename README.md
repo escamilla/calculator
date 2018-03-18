@@ -1,25 +1,19 @@
-Squirrel
-========
-An expression-oriented programming language inspired by Lisp
+Squirrel Core
+=============
+Squirrel is a dialect of Lisp that I made for fun. This module (squirrel-core) only contains the implementation of the Squirrel language. To run Squirrel programs, see the [squirrel-cli](https://github.com/escamilla/squirrel-cli) module.
 
 Sample
 ------
 ```
-[ define a factorial function ]
-(do
-  (def factorial
-    (lambda (x) (if (= x 0) 1 (* x (factorial (- x 1))))))
-  (print (factorial 10)))
-```
+(def factorial
+  (lambda (x)
+    (if (= x 0)
+      1
+      (* x (factorial (- x 1))))))
 
-Usage
------
-```
-# run a Squirrel shell
-npm start
+(print-line (map factorial (range 10)))
 
-# run a Squirrel program
-npm start examples/life.sq
+[ -> (1 1 2 6 24 120 720 5040 40320 362880) ]
 ```
 
 Resources
