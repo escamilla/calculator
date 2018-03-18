@@ -1,5 +1,3 @@
-import { } from "jest";
-
 import interpret from "../src/interpret";
 import replEnv from "../src/replEnv";
 import toString from "../src/toString";

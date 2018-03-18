@@ -1,5 +1,3 @@
-import { } from "jest";
-
 import Environment from "../src/Environment";
 import SquirrelNumber from "../src/types/SquirrelNumber";
 

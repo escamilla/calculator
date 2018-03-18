@@ -12,15 +12,8 @@
     "test": "jest",
     "lint": "tslint -p tsconfig.json"
   },
-  "jest": {
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ]
+  "dependencies": {
+    "readline-sync": "^1.4.9"
   },
   "devDependencies": {
     "@types/jest": "^22.1.0",
@@ -30,8 +23,5 @@
     "ts-jest": "^22.0.1",
     "tslint": "^5.9.1",
     "typescript": "^2.6.2"
-  },
-  "dependencies": {
-    "readline-sync": "^1.4.9"
   }
 }
