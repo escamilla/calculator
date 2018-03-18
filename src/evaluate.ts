@@ -1,11 +1,12 @@
 import Environment from "./Environment";
+import IOHandler from "./IOHandler";
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
 import SquirrelList from "./types/SquirrelList";
 import SquirrelSymbol from "./types/SquirrelSymbol";
 import SquirrelType from "./types/SquirrelType";
 
-function evaluate(ast: SquirrelType, env: Environment): SquirrelType {
+function evaluate(ast: SquirrelType, env: Environment, ioHandler: IOHandler): SquirrelType {
   if (ast instanceof SquirrelSymbol) {
     return env.get(ast.name);
   }
@@ -19,12 +20,12 @@ function evaluate(ast: SquirrelType, env: Environment): SquirrelType {
     if (head instanceof SquirrelSymbol) {
       if (head.name === "if") {
         const condition: SquirrelType = ast.items[1];
-        const result: SquirrelType = evaluate(condition, env);
+        const result: SquirrelType = evaluate(condition, env, ioHandler);
         if (result instanceof SquirrelBoolean) {
           if (result.value) {
-            return evaluate(ast.items[2], env);
+            return evaluate(ast.items[2], env, ioHandler);
           } else {
-            return evaluate(ast.items[3], env);
+            return evaluate(ast.items[3], env, ioHandler);
           }
         } else {
           throw new Error("test condition in if expression must evaluate to a boolean value");
@@ -40,7 +41,7 @@ function evaluate(ast: SquirrelType, env: Environment): SquirrelType {
         const functionBody: SquirrelType = ast.items[2];
 
         const newFunction: SquirrelFunction = new SquirrelFunction((functionArgs: SquirrelType[]): SquirrelType => {
-          return evaluate(functionBody, new Environment(env, functionParams, functionArgs));
+          return evaluate(functionBody, new Environment(env, functionParams, functionArgs), ioHandler);
         });
 
         newFunction.isUserDefined = true;
@@ -50,7 +51,7 @@ function evaluate(ast: SquirrelType, env: Environment): SquirrelType {
         return newFunction;
       } else if (head.name === "def") {
         const key: string = (ast.items[1] as SquirrelSymbol).name;
-        const value: SquirrelType = evaluate(ast.items[2], env);
+        const value: SquirrelType = evaluate(ast.items[2], env, ioHandler);
         env.set(key, value);
         return value;
       } else if (head.name === "quote") {
@@ -58,10 +59,11 @@ function evaluate(ast: SquirrelType, env: Environment): SquirrelType {
       }
     }
 
-    const evaluatedList: SquirrelList = new SquirrelList(ast.items.map((item: SquirrelType) => evaluate(item, env)));
+    const evaluatedList: SquirrelList = new SquirrelList(ast.items.map(
+      (item: SquirrelType) => evaluate(item, env, ioHandler)));
     const fn: SquirrelFunction = evaluatedList.items[0] as SquirrelFunction;
     const args: SquirrelType[] = evaluatedList.items.slice(1);
-    return fn.callable(args);
+    return fn.callable(args, ioHandler);
   }
 
   return ast;

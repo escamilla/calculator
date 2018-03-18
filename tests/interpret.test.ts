@@ -1,3 +1,4 @@
+import dummyIOHandler from "../src/dummyIOHandler";
 import interpret from "../src/interpret";
 import replEnv from "../src/replEnv";
 import toString from "../src/toString";
@@ -87,14 +88,14 @@ const negativeTestCases: INegativeTestCase[] = [
 describe("interpret() follows expected behavior", () => {
   positiveTestCases.forEach((testCase: IPositiveTestCase) => {
     test(`${testCase.input} => ${testCase.expectedOutput}`, () => {
-      const actualOutput: string = toString(interpret(testCase.input, replEnv));
+      const actualOutput: string = toString(interpret(testCase.input, replEnv, dummyIOHandler));
       expect(actualOutput).toEqual(testCase.expectedOutput);
     });
   });
 
   negativeTestCases.forEach((testCase: INegativeTestCase) => {
     test(`${testCase.input} cannot be evaluated because ${testCase.reason}`, () => {
-      expect(() => interpret(testCase.input, replEnv)).toThrow();
+      expect(() => interpret(testCase.input, replEnv, dummyIOHandler)).toThrow();
     });
   });
 });

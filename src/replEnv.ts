@@ -1,7 +1,9 @@
 import { namespace } from "./core";
+import dummyIOHandler from "./dummyIOHandler";
 import Environment from "./Environment";
 import evaluate from "./evaluate";
 import interpret from "./interpret";
+import IOHandler from "./IOHandler";
 import SquirrelBoolean from "./types/SquirrelBoolean";
 import SquirrelFunction from "./types/SquirrelFunction";
 import SquirrelNil from "./types/SquirrelNil";
@@ -10,8 +12,8 @@ import SquirrelType from "./types/SquirrelType";
 const replEnv: Environment = new Environment();
 
 replEnv.set("eval", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelType => {
-    return evaluate(args[0], replEnv);
+  (args: SquirrelType[], ioHandler: IOHandler): SquirrelType => {
+    return evaluate(args[0], replEnv, ioHandler);
   },
 ));
 
@@ -106,7 +108,7 @@ const inputs: string[] = [
 ];
 
 inputs.forEach((input: string) => {
-  interpret(input, replEnv);
+  interpret(input, replEnv, dummyIOHandler);
 });
 
 export default replEnv;

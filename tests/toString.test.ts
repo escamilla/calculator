@@ -1,4 +1,4 @@
-import Environment from "../src/Environment";
+import dummyIOHandler from "../src/dummyIOHandler";
 import interpret from "../src/interpret";
 import replEnv from "../src/replEnv";
 import toString from "../src/toString";
@@ -40,7 +40,7 @@ const testCases: ITestCase[] = [
 
 testCases.forEach((testCase: ITestCase) => {
   test(`\`${testCase.input}\` => \`${testCase.expectedOutput}\` (printable = ${testCase.printable})`, () => {
-    const actualOutput: string = toString(interpret(testCase.input, replEnv), testCase.printable);
+    const actualOutput: string = toString(interpret(testCase.input, replEnv, dummyIOHandler), testCase.printable);
     expect(actualOutput).toEqual(testCase.expectedOutput);
   });
 });

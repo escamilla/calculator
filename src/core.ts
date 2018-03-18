@@ -1,7 +1,4 @@
-import * as fs from "fs";
-
-import * as readlineSync from "readline-sync";
-
+import IOHandler from "./IOHandler";
 import Lexer from "./Lexer";
 import Parser from "./Parser";
 import toString from "./toString";
@@ -100,7 +97,6 @@ namespace.set("length", new SquirrelFunction(
     } else if (args[0] instanceof SquirrelString) {
       return new SquirrelNumber((args[0] as SquirrelString).value.length);
     } else {
-      process.stdout.write(args[0].toString() + "\n");
       throw new Error("length() takes a list or string");
     }
   },
@@ -154,18 +150,20 @@ namespace.set("to-string", new SquirrelFunction(
 ));
 
 namespace.set("print", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelType => {
-    process.stdout.write(toString(args[0], true));
+  (args: SquirrelType[], ioHandler: IOHandler): SquirrelNil => {
+    const message: string = toString(args[0], true);
+    ioHandler.print(message);
     return new SquirrelNil();
   },
 ));
 
 namespace.set("print-line", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelType => {
+  (args: SquirrelType[], ioHandler: IOHandler): SquirrelNil => {
     if (args.length === 0) {
-      process.stdout.write("\n");
+      ioHandler.printLine();
     } else {
-      process.stdout.write(toString(args[0], true) + "\n");
+      const message: string = toString(args[0], true);
+      ioHandler.printLine(message);
     }
     return new SquirrelNil();
   },
@@ -181,17 +179,17 @@ namespace.set("parse-string", new SquirrelFunction(
 ));
 
 namespace.set("read-file", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelString => {
+  (args: SquirrelType[], ioHandler: IOHandler): SquirrelString => {
     const path: string = (args[0] as SquirrelString).value;
-    const contents: string = fs.readFileSync(path).toString();
+    const contents: string = ioHandler.readFile(path);
     return new SquirrelString(contents);
   },
 ));
 
 namespace.set("read-line", new SquirrelFunction(
-  (args: SquirrelType[]): SquirrelString => {
+  (args: SquirrelType[], ioHandler: IOHandler): SquirrelString => {
     const prompt: string = (args[0] as SquirrelString).value;
-    const line: string = readlineSync.question(prompt);
+    const line: string = ioHandler.readLine(prompt);
     return new SquirrelString(line);
   },
 ));
