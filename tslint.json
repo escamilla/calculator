@@ -1,0 +1,23 @@
+{
+  "defaultSeverity": "error",
+  "extends": "tslint:latest",
+  "rules": {
+    "member-access": [
+      true,
+      "check-accessor",
+      "check-constructor"
+    ],
+    "typedef": [
+      true,
+      "call-signature",
+      "arrow-call-signature",
+      "parameter",
+      "arrow-parameter",
+      "property-declaration",
+      "variable-declaration",
+      "member-variable-declaration",
+      "object-destructuring",
+      "array-destructuring"
+    ]
+  }
+}
