@@ -10,20 +10,14 @@
     (0 0 1 0 0 1 0 0)
     (0 0 0 1 1 0 0 0)))
 
-(def print-cell (lambda (cell)
-  (print (if (= cell 0) " " "*"))))
+(def turn-cell-to-string (lambda (cell)
+  (if (= cell 0) "  " "* ")))
 
-(def print-row (lambda (row)
-  (do
-    (map (lambda (cell)
-      (do
-        (print-cell cell)
-        (print " ")))
-      row)
-    (print-line))))
+(def turn-row-to-string (lambda (row)
+  (reduce concat "" (map turn-cell-to-string row))))
 
 (def print-grid (lambda (grid)
-  (map (lambda (row) (print-row row)) grid)))
+  (map (lambda (row) (print-line (turn-row-to-string row))) grid)))
 
 (def get-adjacent-points (lambda (point)
   (do

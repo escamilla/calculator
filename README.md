@@ -23,5 +23,5 @@ Usage
 npm start
 
 # run a Squirrel program
-npm start examples/life.sq
+npm start examples/game-of-life.sq
 ```
