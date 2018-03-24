@@ -30,6 +30,7 @@ const inputs: string[] = [
   `(def not (lambda (x) (if x false true)))`,
   `(def and (lambda (x y) (if x y false)))`,
   `(def or (lambda (x y) (if x true y)))`,
+  `(def != (lambda (x y) (not (= x y))))`,
   `(def <= (lambda (x y) (or (< x y) (= x y))))`,
   `(def >= (lambda (x y) (or (> x y) (= x y))))`,
   // math functions

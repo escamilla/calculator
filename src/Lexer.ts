@@ -62,7 +62,7 @@ class Lexer {
   }
 
   private isSymbolCharacter(char: string): boolean {
-    return this.isAlpha(char) || "%*+-/<=>?_".includes(char);
+    return this.isAlpha(char) || "!%*+-/<=>?_".includes(char);
   }
 
   private isEscapeCharacter(char: string): boolean {
