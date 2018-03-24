@@ -22,14 +22,19 @@ import {
   SquirrelType,
 } from "squirrel-core";
 
-const binaryOperators: string[] = ["+", "-", "*", "/", "%"];
+const binaryOperators: string[] = ["+", "-", "*", "/", "%", "=", "!=", ">", ">=", "<", "<="];
 
 function convertToJavaScriptAST(ast: SquirrelType): JavaScriptNode {
   if (ast instanceof SquirrelList) {
     const head: SquirrelType = ast.items[0];
     if (head instanceof SquirrelSymbol) {
       if (binaryOperators.includes(head.name)) {
-        const operator: string = head.name;
+        let operator: string = head.name;
+        if (operator === "=") {
+          operator = "===";
+        } else if (operator === "!=") {
+          operator = "!==";
+        }
         const leftSide: JavaScriptNode = convertToJavaScriptAST(ast.items[1]);
         const rightSide: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
         return new JavaScriptBinaryOperation(operator, leftSide, rightSide);
