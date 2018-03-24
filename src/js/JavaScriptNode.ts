@@ -2,6 +2,8 @@ import JavaScriptArray from "./JavaScriptArray";
 import JavaScriptAssignmentOperation from "./JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./JavaScriptBinaryOperation";
 import JavaScriptBoolean from "./JavaScriptBoolean";
+import JavaScriptFunction from "./JavaScriptFunction";
+import JavaScriptFunctionCall from "./JavaScriptFunctionCall";
 import JavaScriptIIFE from "./JavaScriptIIFE";
 import JavaScriptNull from "./JavaScriptNull";
 import JavaScriptNumber from "./JavaScriptNumber";
@@ -13,6 +15,8 @@ type JavaScriptNode =
   JavaScriptAssignmentOperation |
   JavaScriptBinaryOperation |
   JavaScriptBoolean |
+  JavaScriptFunction |
+  JavaScriptFunctionCall |
   JavaScriptIIFE |
   JavaScriptNull |
   JavaScriptNumber |

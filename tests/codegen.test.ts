@@ -34,6 +34,7 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(def pi 3.14)`, expectedOutput: undefined },
   { input: `(do (def pi 3.14) pi)`, expectedOutput: 3.14 },
   { input: `(do (do (def pi 3.14) pi))`, expectedOutput: 3.14 },
+  { input: `(do (def square (lambda (x) (* x x))) (square 3))`, expectedOutput: 9 },
 ];
 
 describe("codegen() follows expected behavior", () => {

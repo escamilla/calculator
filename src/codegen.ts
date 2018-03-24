@@ -2,6 +2,8 @@ import JavaScriptArray from "./js/JavaScriptArray";
 import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation";
 import JavaScriptBoolean from "./js/JavaScriptBoolean";
+import JavaScriptFunction from "./js/JavaScriptFunction";
+import JavaScriptFunctionCall from "./js/JavaScriptFunctionCall";
 import JavaScriptIIFE from "./js/JavaScriptIIFE";
 import JavaScriptNode from "./js/JavaScriptNode";
 import JavaScriptNull from "./js/JavaScriptNull";
@@ -41,6 +43,18 @@ function convertToJavaScriptAST(ast: SquirrelType): JavaScriptNode {
       } else if (head.name === "do") {
         const nodes: JavaScriptNode[] = ast.items.slice(1).map((item: SquirrelType) => convertToJavaScriptAST(item));
         return new JavaScriptIIFE(nodes);
+      } else if (head.name === "lambda") {
+        if (!(ast.items[1] instanceof SquirrelList)) {
+          throw new Error("first argument to lambda must be list of parameters");
+        }
+        const paramList: SquirrelList = ast.items[1] as SquirrelList;
+        const paramSymbols: SquirrelSymbol[] = paramList.items.map((item: SquirrelType) => item as SquirrelSymbol);
+        const paramStrings: string[] = paramSymbols.map((item: SquirrelSymbol) => item.name);
+        const body: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
+        return new JavaScriptFunction(paramStrings, body);
+      } else {
+        const args: JavaScriptNode[] = ast.items.slice(1).map((item: SquirrelType) => convertToJavaScriptAST(item));
+        return new JavaScriptFunctionCall(head.name, args);
       }
     }
     const items: JavaScriptNode[] = ast.items.map((item: SquirrelType) => convertToJavaScriptAST(item));
@@ -70,8 +84,14 @@ function convertToJavaScriptAST(ast: SquirrelType): JavaScriptNode {
 
 function generateJavaScriptSourceCode(ast: JavaScriptNode): string {
   if (ast instanceof JavaScriptArray) {
-    const itemStrings: string[] = ast.items.map((item: JavaScriptNode) => generateJavaScriptSourceCode(item));
-    return "[" + itemStrings.join(", ") + "]";
+    if (ast.items[0] instanceof JavaScriptFunction) {
+      const functionString: string = generateJavaScriptSourceCode(ast.items[0]);
+      const argStrings: string[] = ast.items.slice(1).map((item: JavaScriptNode) => generateJavaScriptSourceCode(item));
+      return `${functionString}(${argStrings.join(", ")})`;
+    } else {
+      const itemStrings: string[] = ast.items.map((item: JavaScriptNode) => generateJavaScriptSourceCode(item));
+      return "[" + itemStrings.join(", ") + "]";
+    }
   } else if (ast instanceof JavaScriptAssignmentOperation) {
     const leftSide: string = ast.name;
     const rightSide: string = generateJavaScriptSourceCode(ast.value);
@@ -82,6 +102,14 @@ function generateJavaScriptSourceCode(ast: JavaScriptNode): string {
     return `(${leftSide} ${ast.operator} ${rightSide})`;
   } else if (ast instanceof JavaScriptBoolean) {
     return ast.value ? "true" : "false";
+  } else if (ast instanceof JavaScriptFunction) {
+    const functionParams: string[] = ast.params;
+    const paramString: string = functionParams.join(", ");
+    const bodyString: string = generateJavaScriptSourceCode(ast.body);
+    return `(function(${paramString}) {\nreturn ${bodyString};\n})`;
+  } else if (ast instanceof JavaScriptFunctionCall) {
+    const argString: string = ast.args.map((item: JavaScriptNode) => generateJavaScriptSourceCode(item)).join(", ");
+    return `${ast.functionName}(${argString})`;
   } else if (ast instanceof JavaScriptIIFE) {
     const statements: string[] = ast.nodes.slice(0, ast.nodes.length - 1)
                                           .map((node: JavaScriptNode) => generateJavaScriptSourceCode(node));
