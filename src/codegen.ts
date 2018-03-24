@@ -1,10 +1,13 @@
 import JavaScriptArray from "./js/JavaScriptArray";
+import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation";
 import JavaScriptBoolean from "./js/JavaScriptBoolean";
+import JavaScriptIIFE from "./js/JavaScriptIIFE";
 import JavaScriptNode from "./js/JavaScriptNode";
 import JavaScriptNull from "./js/JavaScriptNull";
 import JavaScriptNumber from "./js/JavaScriptNumber";
 import JavaScriptString from "./js/JavaScriptString";
+import JavaScriptVariable from "./js/JavaScriptVariable";
 
 import {
   escapeString,
@@ -19,18 +22,28 @@ import {
 
 const binaryOperators: string[] = ["+", "-", "*", "/", "%"];
 
-function codegen(ast: SquirrelType): JavaScriptNode {
+function convertToJavaScriptAST(ast: SquirrelType): JavaScriptNode {
   if (ast instanceof SquirrelList) {
     const head: SquirrelType = ast.items[0];
     if (head instanceof SquirrelSymbol) {
       if (binaryOperators.includes(head.name)) {
         const operator: string = head.name;
-        const leftSide: SquirrelType = ast.items[1];
+        const leftSide: JavaScriptNode = convertToJavaScriptAST(ast.items[1]);
+        const rightSide: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
+        return new JavaScriptBinaryOperation(operator, leftSide, rightSide);
+      } else if (head.name === "def") {
+        if (!(ast.items[1] instanceof SquirrelSymbol)) {
+          throw new Error("first argument to def must be a symbol");
+        }
+        const leftSide: SquirrelSymbol = ast.items[1] as SquirrelSymbol;
         const rightSide: SquirrelType = ast.items[2];
-        return new JavaScriptBinaryOperation(operator, codegen(leftSide), codegen(rightSide));
+        return new JavaScriptAssignmentOperation(leftSide.name, convertToJavaScriptAST(rightSide));
+      } else if (head.name === "do") {
+        const nodes: JavaScriptNode[] = ast.items.slice(1).map((item: SquirrelType) => convertToJavaScriptAST(item));
+        return new JavaScriptIIFE(nodes);
       }
     }
-    const items: JavaScriptNode[] = ast.items.map((item: SquirrelType) => codegen(item));
+    const items: JavaScriptNode[] = ast.items.map((item: SquirrelType) => convertToJavaScriptAST(item));
     return new JavaScriptArray(items);
   } else if (ast instanceof SquirrelBoolean) {
     return new JavaScriptBoolean(ast.value);
@@ -47,31 +60,46 @@ function codegen(ast: SquirrelType): JavaScriptNode {
       return new JavaScriptBoolean(true);
     } else if (ast.name === "false") {
       return new JavaScriptBoolean(false);
+    } else {
+      return new JavaScriptVariable(ast.name);
     }
   }
 
   throw new Error("not implemented");
 }
 
-function convertToString(ast: JavaScriptNode): string {
+function generateJavaScriptSourceCode(ast: JavaScriptNode): string {
   if (ast instanceof JavaScriptArray) {
-    const itemStrings: string[] = ast.items.map((item: JavaScriptNode) => convertToString(item));
+    const itemStrings: string[] = ast.items.map((item: JavaScriptNode) => generateJavaScriptSourceCode(item));
     return "[" + itemStrings.join(", ") + "]";
+  } else if (ast instanceof JavaScriptAssignmentOperation) {
+    const leftSide: string = ast.name;
+    const rightSide: string = generateJavaScriptSourceCode(ast.value);
+    return `const ${leftSide} = ${rightSide};`;
   } else if (ast instanceof JavaScriptBinaryOperation) {
-    const leftSide: string = convertToString(ast.leftSide);
-    const rightSide: string = convertToString(ast.rightSide);
+    const leftSide: string = generateJavaScriptSourceCode(ast.leftSide);
+    const rightSide: string = generateJavaScriptSourceCode(ast.rightSide);
     return `(${leftSide} ${ast.operator} ${rightSide})`;
   } else if (ast instanceof JavaScriptBoolean) {
     return ast.value ? "true" : "false";
+  } else if (ast instanceof JavaScriptIIFE) {
+    const statements: string[] = ast.nodes.slice(0, ast.nodes.length - 1)
+                                          .map((node: JavaScriptNode) => generateJavaScriptSourceCode(node));
+    const lastStatement: string = `return ${generateJavaScriptSourceCode(ast.nodes[ast.nodes.length - 1])};`;
+    statements.push(lastStatement);
+    const functionBody: string = statements.join("\n");
+    return `(function() {\n${functionBody}\n})()`;
   } else if (ast instanceof JavaScriptNull) {
     return "null";
   } else if (ast instanceof JavaScriptNumber) {
     return ast.value.toString();
   } else if (ast instanceof JavaScriptString) {
     return escapeString(ast.value);
+  } else if (ast instanceof JavaScriptVariable) {
+    return ast.name;
   }
 
   throw new Error("not implemented");
 }
 
-export { codegen, convertToString };
+export { convertToJavaScriptAST, generateJavaScriptSourceCode };

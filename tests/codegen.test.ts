@@ -6,7 +6,7 @@ import {
   toString,
 } from "squirrel-core";
 
-import { codegen, convertToString } from "../src/codegen";
+import { convertToJavaScriptAST, generateJavaScriptSourceCode } from "../src/codegen";
 import JavaScriptNode from "../src/js/JavaScriptNode";
 
 interface IPositiveTestCase {
@@ -31,6 +31,9 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(/ 6 3)`, expectedOutput: 2 },
   { input: `(% 7 3)`, expectedOutput: 1 },
   { input: `(+ 1 (+ 1 1))`, expectedOutput: 3 },
+  { input: `(def pi 3.14)`, expectedOutput: undefined },
+  { input: `(do (def pi 3.14) pi)`, expectedOutput: 3.14 },
+  { input: `(do (do (def pi 3.14) pi))`, expectedOutput: 3.14 },
 ];
 
 describe("codegen() follows expected behavior", () => {
@@ -39,8 +42,8 @@ describe("codegen() follows expected behavior", () => {
       const lexer: Lexer = new Lexer(testCase.input);
       const parser: Parser = new Parser(lexer.lex());
       const squirrelAst: SquirrelType = parser.parse();
-      const javaScriptAst: JavaScriptNode = codegen(squirrelAst);
-      const javaScriptCode: string = convertToString(javaScriptAst);
+      const javaScriptAst: JavaScriptNode = convertToJavaScriptAST(squirrelAst);
+      const javaScriptCode: string = generateJavaScriptSourceCode(javaScriptAst);
       // tslint:disable-next-line:no-eval
       const actualOutput: string = eval(javaScriptCode);
       expect(actualOutput).toEqual(testCase.expectedOutput);
