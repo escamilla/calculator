@@ -1,7 +1,7 @@
 {
   "name": "squirrel-core",
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "description": "Squirrel is a dialect of Lisp made for fun",
   "keywords": [
