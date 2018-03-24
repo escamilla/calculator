@@ -49,6 +49,13 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(do (def pi 3.14) pi)`, expectedOutput: 3.14 },
   { input: `(do (do (def pi 3.14) pi))`, expectedOutput: 3.14 },
   { input: `(do (def square (lambda (x) (* x x))) (square 3))`, expectedOutput: 9 },
+  { input: `(if 1 "true" "false")`, expectedOutput: "true" },
+  { input: `(if 1 "true" "false")`, expectedOutput: "true" },
+  { input: `(if 0 "true" "false")`, expectedOutput: "false" },
+  {
+    input: `(do (def factorial (lambda (x) (if (= x 0) 1 (* x (factorial (- x 1)))))) (factorial 10))`,
+    expectedOutput: 3628800,
+  },
 ];
 
 describe("codegen() follows expected behavior", () => {

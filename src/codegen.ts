@@ -2,6 +2,7 @@ import JavaScriptArray from "./js/JavaScriptArray";
 import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation";
 import JavaScriptBoolean from "./js/JavaScriptBoolean";
+import JavaScriptConditional from "./js/JavaScriptConditional";
 import JavaScriptFunction from "./js/JavaScriptFunction";
 import JavaScriptFunctionCall from "./js/JavaScriptFunctionCall";
 import JavaScriptIIFE from "./js/JavaScriptIIFE";
@@ -48,6 +49,11 @@ function convertToJavaScriptAST(ast: SquirrelType): JavaScriptNode {
       } else if (head.name === "do") {
         const nodes: JavaScriptNode[] = ast.items.slice(1).map((item: SquirrelType) => convertToJavaScriptAST(item));
         return new JavaScriptIIFE(nodes);
+      } else if (head.name === "if") {
+        const condition: JavaScriptNode = convertToJavaScriptAST(ast.items[1]);
+        const outcomeIfTrue: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
+        const outcomeIfFalse: JavaScriptNode = convertToJavaScriptAST(ast.items[3]);
+        return new JavaScriptConditional(condition, outcomeIfTrue, outcomeIfFalse);
       } else if (head.name === "lambda") {
         if (!(ast.items[1] instanceof SquirrelList)) {
           throw new Error("first argument to lambda must be list of parameters");
@@ -107,6 +113,11 @@ function generateJavaScriptSourceCode(ast: JavaScriptNode): string {
     return `(${leftSide} ${ast.operator} ${rightSide})`;
   } else if (ast instanceof JavaScriptBoolean) {
     return ast.value ? "true" : "false";
+  } else if (ast instanceof JavaScriptConditional) {
+    const conditionText: string = generateJavaScriptSourceCode(ast.condition);
+    const outcomeIfTrueText: string = generateJavaScriptSourceCode(ast.outcomeIfTrue);
+    const outcomeIfFalseText: string = generateJavaScriptSourceCode(ast.outcomeIfFalse);
+    return `${conditionText} ? ${outcomeIfTrueText} : ${outcomeIfFalseText}`;
   } else if (ast instanceof JavaScriptFunction) {
     const functionParams: string[] = ast.params;
     const paramString: string = functionParams.join(", ");
