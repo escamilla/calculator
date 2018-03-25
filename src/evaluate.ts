@@ -40,9 +40,10 @@ function evaluate(ast: SquirrelType, env: Environment, ioHandler: IOHandler): Sq
         });
         const functionBody: SquirrelType = ast.items[2];
 
-        const newFunction: SquirrelFunction = new SquirrelFunction((functionArgs: SquirrelType[]): SquirrelType => {
-          return evaluate(functionBody, new Environment(env, functionParams, functionArgs), ioHandler);
-        });
+        const newFunction: SquirrelFunction = new SquirrelFunction(
+          (functionArgs: SquirrelType[]): SquirrelType => {
+            return evaluate(functionBody, new Environment(env, functionParams, functionArgs), ioHandler);
+          });
 
         newFunction.isUserDefined = true;
         newFunction.params = functionParams;
@@ -59,8 +60,8 @@ function evaluate(ast: SquirrelType, env: Environment, ioHandler: IOHandler): Sq
       }
     }
 
-    const evaluatedList: SquirrelList = new SquirrelList(ast.items.map(
-      (item: SquirrelType) => evaluate(item, env, ioHandler)));
+    const evaluatedList: SquirrelList = new SquirrelList(
+      ast.items.map((item: SquirrelType) => evaluate(item, env, ioHandler)));
     const fn: SquirrelFunction = evaluatedList.items[0] as SquirrelFunction;
     const args: SquirrelType[] = evaluatedList.items.slice(1);
     return fn.callable(args, ioHandler);

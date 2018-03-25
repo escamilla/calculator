@@ -1,9 +1,8 @@
 class SquirrelNil {
-  public dummyProperty: undefined;
-
-  // tslint:disable-next-line:no-empty
-  public constructor() {
-  }
+  public constructor(
+    public readonly line?: number,
+    public readonly column?: number,
+  ) {}
 }
 
 export default SquirrelNil;

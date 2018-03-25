@@ -9,7 +9,11 @@ class SquirrelFunction {
   public params: SquirrelSymbol[] | undefined;
   public body: SquirrelType | undefined;
 
-  public constructor(callable: (args: SquirrelType[], ioHandler: IOHandler) => SquirrelType) {
+  public constructor(
+    callable: (args: SquirrelType[], ioHandler: IOHandler) => SquirrelType,
+    public readonly line?: number,
+    public readonly column?: number,
+  ) {
     this.callable = callable;
   }
 }
