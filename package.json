@@ -17,6 +17,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "compile": "npm run build && node dist/compile.js",
     "lint": "tslint --project .",
     "start": "npm run build && node dist/index.js",
     "test": "jest"
@@ -35,7 +36,8 @@
   },
   "dependencies": {
     "readline-sync": "^1.4.9",
-    "squirrel-core": "^0.2.2"
+    "source-map": "^0.7.2",
+    "squirrel-core": "^0.3.0"
   },
   "devDependencies": {
     "@types/jest": "^22.2.2",

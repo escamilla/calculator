@@ -1,3 +1,10 @@
+import * as fs from "fs";
+
+import {
+  CodeWithSourceMap,
+  SourceNode,
+} from "source-map";
+
 import {
   Lexer,
   Parser,
@@ -6,7 +13,7 @@ import {
   toString,
 } from "squirrel-core";
 
-import { convertToJavaScriptAST, generateJavaScriptSourceCode } from "../src/codegen";
+import { convertToJavaScriptAST, convertToSourceNode } from "../src/codegen";
 import JavaScriptNode from "../src/js/JavaScriptNode";
 
 interface IPositiveTestCase {
@@ -58,14 +65,14 @@ const positiveTestCases: IPositiveTestCase[] = [
   },
 ];
 
-describe("codegen() follows expected behavior", () => {
+describe("code generation produces equivalent JavaScript code", () => {
   positiveTestCases.forEach((testCase: IPositiveTestCase) => {
     test(`${testCase.input} => ${testCase.expectedOutput}`, () => {
       const lexer: Lexer = new Lexer(testCase.input);
       const parser: Parser = new Parser(lexer.lex());
       const squirrelAst: SquirrelType = parser.parse();
       const javaScriptAst: JavaScriptNode = convertToJavaScriptAST(squirrelAst);
-      const javaScriptCode: string = generateJavaScriptSourceCode(javaScriptAst);
+      const javaScriptCode: string = convertToSourceNode(javaScriptAst).toString();
       // tslint:disable-next-line:no-eval
       const actualOutput: string = eval(javaScriptCode);
       expect(actualOutput).toEqual(testCase.expectedOutput);
