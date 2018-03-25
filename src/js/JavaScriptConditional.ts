@@ -1,6 +1,6 @@
 import JavaScriptNode from "./JavaScriptNode";
 
-class JavaScriptConditional {
+class JavaScriptConditionalOperation {
   public constructor(
     public readonly line: number,
     public readonly column: number,
@@ -10,4 +10,4 @@ class JavaScriptConditional {
   ) {}
 }
 
-export default JavaScriptConditional;
+export default JavaScriptConditionalOperation;
