@@ -36,7 +36,7 @@ const binaryOperators: string[] = ["+", "-", "*", "/", "%", "=", "!=", ">", ">="
 
 function convertToJavaScriptAST(ast: SquirrelType): JavaScriptNode {
   const line: number = ast.line as number;
-  const column: number = ast.column as number;
+  const column: number = (ast.column as number) - 1;
 
   if (ast instanceof SquirrelList) {
     const head: SquirrelType = ast.items[0];
@@ -105,25 +105,27 @@ function convertToJavaScriptAST(ast: SquirrelType): JavaScriptNode {
   throw new Error("not implemented");
 }
 
-function convertToSourceNode(ast: JavaScriptNode, originalFilename: string | null = null): SourceNode {
+function convertToSourceNode(ast: JavaScriptNode,
+                             sourceFile: string | null = null,
+                             indent: number = 0): SourceNode {
   if (ast instanceof JavaScriptArray) {
     if (ast.items[0] instanceof JavaScriptFunction) {
-      const functionString: SourceNode = convertToSourceNode(ast.items[0], originalFilename);
+      const functionString: SourceNode = convertToSourceNode(ast.items[0], sourceFile, indent);
       const argStrings: SourceNode[] =
-        ast.items.slice(1).map((item: JavaScriptNode) => convertToSourceNode(item, originalFilename));
+        ast.items.slice(1).map((item: JavaScriptNode) => convertToSourceNode(item, sourceFile, indent));
       return new SourceNode(
         ast.line,
         ast.column,
-        originalFilename,
+        sourceFile,
         [functionString, "(", argStrings.join(", "), ")"],
       );
     } else {
       const itemStrings: SourceNode[] =
-        ast.items.map((item: JavaScriptNode) => convertToSourceNode(item, originalFilename));
+        ast.items.map((item: JavaScriptNode) => convertToSourceNode(item, sourceFile, indent));
       return new SourceNode(
         ast.line,
         ast.column,
-        originalFilename,
+        sourceFile,
         ["[", itemStrings.join(", "), "]"],
       );
     }
@@ -131,97 +133,110 @@ function convertToSourceNode(ast: JavaScriptNode, originalFilename: string | nul
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
-      ["const ", ast.name, " = ", convertToSourceNode(ast.value, originalFilename), ";"],
+      sourceFile,
+      [" ".repeat(indent), "const ", ast.name, " = ", convertToSourceNode(ast.value, sourceFile, indent), ";"],
     );
   } else if (ast instanceof JavaScriptBinaryOperation) {
-    const leftSide: SourceNode = convertToSourceNode(ast.leftSide, originalFilename);
-    const rightSide: SourceNode = convertToSourceNode(ast.rightSide, originalFilename);
+    const leftSide: SourceNode = convertToSourceNode(ast.leftSide, sourceFile, indent);
+    const rightSide: SourceNode = convertToSourceNode(ast.rightSide, sourceFile, indent);
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
+      sourceFile,
       ["(", leftSide, " ", ast.operator, " ", rightSide, ")"],
     );
   } else if (ast instanceof JavaScriptBoolean) {
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
+      sourceFile,
       ast.value ? "true" : "false",
     );
   } else if (ast instanceof JavaScriptConditional) {
-    const condition: SourceNode = convertToSourceNode(ast.condition, originalFilename);
-    const outcomeIfTrue: SourceNode = convertToSourceNode(ast.outcomeIfTrue, originalFilename);
-    const outcomeIfFalse: SourceNode = convertToSourceNode(ast.outcomeIfFalse, originalFilename);
+    const condition: SourceNode = convertToSourceNode(ast.condition, sourceFile, indent);
+    const outcomeIfTrue: SourceNode = convertToSourceNode(ast.outcomeIfTrue, sourceFile, indent);
+    const outcomeIfFalse: SourceNode = convertToSourceNode(ast.outcomeIfFalse, sourceFile, indent);
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
+      sourceFile,
       ["(", condition, " ? ", outcomeIfTrue, " : ", outcomeIfFalse, ")"],
     );
   } else if (ast instanceof JavaScriptFunction) {
+    const body: SourceNode = convertToSourceNode(ast.body, sourceFile, indent);
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
-      ["(function(", ast.params.join(", "), ") {\nreturn ", convertToSourceNode(ast.body, originalFilename), ";\n})"],
+      sourceFile,
+      ["(function(", ast.params.join(", "), ") {\n", " ".repeat(indent + 2),
+      "return ", body, ";\n", " ".repeat(indent), "})"],
     );
   } else if (ast instanceof JavaScriptFunctionCall) {
-    const argString: string =
-      ast.args.map((item: JavaScriptNode) => convertToSourceNode(item, originalFilename)).join(", ");
+    const argNodes: SourceNode[] =
+      ast.args.map((item: JavaScriptNode) => convertToSourceNode(item, sourceFile, indent));
+    const argNodesWithCommas: any[] = [];
+    for (let i: number = 0; i < argNodes.length; i++) {
+      argNodesWithCommas.push(argNodes[i]);
+      if (i !== argNodes.length - 1) {
+        argNodesWithCommas.push(", ");
+      }
+    }
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
-      [ast.functionName, "(", argString, ")"],
+      sourceFile,
+      [ast.functionName, "(", ...argNodesWithCommas, ")"],
     );
   } else if (ast instanceof JavaScriptIIFE) {
     const statements: SourceNode[] = ast.nodes.slice(0, ast.nodes.length - 1)
-      .map((node: JavaScriptNode) => convertToSourceNode(node, originalFilename));
-    const functionBody: string = statements.join("\n");
-    const returnValue: SourceNode = convertToSourceNode(ast.nodes[ast.nodes.length - 1], originalFilename);
+      .map((node: JavaScriptNode) => convertToSourceNode(node, sourceFile, indent + 2));
+    const statementsWithLineBreaks: any[] = [];
+    statements.forEach((statement: SourceNode) => {
+      statementsWithLineBreaks.push(statement);
+      statementsWithLineBreaks.push("\n");
+    });
+    const returnValue: SourceNode = convertToSourceNode(ast.nodes[ast.nodes.length - 1], sourceFile, indent);
     if (statements.length === 0) {
       return new SourceNode(
         ast.line,
         ast.column,
-        originalFilename,
-        ["(function() {\nreturn ", returnValue, ";\n})()"],
+        sourceFile,
+        ["(function() {\n", " ".repeat(indent + 2), "return ", returnValue, ";\n})()"],
       );
     } else {
       return new SourceNode(
         ast.line,
         ast.column,
-        originalFilename,
-        ["(function() {\n", functionBody, "\nreturn ", returnValue, ";\n})()"],
+        sourceFile,
+        ["(function() {\n", ...statements, "\n", " ".repeat(indent + 2), "return ", returnValue, ";\n})()"],
       );
     }
   } else if (ast instanceof JavaScriptNull) {
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
+      sourceFile,
       "null",
     );
   } else if (ast instanceof JavaScriptNumber) {
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
+      sourceFile,
       ast.value.toString(),
     );
   } else if (ast instanceof JavaScriptString) {
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
+      sourceFile,
       escapeString(ast.value),
     );
   } else if (ast instanceof JavaScriptVariable) {
     return new SourceNode(
       ast.line,
       ast.column,
-      originalFilename,
+      sourceFile,
       ast.name,
     );
   }
