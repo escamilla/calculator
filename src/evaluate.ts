@@ -1,27 +1,27 @@
 import Environment from "./Environment";
 import IOHandler from "./IOHandler";
-import SquirrelBoolean from "./types/SquirrelBoolean";
-import SquirrelFunction from "./types/SquirrelFunction";
-import SquirrelList from "./types/SquirrelList";
-import SquirrelSymbol from "./types/SquirrelSymbol";
-import SquirrelType from "./types/SquirrelType";
+import SquirrelFunction from "./nodes/SquirrelFunction";
+import SquirrelList from "./nodes/SquirrelList";
+import SquirrelNode from "./nodes/SquirrelNode";
+import SquirrelNodeType from "./nodes/SquirrelNodeType";
+import SquirrelSymbol from "./nodes/SquirrelSymbol";
 
-function evaluate(ast: SquirrelType, env: Environment, ioHandler: IOHandler): SquirrelType {
-  if (ast instanceof SquirrelSymbol) {
+function evaluate(ast: SquirrelNode, env: Environment, ioHandler: IOHandler): SquirrelNode {
+  if (ast.type === SquirrelNodeType.SYMBOL) {
     return env.get(ast.name);
   }
 
-  if (ast instanceof SquirrelList) {
+  if (ast.type === SquirrelNodeType.LIST) {
     if (ast.items.length === 0) {
       return ast;
     }
 
-    const head: SquirrelType = ast.items[0];
-    if (head instanceof SquirrelSymbol) {
+    const head: SquirrelNode = ast.items[0];
+    if (head.type === SquirrelNodeType.SYMBOL) {
       if (head.name === "if") {
-        const condition: SquirrelType = ast.items[1];
-        const result: SquirrelType = evaluate(condition, env, ioHandler);
-        if (result instanceof SquirrelBoolean) {
+        const condition: SquirrelNode = ast.items[1];
+        const result: SquirrelNode = evaluate(condition, env, ioHandler);
+        if (result.type === SquirrelNodeType.BOOLEAN) {
           if (result.value) {
             return evaluate(ast.items[2], env, ioHandler);
           } else {
@@ -32,27 +32,28 @@ function evaluate(ast: SquirrelType, env: Environment, ioHandler: IOHandler): Sq
         }
       } else if (head.name === "lambda") {
         const binds: SquirrelList = ast.items[1] as SquirrelList;
-        const functionParams: SquirrelSymbol[] = binds.items.map((item: SquirrelType) => {
-          if (!(item instanceof SquirrelSymbol)) {
+        const functionParams: SquirrelSymbol[] = binds.items.map((item: SquirrelNode) => {
+          if (item.type !== SquirrelNodeType.SYMBOL) {
             throw new Error("expected list of symbols for function parameters");
           }
           return item as SquirrelSymbol;
         });
-        const functionBody: SquirrelType = ast.items[2];
+        const functionBody: SquirrelNode = ast.items[2];
 
-        const newFunction: SquirrelFunction = new SquirrelFunction(
-          (functionArgs: SquirrelType[]): SquirrelType => {
+        const newFunction: SquirrelFunction = {
+          type: SquirrelNodeType.FUNCTION,
+          callable: (functionArgs: SquirrelNode[]): SquirrelNode => {
             return evaluate(functionBody, new Environment(env, functionParams, functionArgs), ioHandler);
-          });
-
-        newFunction.isUserDefined = true;
-        newFunction.params = functionParams;
-        newFunction.body = functionBody;
+          },
+          isUserDefined: true,
+          params: functionParams,
+          body: functionBody,
+        };
 
         return newFunction;
       } else if (head.name === "def") {
         const key: string = (ast.items[1] as SquirrelSymbol).name;
-        const value: SquirrelType = evaluate(ast.items[2], env, ioHandler);
+        const value: SquirrelNode = evaluate(ast.items[2], env, ioHandler);
         env.set(key, value);
         return value;
       } else if (head.name === "quote") {
@@ -60,10 +61,12 @@ function evaluate(ast: SquirrelType, env: Environment, ioHandler: IOHandler): Sq
       }
     }
 
-    const evaluatedList: SquirrelList = new SquirrelList(
-      ast.items.map((item: SquirrelType) => evaluate(item, env, ioHandler)));
+    const evaluatedList: SquirrelList = {
+      type: SquirrelNodeType.LIST,
+      items: ast.items.map((item: SquirrelNode) => evaluate(item, env, ioHandler)),
+    };
     const fn: SquirrelFunction = evaluatedList.items[0] as SquirrelFunction;
-    const args: SquirrelType[] = evaluatedList.items.slice(1);
+    const args: SquirrelNode[] = evaluatedList.items.slice(1);
     return fn.callable(args, ioHandler);
   }
 

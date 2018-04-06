@@ -2,11 +2,13 @@
   "defaultSeverity": "error",
   "extends": "tslint:latest",
   "rules": {
+    "interface-name": false,
     "member-access": [
       true,
       "check-accessor",
       "check-constructor"
     ],
+    "object-literal-sort-keys": false,
     "typedef": [
       true,
       "call-signature",

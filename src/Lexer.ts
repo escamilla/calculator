@@ -164,22 +164,22 @@ class Lexer {
     const column: number = this.column;
 
     if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
-      return new Token(line, column, TokenType.NUMBER, this.readNumber());
+      return { type: TokenType.NUMBER, value: this.readNumber(), line, column };
     }
 
     if (this.isSymbolCharacter(char)) {
-      return new Token(line, column, TokenType.SYMBOL, this.readSymbol());
+      return { type: TokenType.SYMBOL, value: this.readSymbol(), line, column };
     }
 
     switch (char) {
       case "(":
-        return new Token(line, column, TokenType.LEFT_PARENTHESIS, this.next());
+        return { type: TokenType.LEFT_PARENTHESIS, value: this.next(), line, column };
       case ")":
-        return new Token(line, column, TokenType.RIGHT_PARENTHESIS, this.next());
+        return { type: TokenType.RIGHT_PARENTHESIS, value: this.next(), line, column };
       case "\"":
-        return new Token(line, column, TokenType.STRING, this.readString());
+        return { type: TokenType.STRING, value: this.readString(), line, column };
       case "'":
-        return new Token(line, column, TokenType.SINGLE_QUOTE, this.next());
+        return { type: TokenType.SINGLE_QUOTE, value: this.next(), line, column };
       default:
         this.die(`unexpected character: ${char}`);
     }

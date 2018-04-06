@@ -1,39 +1,34 @@
 import escapeString from "./escapeString";
-import SquirrelBoolean from "./types/SquirrelBoolean";
-import SquirrelFunction from "./types/SquirrelFunction";
-import SquirrelList from "./types/SquirrelList";
-import SquirrelNil from "./types/SquirrelNil";
-import SquirrelNumber from "./types/SquirrelNumber";
-import SquirrelString from "./types/SquirrelString";
-import SquirrelSymbol from "./types/SquirrelSymbol";
-import SquirrelType from "./types/SquirrelType";
+import SquirrelNode from "./nodes/SquirrelNode";
+import SquirrelNodeType from "./nodes/SquirrelNodeType";
+import SquirrelSymbol from "./nodes/SquirrelSymbol";
 
-function toString(input: SquirrelType, printable: boolean = false): string {
-  if (input instanceof SquirrelBoolean) {
-    return input.value ? "true" : "false";
-  } else if (input instanceof SquirrelFunction) {
-    if (input.isUserDefined) {
-      const stringParams: string = (input.params as SquirrelSymbol[])
+function toString(ast: SquirrelNode, printable: boolean = false): string {
+  if (ast.type === SquirrelNodeType.BOOLEAN) {
+    return ast.value ? "true" : "false";
+  } else if (ast.type === SquirrelNodeType.FUNCTION) {
+    if (ast.isUserDefined) {
+      const stringParams: string = (ast.params as SquirrelSymbol[])
         .map((param: SquirrelSymbol) => param.name).join(" ");
-      const stringBody: string = toString(input.body as SquirrelType);
+      const stringBody: string = toString(ast.body as SquirrelNode);
       return `(lambda (${stringParams}) ${stringBody})`;
     } else {
-      return input.name as string;
+      return ast.name as string;
     }
-  } else if (input instanceof SquirrelList) {
-    return `(${input.items.map((item: SquirrelType) => toString(item)).join(" ")})`;
-  } else if (input instanceof SquirrelNil) {
+  } else if (ast.type === SquirrelNodeType.LIST) {
+    return `(${ast.items.map((item: SquirrelNode) => toString(item)).join(" ")})`;
+  } else if (ast.type === SquirrelNodeType.NIL) {
     return "nil";
-  } else if (input instanceof SquirrelNumber) {
-    return `${input.value}`;
-  } else if (input instanceof SquirrelString) {
+  } else if (ast.type === SquirrelNodeType.NUMBER) {
+    return `${ast.value}`;
+  } else if (ast.type === SquirrelNodeType.STRING) {
     if (printable) {
-      return input.value;
+      return ast.value;
     } else {
-      return escapeString(input.value);
+      return escapeString(ast.value);
     }
-  } else if (input instanceof SquirrelSymbol) {
-    return input.name;
+  } else if (ast.type === SquirrelNodeType.SYMBOL) {
+    return ast.name;
   }
   throw new Error("unknown data type");
 }

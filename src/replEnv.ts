@@ -4,22 +4,24 @@ import Environment from "./Environment";
 import evaluate from "./evaluate";
 import interpret from "./interpret";
 import IOHandler from "./IOHandler";
-import SquirrelBoolean from "./types/SquirrelBoolean";
-import SquirrelFunction from "./types/SquirrelFunction";
-import SquirrelNil from "./types/SquirrelNil";
-import SquirrelType from "./types/SquirrelType";
+import SquirrelFunction from "./nodes/SquirrelFunction";
+import SquirrelNode from "./nodes/SquirrelNode";
+import SquirrelNodeType from "./nodes/SquirrelNodeType";
 
 const replEnv: Environment = new Environment();
 
-replEnv.set("eval", new SquirrelFunction(
-  (args: SquirrelType[], ioHandler: IOHandler): SquirrelType => {
+replEnv.set("eval", {
+  type: SquirrelNodeType.FUNCTION,
+  callable: (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNode => {
     return evaluate(args[0], replEnv, ioHandler);
   },
-));
+  isUserDefined: false,
+  name: "eval",
+});
 
-replEnv.set("nil", new SquirrelNil());
-replEnv.set("true", new SquirrelBoolean(true));
-replEnv.set("false", new SquirrelBoolean(false));
+replEnv.set("nil", { type: SquirrelNodeType.NIL });
+replEnv.set("true", { type: SquirrelNodeType.BOOLEAN, value: true });
+replEnv.set("false", { type: SquirrelNodeType.BOOLEAN, value: false });
 
 namespace.forEach((fn: SquirrelFunction, name: string) => {
   replEnv.set(name, fn);

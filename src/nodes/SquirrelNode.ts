@@ -6,13 +6,12 @@ import SquirrelNumber from "./SquirrelNumber";
 import SquirrelString from "./SquirrelString";
 import SquirrelSymbol from "./SquirrelSymbol";
 
-type SquirrelType =
-  SquirrelBoolean |
-  SquirrelFunction |
-  SquirrelList |
-  SquirrelNil |
-  SquirrelNumber |
-  SquirrelString |
-  SquirrelSymbol;
+type SquirrelNode = SquirrelBoolean
+                  | SquirrelFunction
+                  | SquirrelList
+                  | SquirrelNil
+                  | SquirrelNumber
+                  | SquirrelString
+                  | SquirrelSymbol;
 
-export default SquirrelType;
+export default SquirrelNode;

@@ -1,24 +1,24 @@
-import SquirrelSymbol from "./types/SquirrelSymbol";
-import SquirrelType from "./types/SquirrelType";
+import SquirrelNode from "./nodes/SquirrelNode";
+import SquirrelSymbol from "./nodes/SquirrelSymbol";
 
 class Environment {
-  private data: Map<string, SquirrelType> = new Map();
+  private data: Map<string, SquirrelNode> = new Map();
 
   public constructor(public readonly outerEnv?: Environment,
                      bindSymbols: SquirrelSymbol[] = [],
-                     bindExpressions: SquirrelType[] = []) {
+                     bindExpressions: SquirrelNode[] = []) {
     for (let i: number = 0; i < bindSymbols.length; i++) {
       this.set(bindSymbols[i].name, bindExpressions[i]);
     }
   }
 
-  public set(key: string, value: SquirrelType): void {
+  public set(key: string, value: SquirrelNode): void {
     this.data.set(key, value);
   }
 
-  public get(key: string): SquirrelType {
+  public get(key: string): SquirrelNode {
     if (this.data.has(key)) {
-      return this.data.get(key) as SquirrelType;
+      return this.data.get(key) as SquirrelNode;
     } else if (this.outerEnv) {
       return this.outerEnv.get(key);
     }

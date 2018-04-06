@@ -2,32 +2,34 @@ import escapeString from "./escapeString";
 import interpret from "./interpret";
 import IOHandler from "./IOHandler";
 import Lexer from "./Lexer";
+import SquirrelBoolean from "./nodes/SquirrelBoolean";
+import SquirrelFunction from "./nodes/SquirrelFunction";
+import SquirrelList from "./nodes/SquirrelList";
+import SquirrelNil from "./nodes/SquirrelNil";
+import SquirrelNode from "./nodes/SquirrelNode";
+import SquirrelNodeType from "./nodes/SquirrelNodeType";
+import SquirrelNumber from "./nodes/SquirrelNumber";
+import SquirrelString from "./nodes/SquirrelString";
+import SquirrelSymbol from "./nodes/SquirrelSymbol";
 import Parser from "./Parser";
 import replEnv from "./replEnv";
 import toString from "./toString";
-import SquirrelBoolean from "./types/SquirrelBoolean";
-import SquirrelFunction from "./types/SquirrelFunction";
-import SquirrelList from "./types/SquirrelList";
-import SquirrelNil from "./types/SquirrelNil";
-import SquirrelNumber from "./types/SquirrelNumber";
-import SquirrelString from "./types/SquirrelString";
-import SquirrelSymbol from "./types/SquirrelSymbol";
-import SquirrelType from "./types/SquirrelType";
 
 export {
   escapeString,
   interpret,
   IOHandler,
   Lexer,
-  Parser,
-  replEnv,
-  toString,
   SquirrelBoolean,
   SquirrelFunction,
   SquirrelList,
   SquirrelNil,
+  SquirrelNode,
+  SquirrelNodeType,
   SquirrelNumber,
   SquirrelString,
   SquirrelSymbol,
-  SquirrelType,
+  Parser,
+  replEnv,
+  toString,
 };

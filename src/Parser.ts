@@ -1,18 +1,19 @@
+import SquirrelList from "./nodes/SquirrelList";
+import SquirrelNode from "./nodes/SquirrelNode";
+import SquirrelNodeType from "./nodes/SquirrelNodeType";
+import SquirrelNumber from "./nodes/SquirrelNumber";
+import SquirrelString from "./nodes/SquirrelString";
+import SquirrelSymbol from "./nodes/SquirrelSymbol";
 import Token from "./tokens/Token";
 import TokenType from "./tokens/TokenType";
-import SquirrelList from "./types/SquirrelList";
-import SquirrelNumber from "./types/SquirrelNumber";
-import SquirrelString from "./types/SquirrelString";
-import SquirrelSymbol from "./types/SquirrelSymbol";
-import SquirrelType from "./types/SquirrelType";
 
 class Parser {
   private position: number = 0;
 
   public constructor(private readonly tokens: Token[]) { }
 
-  public parse(): SquirrelType {
-    const result: SquirrelType = this.parseExpression();
+  public parse(): SquirrelNode {
+    const result: SquirrelNode = this.parseExpression();
     if (!this.eof()) {
       throw new Error("Expected end of file after expression");
     }
@@ -41,7 +42,7 @@ class Parser {
     throw new Error(`Expected token of type ${expectedType} but got token of type ${token.type}`);
   }
 
-  private parseExpression(): SquirrelType {
+  private parseExpression(): SquirrelNode {
     switch (this.peek().type) {
       case TokenType.LEFT_PARENTHESIS:
         return this.parseSymbolicExpression();
@@ -60,32 +61,63 @@ class Parser {
 
   private parseNumber(): SquirrelNumber {
     const token: Token = this.consumeToken(TokenType.NUMBER);
-    return new SquirrelNumber(token.value, token.line, token.column);
+    return {
+      type: SquirrelNodeType.NUMBER,
+      value: token.value,
+      line: token.line,
+      column: token.column,
+    };
   }
 
   private parseSymbol(): SquirrelSymbol {
     const token: Token = this.consumeToken(TokenType.SYMBOL);
-    return new SquirrelSymbol(token.value, token.line, token.column);
+    return {
+      type: SquirrelNodeType.SYMBOL,
+      name: token.value,
+      line: token.line,
+      column: token.column,
+    };
   }
 
   private parseString(): SquirrelString {
     const token: Token = this.consumeToken(TokenType.STRING);
-    return new SquirrelString(token.value, token.line, token.column);
+    return {
+      type: SquirrelNodeType.STRING,
+      value: token.value,
+      line: token.line,
+      column: token.column,
+    };
   }
 
   private parseSymbolicExpression(): SquirrelList {
     const firstToken: Token = this.consumeToken(TokenType.LEFT_PARENTHESIS);
-    const items: SquirrelType[] = [];
+    const items: SquirrelNode[] = [];
     while (this.peek().type !== TokenType.RIGHT_PARENTHESIS) {
       items.push(this.parseExpression());
     }
     this.consumeToken(TokenType.RIGHT_PARENTHESIS);
-    return new SquirrelList(items, firstToken.line, firstToken.column);
+    return {
+      type: SquirrelNodeType.LIST,
+      items,
+      line: firstToken.line,
+      column: firstToken.column,
+    };
   }
 
   private parseQuotedExpression(): SquirrelList {
     const firstToken: Token = this.consumeToken(TokenType.SINGLE_QUOTE);
-    return new SquirrelList([new SquirrelSymbol("quote"), this.parseExpression()], firstToken.column, firstToken.line);
+    return {
+      type: SquirrelNodeType.LIST,
+      items: [
+        {
+          type: SquirrelNodeType.SYMBOL,
+          name: "quote",
+        },
+        this.parseExpression(),
+      ],
+      line: firstToken.line,
+      column: firstToken.column,
+    };
   }
 }
 
