@@ -4,7 +4,7 @@ import {
   Tokenizer,
 } from "squirrel-core";
 
-import { compileJavaScript, convertToJavaScriptAST } from "../src/codegen";
+import { compileJavaScriptToSourceNode, convertSquirrelNodeToJavaScriptNode } from "../src/codegen";
 import JavaScriptNode from "../src/js/JavaScriptNode";
 
 interface IPositiveTestCase {
@@ -62,10 +62,9 @@ describe("code generation produces equivalent JavaScript code", () => {
       const tokenizer: Tokenizer = new Tokenizer(testCase.input);
       const parser: Parser = new Parser(tokenizer.tokenize());
       const squirrelAst: SquirrelNode = parser.parse();
-      const javaScriptAst: JavaScriptNode = convertToJavaScriptAST(squirrelAst);
-      const javaScriptCode: string = compileJavaScript(javaScriptAst).toString();
-      // tslint:disable-next-line:no-eval
-      const actualOutput: string = eval(javaScriptCode);
+      const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst);
+      const javaScriptCode: string = compileJavaScriptToSourceNode(javaScriptAst).toString();
+      const actualOutput: string = eval(javaScriptCode); // tslint:disable-line:no-eval
       expect(actualOutput).toEqual(testCase.expectedOutput);
     });
   });
