@@ -9,6 +9,7 @@ import JavaScriptArray from "./js/JavaScriptArray";
 import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation";
 import JavaScriptConditionalOperation from "./js/JavaScriptConditionalOperation";
+import JavaScriptConsoleLogStatement from "./js/JavaScriptConsoleLogStatement";
 import JavaScriptFunctionCall from "./js/JavaScriptFunctionCall";
 import JavaScriptFunctionDefinition from "./js/JavaScriptFunctionDefinition";
 import JavaScriptIIFE from "./js/JavaScriptIIFE";
@@ -68,6 +69,9 @@ function convertToJavaScriptAST(ast: SquirrelNode): JavaScriptNode {
         const params: string[] = paramSymbols.map((item: SquirrelSymbol) => item.name);
         const body: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
         return { type: JavaScriptNodeType.FUNCTION_DEFINITION, params, body, line, column };
+      } else if (head.name === "log") {
+        const obj: JavaScriptNode = convertToJavaScriptAST(ast.items[1]);
+        return { type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT, obj, line, column };
       } else {
         const functionName: string = head.name;
         const args: JavaScriptNode[] = ast.items.slice(1).map((item: SquirrelNode) => convertToJavaScriptAST(item));
@@ -177,6 +181,18 @@ function compileJavaScriptConditionalOperation(ast: JavaScriptConditionalOperati
   );
 }
 
+function compileJavaScriptConsoleLogStatement(ast: JavaScriptConsoleLogStatement,
+                                              sourceFile: string | null = null,
+                                              indent: number = 0): SourceNode {
+  const objNode: SourceNode = compileJavaScript(ast.obj, sourceFile, indent);
+  return new SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    ["console.log(", objNode, ");"],
+  );
+}
+
 function compileJavaScriptFunctionDefinition(ast: JavaScriptFunctionDefinition,
                                              sourceFile: string | null = null,
                                              indent: number = 0): SourceNode {
@@ -266,6 +282,8 @@ function compileJavaScript(ast: JavaScriptNode,
     );
   } else if (ast.type === JavaScriptNodeType.CONDITIONAL_OPERATION) {
     return compileJavaScriptConditionalOperation(ast, sourceFile, indent);
+  } else if (ast.type === JavaScriptNodeType.CONSOLE_LOG_STATEMENT) {
+    return compileJavaScriptConsoleLogStatement(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.FUNCTION_CALL) {
     return compileJavaScriptFunctionCall(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.FUNCTION_DEFINITION) {

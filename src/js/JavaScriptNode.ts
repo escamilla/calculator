@@ -3,6 +3,7 @@ import JavaScriptAssignmentOperation from "./JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./JavaScriptBinaryOperation";
 import JavaScriptBoolean from "./JavaScriptBoolean";
 import JavaScriptConditionalOperation from "./JavaScriptConditionalOperation";
+import JavaScriptConsoleLogStatement from "./JavaScriptConsoleLogStatement";
 import JavaScriptFunctionCall from "./JavaScriptFunctionCall";
 import JavaScriptFunctionDefinition from "./JavaScriptFunctionDefinition";
 import JavaScriptIIFE from "./JavaScriptIIFE";
@@ -16,6 +17,7 @@ type JavaScriptNode = JavaScriptArray
                     | JavaScriptBinaryOperation
                     | JavaScriptBoolean
                     | JavaScriptConditionalOperation
+                    | JavaScriptConsoleLogStatement
                     | JavaScriptFunctionCall
                     | JavaScriptFunctionDefinition
                     | JavaScriptIIFE
