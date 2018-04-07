@@ -146,7 +146,7 @@ function compileJavaScriptAssignmentOperation(ast: JavaScriptAssignmentOperation
     ast.line,
     ast.column,
     sourceFile,
-    [" ".repeat(indent), "const ", ast.name, " = ", valueNode, ";"],
+    [" ".repeat(indent), `_var['${ast.name}'] = `, valueNode, ";"],
   );
 }
 
@@ -177,16 +177,21 @@ function compileJavaScriptConditionalOperation(ast: JavaScriptConditionalOperati
   );
 }
 
-function compileJavaScriptFunction(ast: JavaScriptFunctionDefinition,
-                                   sourceFile: string | null = null,
-                                   indent: number = 0): SourceNode {
+function compileJavaScriptFunctionDefinition(ast: JavaScriptFunctionDefinition,
+                                             sourceFile: string | null = null,
+                                             indent: number = 0): SourceNode {
     const functionBodyNode: SourceNode = compileJavaScript(ast.body, sourceFile, indent);
+    const argUnpackingChunks: any[] = [];
+    for (let i: number = 0; i < ast.params.length; i++) {
+      argUnpackingChunks.push(" ".repeat(indent + 2));
+      argUnpackingChunks.push(`_var['${ast.params[i]}'] = _var['${i}'];\n`);
+    }
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
-      ["(function(", ast.params.join(", "), ") {\n", " ".repeat(indent + 2),
-      "return ", functionBodyNode, ";\n", " ".repeat(indent), "})"],
+      ["(function(_var) {\n", ...argUnpackingChunks,
+      " ".repeat(indent + 2), "return ", functionBodyNode, ";\n", " ".repeat(indent), "})"],
     );
 }
 
@@ -194,18 +199,23 @@ function compileJavaScriptFunctionCall(ast: JavaScriptFunctionCall,
                                        sourceFile: string | null = null,
                                        indent: number = 0): SourceNode {
   const argNodes: SourceNode[] = ast.args.map((item: JavaScriptNode) => compileJavaScript(item, sourceFile, indent));
-  const argNodesWithCommas: any[] = [];
+
+  const argDictChunks: any[] = [];
+  argDictChunks.push("{");
   for (let i: number = 0; i < argNodes.length; i++) {
-    argNodesWithCommas.push(argNodes[i]);
+    argDictChunks.push(`'${i}': `);
+    argDictChunks.push(argNodes[i]);
     if (i !== argNodes.length - 1) {
-      argNodesWithCommas.push(", ");
+      argDictChunks.push(", ");
     }
   }
+  argDictChunks.push("}");
+
   return new SourceNode(
     ast.line,
     ast.column,
     sourceFile,
-    [ast.functionName, "(", ...argNodesWithCommas, ")"],
+    [`_var['${ast.functionName}']`, "(Object.assign(_var, ", ...argDictChunks, "))"],
   );
 }
 
@@ -232,7 +242,8 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
       ast.line,
       ast.column,
       sourceFile,
-      ["(function() {\n", ...statementNodes, "\n", " ".repeat(indent + 2), "return ", returnValueNode, ";\n})()"],
+      ["(function() {\n", " ".repeat(indent + 2), "const _var = {};\n",
+      ...statementNodes, "\n", " ".repeat(indent + 2), "return ", returnValueNode, ";\n})()"],
     );
   }
 }
@@ -258,7 +269,7 @@ function compileJavaScript(ast: JavaScriptNode,
   } else if (ast.type === JavaScriptNodeType.FUNCTION_CALL) {
     return compileJavaScriptFunctionCall(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.FUNCTION_DEFINITION) {
-    return compileJavaScriptFunction(ast, sourceFile, indent);
+    return compileJavaScriptFunctionDefinition(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.IIFE) {
     return compileJavaScriptIIFE(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.NULL) {
@@ -287,7 +298,7 @@ function compileJavaScript(ast: JavaScriptNode,
       ast.line,
       ast.column,
       sourceFile,
-      ast.name,
+      `_var['${ast.name}']`,
     );
   } else {
     throw new Error("unrecognized node");
