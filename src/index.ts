@@ -3,10 +3,9 @@ import * as readlineSync from "readline-sync";
 import {
   interpret,
   replEnv,
-  SquirrelList,
-  SquirrelNil,
+  SquirrelNode,
+  SquirrelNodeType,
   SquirrelString,
-  SquirrelType,
   toString,
 } from "squirrel-core";
 
@@ -18,7 +17,17 @@ const loadFileDefinition: string =
 interpret(loadFileDefinition, replEnv, nodeIOHandler);
 
 if (process.argv.length > 2) {
-  replEnv.set("argv", new SquirrelList(process.argv.slice(3).map((value: string) => new SquirrelString(value))));
+  const paths: SquirrelString[] = [];
+  process.argv.slice(3).forEach((value: string) => {
+    paths.push({
+      type: SquirrelNodeType.STRING,
+      value,
+    });
+  });
+  replEnv.set("argv", {
+    type: SquirrelNodeType.LIST,
+    items: paths,
+  });
   interpret(`(load-file "${process.argv[2]}")`, replEnv, nodeIOHandler);
   process.exit(0);
 }
@@ -32,7 +41,7 @@ while (true) {
     if (line === "exit") {
       process.exit(0);
     }
-    let result: SquirrelType;
+    let result: SquirrelNode;
     try {
       result = interpret(line, replEnv, nodeIOHandler);
     } catch (e) {
@@ -40,7 +49,7 @@ while (true) {
       continue;
     }
     replEnv.set("_", result);
-    if (!(result instanceof SquirrelNil)) {
+    if (result.type !== SquirrelNodeType.NIL) {
       process.stdout.write(toString(result) + "\n");
     }
   }
