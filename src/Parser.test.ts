@@ -1,6 +1,6 @@
-import Lexer from "../src/Lexer";
-import Parser from "../src/Parser";
-import Token from "../src/tokens/Token";
+import Parser from "./Parser";
+import Tokenizer from "./Tokenizer";
+import Token from "./tokens/Token";
 
 interface INegativeTestCase {
   input: string;
@@ -17,8 +17,8 @@ const negativeTests: INegativeTestCase[] = [
 
 negativeTests.forEach((testCase: INegativeTestCase) => {
   test(`input cannot be parsed because ${testCase.reason}: ${testCase.input}`, () => {
-    const lexer: Lexer = new Lexer(testCase.input);
-    const tokens: Token[] = lexer.lex();
+    const tokenizer: Tokenizer = new Tokenizer(testCase.input);
+    const tokens: Token[] = tokenizer.tokenize();
     const parser: Parser = new Parser(tokens);
     expect(() => parser.parse()).toThrow();
   });

@@ -1,7 +1,7 @@
+import SquirrelNode from "../nodes/SquirrelNode";
+import SquirrelNodeType from "../nodes/SquirrelNodeType";
+import SquirrelSymbol from "../nodes/SquirrelSymbol";
 import escapeString from "./escapeString";
-import SquirrelNode from "./nodes/SquirrelNode";
-import SquirrelNodeType from "./nodes/SquirrelNodeType";
-import SquirrelSymbol from "./nodes/SquirrelSymbol";
 
 function toString(ast: SquirrelNode, printable: boolean = false): string {
   if (ast.type === SquirrelNodeType.BOOLEAN) {

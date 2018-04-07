@@ -1,5 +1,5 @@
-import Environment from "../src/Environment";
-import SquirrelNodeType from "../src/nodes/SquirrelNodeType";
+import Environment from "./Environment";
+import SquirrelNodeType from "./nodes/SquirrelNodeType";
 
 describe("Environment.get()", () => {
   test("returns a value defined in the current environment", () => {

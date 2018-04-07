@@ -1,7 +1,7 @@
-import dummyIOHandler from "../src/dummyIOHandler";
-import interpret from "../src/interpret";
-import replEnv from "../src/replEnv";
-import toString from "../src/toString";
+import interpret from "../interpret";
+import dummyIOHandler from "../io/dummyIOHandler";
+import replEnv from "../replEnv";
+import toString from "./toString";
 
 interface ITestCase {
   input: string;

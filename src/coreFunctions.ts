@@ -1,5 +1,4 @@
 import IOHandler from "./IOHandler";
-import Lexer from "./Lexer";
 import SquirrelBoolean from "./nodes/SquirrelBoolean";
 import SquirrelFunction from "./nodes/SquirrelFunction";
 import SquirrelList from "./nodes/SquirrelList";
@@ -9,7 +8,8 @@ import SquirrelNodeType from "./nodes/SquirrelNodeType";
 import SquirrelNumber from "./nodes/SquirrelNumber";
 import SquirrelString from "./nodes/SquirrelString";
 import Parser from "./Parser";
-import toString from "./toString";
+import Tokenizer from "./Tokenizer";
+import toString from "./utils/toString";
 
 const callables: Map<string, (args: SquirrelNode[], ioHandler: IOHandler) => SquirrelNode> = new Map();
 
@@ -173,8 +173,8 @@ callables.set("print-line",
 callables.set("parse-string",
   (args: SquirrelNode[]): SquirrelNode => {
     const input: SquirrelString = args[0] as SquirrelString;
-    const lexer: Lexer = new Lexer(input.value);
-    const parser: Parser = new Parser(lexer.lex());
+    const tokenizer: Tokenizer = new Tokenizer(input.value);
+    const parser: Parser = new Parser(tokenizer.tokenize());
     return parser.parse();
   },
 );
@@ -201,9 +201,9 @@ callables.set("do",
   },
 );
 
-const namespace: Map<string, SquirrelFunction> = new Map();
+const coreFunctions: SquirrelFunction[] = [];
 callables.forEach((callable: (args: SquirrelNode[], ioHandler: IOHandler) => SquirrelNode, name: string) => {
-  namespace.set(name, {
+  coreFunctions.push({
     type: SquirrelNodeType.FUNCTION,
     callable,
     isUserDefined: false,
@@ -211,4 +211,4 @@ callables.forEach((callable: (args: SquirrelNode[], ioHandler: IOHandler) => Squ
   });
 });
 
-export { namespace };
+export default coreFunctions;

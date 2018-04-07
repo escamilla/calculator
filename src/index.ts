@@ -1,7 +1,5 @@
-import escapeString from "./escapeString";
 import interpret from "./interpret";
-import IOHandler from "./IOHandler";
-import Lexer from "./Lexer";
+import IOHandler from "./io/IOHandler";
 import SquirrelBoolean from "./nodes/SquirrelBoolean";
 import SquirrelFunction from "./nodes/SquirrelFunction";
 import SquirrelList from "./nodes/SquirrelList";
@@ -13,13 +11,14 @@ import SquirrelString from "./nodes/SquirrelString";
 import SquirrelSymbol from "./nodes/SquirrelSymbol";
 import Parser from "./Parser";
 import replEnv from "./replEnv";
-import toString from "./toString";
+import Tokenizer from "./Tokenizer";
+import escapeString from "./utils/escapeString";
+import toString from "./utils/toString";
 
 export {
   escapeString,
   interpret,
   IOHandler,
-  Lexer,
   SquirrelBoolean,
   SquirrelFunction,
   SquirrelList,
@@ -31,5 +30,6 @@ export {
   SquirrelSymbol,
   Parser,
   replEnv,
+  Tokenizer,
   toString,
 };

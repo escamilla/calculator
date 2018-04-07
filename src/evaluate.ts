@@ -1,5 +1,5 @@
 import Environment from "./Environment";
-import IOHandler from "./IOHandler";
+import IOHandler from "./io/IOHandler";
 import SquirrelFunction from "./nodes/SquirrelFunction";
 import SquirrelList from "./nodes/SquirrelList";
 import SquirrelNode from "./nodes/SquirrelNode";

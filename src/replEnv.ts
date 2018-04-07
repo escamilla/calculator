@@ -1,9 +1,9 @@
-import { namespace } from "./core";
-import dummyIOHandler from "./dummyIOHandler";
+import coreFunctions from "./coreFunctions";
 import Environment from "./Environment";
 import evaluate from "./evaluate";
 import interpret from "./interpret";
-import IOHandler from "./IOHandler";
+import dummyIOHandler from "./io/dummyIOHandler";
+import IOHandler from "./io/IOHandler";
 import SquirrelFunction from "./nodes/SquirrelFunction";
 import SquirrelNode from "./nodes/SquirrelNode";
 import SquirrelNodeType from "./nodes/SquirrelNodeType";
@@ -23,8 +23,8 @@ replEnv.set("nil", { type: SquirrelNodeType.NIL });
 replEnv.set("true", { type: SquirrelNodeType.BOOLEAN, value: true });
 replEnv.set("false", { type: SquirrelNodeType.BOOLEAN, value: false });
 
-namespace.forEach((fn: SquirrelFunction, name: string) => {
-  replEnv.set(name, fn);
+coreFunctions.forEach((fn: SquirrelFunction) => {
+  replEnv.set(fn.name as string, fn);
 });
 
 const inputs: string[] = [
