@@ -1,31 +1,229 @@
-import coreFunctions from "./coreFunctions";
 import Environment from "./Environment";
 import evaluate from "./evaluate";
 import interpret from "./interpret";
 import dummyIOHandler from "./io/dummyIOHandler";
 import IOHandler from "./io/IOHandler";
-import SquirrelFunction from "./nodes/SquirrelFunction";
+import SquirrelBoolean from "./nodes/SquirrelBoolean";
+import SquirrelList from "./nodes/SquirrelList";
+import SquirrelNil from "./nodes/SquirrelNil";
 import SquirrelNode from "./nodes/SquirrelNode";
 import SquirrelNodeType from "./nodes/SquirrelNodeType";
+import SquirrelNumber from "./nodes/SquirrelNumber";
+import SquirrelString from "./nodes/SquirrelString";
+import Parser from "./Parser";
+import Tokenizer from "./Tokenizer";
+import toString from "./utils/toString";
 
 const replEnv: Environment = new Environment();
 
-replEnv.set("eval", {
-  type: SquirrelNodeType.FUNCTION,
-  callable: (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNode => {
+type SquirrelCallable = (args: SquirrelNode[], ioHandler: IOHandler) => SquirrelNode;
+
+function defineSquirrelFunction(name: string, callable: SquirrelCallable): void {
+  replEnv.set(name, {
+    type: SquirrelNodeType.FUNCTION,
+    callable,
+    isUserDefined: false,
+    name,
+  });
+}
+
+defineSquirrelFunction("+",
+  (args: SquirrelNode[]): SquirrelNumber => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.NUMBER, value: x.value + y.value };
+  },
+);
+
+defineSquirrelFunction("-",
+  (args: SquirrelNode[]): SquirrelNumber => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.NUMBER, value: x.value - y.value };
+  },
+);
+
+defineSquirrelFunction("*",
+  (args: SquirrelNode[]): SquirrelNumber => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.NUMBER, value: x.value * y.value };
+  },
+);
+
+defineSquirrelFunction("/",
+  (args: SquirrelNode[]): SquirrelNumber => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.NUMBER, value: x.value / y.value };
+  },
+);
+
+defineSquirrelFunction("%",
+  (args: SquirrelNode[]): SquirrelNumber => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.NUMBER, value: x.value % y.value };
+  },
+);
+
+defineSquirrelFunction("pow",
+  (args: SquirrelNode[]): SquirrelNumber => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.NUMBER, value: Math.pow(x.value, y.value) };
+  },
+);
+
+defineSquirrelFunction("=",
+  (args: SquirrelNode[]): SquirrelBoolean => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.BOOLEAN, value: x.value === y.value };
+  },
+);
+
+defineSquirrelFunction("<",
+  (args: SquirrelNode[]): SquirrelBoolean => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.BOOLEAN, value: x.value < y.value };
+  },
+);
+
+defineSquirrelFunction(">",
+  (args: SquirrelNode[]): SquirrelNode => {
+    const x: SquirrelNumber = args[0] as SquirrelNumber;
+    const y: SquirrelNumber = args[1] as SquirrelNumber;
+    return { type: SquirrelNodeType.BOOLEAN, value: x.value > y.value };
+  },
+);
+
+defineSquirrelFunction("list",
+  (args: SquirrelNode[]): SquirrelList => {
+    return { type: SquirrelNodeType.LIST, items: args };
+  },
+);
+
+defineSquirrelFunction("length",
+  (args: SquirrelNode[]): SquirrelNumber => {
+    const arg: SquirrelNode = args[0];
+    if (arg.type === SquirrelNodeType.LIST) {
+      return { type: SquirrelNodeType.NUMBER, value: arg.items.length };
+    } else if (arg.type === SquirrelNodeType.STRING) {
+      return { type: SquirrelNodeType.NUMBER, value: arg.value.length };
+    } else {
+      throw new Error("length() takes a list or string");
+    }
+  },
+);
+
+defineSquirrelFunction("nth",
+  (args: SquirrelNode[]): SquirrelNode => {
+    const arg: SquirrelNode = args[0];
+    const index: SquirrelNumber = args[1] as SquirrelNumber;
+
+    if (arg.type === SquirrelNodeType.LIST) {
+      return arg.items[index.value];
+    } else if (arg.type === SquirrelNodeType.STRING) {
+      return { type: SquirrelNodeType.STRING, value: arg.value.charAt(index.value) };
+    } else {
+      throw new Error("nth() takes a list or string");
+    }
+  },
+);
+
+defineSquirrelFunction("slice",
+  (args: SquirrelNode[]): SquirrelList => {
+    const list: SquirrelList = args[0] as SquirrelList;
+    const start: SquirrelNumber = args[1] as SquirrelNumber;
+    const end: SquirrelNumber = args[2] as SquirrelNumber;
+    return { type: SquirrelNodeType.LIST, items: list.items.slice(start.value, end.value) };
+  },
+);
+
+defineSquirrelFunction("join",
+  (args: SquirrelNode[]): SquirrelList => {
+    const list1: SquirrelList = args[0] as SquirrelList;
+    const list2: SquirrelList = args[1] as SquirrelList;
+    return { type: SquirrelNodeType.LIST, items: list1.items.concat(list2.items) };
+  },
+);
+
+defineSquirrelFunction("concat",
+  (args: SquirrelNode[]): SquirrelString => {
+    const castedArgs: SquirrelString[] = args.map((arg: SquirrelNode) => arg as SquirrelString);
+    const strings: string[] = castedArgs.map((arg: SquirrelString) => arg.value);
+    return { type: SquirrelNodeType.STRING, value: strings.join("") };
+  },
+);
+
+defineSquirrelFunction("to-string",
+  (args: SquirrelNode[]): SquirrelString => {
+    return { type: SquirrelNodeType.STRING, value: toString(args[0]) };
+  },
+);
+
+defineSquirrelFunction("print",
+  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNil => {
+    const message: string = toString(args[0], true);
+    ioHandler.print(message);
+    return { type: SquirrelNodeType.NIL };
+  },
+);
+
+defineSquirrelFunction("print-line",
+  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNil => {
+    if (args.length === 0) {
+      ioHandler.printLine();
+    } else {
+      const message: string = toString(args[0], true);
+      ioHandler.printLine(message);
+    }
+    return { type: SquirrelNodeType.NIL };
+  },
+);
+
+defineSquirrelFunction("parse-string",
+  (args: SquirrelNode[]): SquirrelNode => {
+    const input: SquirrelString = args[0] as SquirrelString;
+    const tokenizer: Tokenizer = new Tokenizer(input.value);
+    const parser: Parser = new Parser(tokenizer.tokenize());
+    return parser.parse();
+  },
+);
+
+defineSquirrelFunction("read-file",
+  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelString => {
+    const path: string = (args[0] as SquirrelString).value;
+    const contents: string = ioHandler.readFile(path);
+    return { type: SquirrelNodeType.STRING, value: contents };
+  },
+);
+
+defineSquirrelFunction("read-line",
+  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelString => {
+    const prompt: string = (args[0] as SquirrelString).value;
+    const line: string = ioHandler.readLine(prompt);
+    return { type: SquirrelNodeType.STRING, value: line };
+  },
+);
+
+defineSquirrelFunction("do",
+  (args: SquirrelNode[]): SquirrelNode => {
+    return args[args.length - 1];
+  },
+);
+
+defineSquirrelFunction("eval",
+  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNode => {
     return evaluate(args[0], replEnv, ioHandler);
   },
-  isUserDefined: false,
-  name: "eval",
-});
+);
 
 replEnv.set("nil", { type: SquirrelNodeType.NIL });
 replEnv.set("true", { type: SquirrelNodeType.BOOLEAN, value: true });
 replEnv.set("false", { type: SquirrelNodeType.BOOLEAN, value: false });
-
-coreFunctions.forEach((fn: SquirrelFunction) => {
-  replEnv.set(fn.name as string, fn);
-});
 
 const inputs: string[] = [
   // logic functions

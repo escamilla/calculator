@@ -1,4 +1,4 @@
-import IOHandler from "../IOHandler";
+import IOHandler from "../io/IOHandler";
 import SquirrelNode from "./SquirrelNode";
 import SquirrelNodeBase from "./SquirrelNodeBase";
 import SquirrelNodeType from "./SquirrelNodeType";
