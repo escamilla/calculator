@@ -1,12 +1,11 @@
 import JavaScriptNode from "./JavaScriptNode";
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
 
-class JavaScriptFunctionCall {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-    public readonly functionName: string,
-    public readonly args: JavaScriptNode[],
-  ) {}
+interface JavaScriptFunctionCall extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.FUNCTION_CALL;
+  functionName: string;
+  args: JavaScriptNode[];
 }
 
 export default JavaScriptFunctionCall;

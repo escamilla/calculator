@@ -1,12 +1,10 @@
 import JavaScriptNode from "./JavaScriptNode";
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
 
-// immediately-invoked function expression
-class JavaScriptIIFE {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-    public nodes: JavaScriptNode[],
-  ) {}
+interface JavaScriptIIFE extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.IIFE;
+  nodes: JavaScriptNode[];
 }
 
 export default JavaScriptIIFE;

@@ -1,9 +1,9 @@
-class JavaScriptString {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-    public readonly value: string,
-  ) {}
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
+
+interface JavaScriptString extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.STRING;
+  value: string;
 }
 
 export default JavaScriptString;

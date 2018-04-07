@@ -1,8 +1,8 @@
-class JavaScriptNull {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-  ) {}
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
+
+interface JavaScriptNull extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.NULL;
 }
 
 export default JavaScriptNull;

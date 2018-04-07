@@ -1,9 +1,9 @@
-class JavaScriptVariable {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-    public readonly name: string,
-  ) {}
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
+
+interface JavaScriptVariable extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.VARIABLE;
+  name: string;
 }
 
 export default JavaScriptVariable;

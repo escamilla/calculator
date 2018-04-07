@@ -1,0 +1,16 @@
+enum JavaScriptNodeType {
+  ARRAY,
+  ASSIGNMENT_OPERATION,
+  BINARY_OPERATION,
+  BOOLEAN,
+  FUNCTION_CALL,
+  FUNCTION_DEFINITION,
+  IIFE,
+  NULL,
+  NUMBER,
+  STRING,
+  CONDITIONAL_OPERATION,
+  VARIABLE,
+}
+
+export default JavaScriptNodeType;

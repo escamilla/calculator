@@ -1,11 +1,10 @@
 import JavaScriptNode from "./JavaScriptNode";
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
 
-class JavaScriptArray {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-    public readonly items: JavaScriptNode[],
-  ) {}
+interface JavaScriptArray extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.ARRAY;
+  items: JavaScriptNode[];
 }
 
 export default JavaScriptArray;

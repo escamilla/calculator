@@ -1,12 +1,11 @@
 import JavaScriptNode from "./JavaScriptNode";
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
 
-class JavaScriptAssignmentOperation {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-    public readonly name: string,
-    public readonly value: JavaScriptNode,
-  ) {}
+interface JavaScriptAssignmentOperation extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.ASSIGNMENT_OPERATION;
+  name: string;
+  value: JavaScriptNode;
 }
 
 export default JavaScriptAssignmentOperation;

@@ -8,16 +8,12 @@ import {
 import JavaScriptArray from "./js/JavaScriptArray";
 import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation";
-import JavaScriptBoolean from "./js/JavaScriptBoolean";
-import JavaScriptConditionalOperation from "./js/JavaScriptConditional";
-import JavaScriptFunction from "./js/JavaScriptFunction";
+import JavaScriptConditionalOperation from "./js/JavaScriptConditionalOperation";
 import JavaScriptFunctionCall from "./js/JavaScriptFunctionCall";
+import JavaScriptFunctionDefinition from "./js/JavaScriptFunctionDefinition";
 import JavaScriptIIFE from "./js/JavaScriptIIFE";
 import JavaScriptNode from "./js/JavaScriptNode";
-import JavaScriptNull from "./js/JavaScriptNull";
-import JavaScriptNumber from "./js/JavaScriptNumber";
-import JavaScriptString from "./js/JavaScriptString";
-import JavaScriptVariable from "./js/JavaScriptVariable";
+import JavaScriptNodeType from "./js/JavaScriptNodeType";
 
 import {
   escapeString,
@@ -47,55 +43,56 @@ function convertToJavaScriptAST(ast: SquirrelNode): JavaScriptNode {
         }
         const leftSide: JavaScriptNode = convertToJavaScriptAST(ast.items[1]);
         const rightSide: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
-        return new JavaScriptBinaryOperation(line, column, operator, leftSide, rightSide);
+        return { type: JavaScriptNodeType.BINARY_OPERATION, operator, leftSide, rightSide, line, column };
       } else if (head.name === "def") {
         if (ast.items[1].type !== SquirrelNodeType.SYMBOL) {
           throw new Error("first argument to def must be a symbol");
         }
-        const leftSide: SquirrelSymbol = ast.items[1] as SquirrelSymbol;
-        const rightSide: SquirrelNode = ast.items[2];
-        return new JavaScriptAssignmentOperation(line, column, leftSide.name, convertToJavaScriptAST(rightSide));
+        const name: string = (ast.items[1] as SquirrelSymbol).name;
+        const value: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
+        return { type: JavaScriptNodeType.ASSIGNMENT_OPERATION, name, value, line, column };
       } else if (head.name === "do") {
         const nodes: JavaScriptNode[] = ast.items.slice(1).map((item: SquirrelNode) => convertToJavaScriptAST(item));
-        return new JavaScriptIIFE(line, column, nodes);
+        return { type: JavaScriptNodeType.IIFE, nodes, line, column };
       } else if (head.name === "if") {
         const condition: JavaScriptNode = convertToJavaScriptAST(ast.items[1]);
-        const outcomeIfTrue: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
-        const outcomeIfFalse: JavaScriptNode = convertToJavaScriptAST(ast.items[3]);
-        return new JavaScriptConditionalOperation(line, column, condition, outcomeIfTrue, outcomeIfFalse);
+        const valueIfTrue: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
+        const valueIfFalse: JavaScriptNode = convertToJavaScriptAST(ast.items[3]);
+        return { type: JavaScriptNodeType.CONDITIONAL_OPERATION, condition, valueIfTrue, valueIfFalse, line, column };
       } else if (head.name === "lambda") {
         if (ast.items[1].type !== SquirrelNodeType.LIST) {
           throw new Error("first argument to lambda must be list of parameters");
         }
         const paramList: SquirrelList = ast.items[1] as SquirrelList;
         const paramSymbols: SquirrelSymbol[] = paramList.items.map((item: SquirrelNode) => item as SquirrelSymbol);
-        const paramStrings: string[] = paramSymbols.map((item: SquirrelSymbol) => item.name);
+        const params: string[] = paramSymbols.map((item: SquirrelSymbol) => item.name);
         const body: JavaScriptNode = convertToJavaScriptAST(ast.items[2]);
-        return new JavaScriptFunction(line, column, paramStrings, body);
+        return { type: JavaScriptNodeType.FUNCTION_DEFINITION, params, body, line, column };
       } else {
+        const functionName: string = head.name;
         const args: JavaScriptNode[] = ast.items.slice(1).map((item: SquirrelNode) => convertToJavaScriptAST(item));
-        return new JavaScriptFunctionCall(line, column, head.name, args);
+        return { type: JavaScriptNodeType.FUNCTION_CALL, functionName, args, line, column };
       }
     }
     const items: JavaScriptNode[] = ast.items.map((item: SquirrelNode) => convertToJavaScriptAST(item));
-    return new JavaScriptArray(line, column, items);
+    return { type: JavaScriptNodeType.ARRAY, items, line, column };
   } else if (ast.type === SquirrelNodeType.BOOLEAN) {
-    return new JavaScriptBoolean(line, column, ast.value);
+    return { type: JavaScriptNodeType.BOOLEAN, value: ast.value, line, column };
   } else if (ast.type === SquirrelNodeType.NIL) {
-    return new JavaScriptNull(line, column);
+    return { type: JavaScriptNodeType.NULL, line, column };
   } else if (ast.type === SquirrelNodeType.NUMBER) {
-    return new JavaScriptNumber(line, column, ast.value);
+    return { type: JavaScriptNodeType.NUMBER, value: ast.value, line, column };
   } else if (ast.type === SquirrelNodeType.STRING) {
-    return new JavaScriptString(line, column, ast.value);
+    return { type: JavaScriptNodeType.STRING, value: ast.value, line, column };
   } else if (ast.type === SquirrelNodeType.SYMBOL) {
     if (ast.name === "null") {
-      return new JavaScriptNull(line, column);
+      return { type: JavaScriptNodeType.NULL, line, column };
     } else if (ast.name === "true") {
-      return new JavaScriptBoolean(line, column, true);
+      return { type: JavaScriptNodeType.BOOLEAN, value: true, line, column };
     } else if (ast.name === "false") {
-      return new JavaScriptBoolean(line, column, false);
+      return { type: JavaScriptNodeType.BOOLEAN, value: false, line, column };
     } else {
-      return new JavaScriptVariable(line, column, ast.name);
+      return { type: JavaScriptNodeType.VARIABLE, name: ast.name, line, column };
     }
   }
 
@@ -105,7 +102,7 @@ function convertToJavaScriptAST(ast: SquirrelNode): JavaScriptNode {
 function compileJavaScriptArray(ast: JavaScriptArray,
                                 sourceFile: string | null = null,
                                 indent: number = 0): SourceNode {
-  if (ast.items[0] instanceof JavaScriptFunction) {
+  if (ast.items[0].type === JavaScriptNodeType.FUNCTION_DEFINITION) {
     const functionNode: SourceNode = compileJavaScript(ast.items[0], sourceFile, indent);
     const argNodes: SourceNode[] =
       ast.items.slice(1).map((item: JavaScriptNode) => compileJavaScript(item, sourceFile, indent));
@@ -170,8 +167,8 @@ function compileJavaScriptConditionalOperation(ast: JavaScriptConditionalOperati
                                                sourceFile: string | null = null,
                                                indent: number = 0): SourceNode {
   const conditionNode: SourceNode = compileJavaScript(ast.condition, sourceFile, indent);
-  const outcomeIfTrueNode: SourceNode = compileJavaScript(ast.outcomeIfTrue, sourceFile, indent);
-  const outcomeIfFalseNode: SourceNode = compileJavaScript(ast.outcomeIfFalse, sourceFile, indent);
+  const outcomeIfTrueNode: SourceNode = compileJavaScript(ast.valueIfTrue, sourceFile, indent);
+  const outcomeIfFalseNode: SourceNode = compileJavaScript(ast.valueIfFalse, sourceFile, indent);
   return new SourceNode(
     ast.line,
     ast.column,
@@ -180,7 +177,7 @@ function compileJavaScriptConditionalOperation(ast: JavaScriptConditionalOperati
   );
 }
 
-function compileJavaScriptFunction(ast: JavaScriptFunction,
+function compileJavaScriptFunction(ast: JavaScriptFunctionDefinition,
                                    sourceFile: string | null = null,
                                    indent: number = 0): SourceNode {
     const functionBodyNode: SourceNode = compileJavaScript(ast.body, sourceFile, indent);
@@ -243,49 +240,49 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
 function compileJavaScript(ast: JavaScriptNode,
                            sourceFile: string | null = null,
                            indent: number = 0): SourceNode {
-  if (ast instanceof JavaScriptArray) {
+  if (ast.type === JavaScriptNodeType.ARRAY) {
     return compileJavaScriptArray(ast, sourceFile, indent);
-  } else if (ast instanceof JavaScriptAssignmentOperation) {
+  } else if (ast.type === JavaScriptNodeType.ASSIGNMENT_OPERATION) {
     return compileJavaScriptAssignmentOperation(ast, sourceFile, indent);
-  } else if (ast instanceof JavaScriptBinaryOperation) {
+  } else if (ast.type === JavaScriptNodeType.BINARY_OPERATION) {
     return compileJavaScriptBinaryOperation(ast, sourceFile, indent);
-  } else if (ast instanceof JavaScriptBoolean) {
+  } else if (ast.type === JavaScriptNodeType.BOOLEAN) {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
       ast.value ? "true" : "false",
     );
-  } else if (ast instanceof JavaScriptConditionalOperation) {
+  } else if (ast.type === JavaScriptNodeType.CONDITIONAL_OPERATION) {
     return compileJavaScriptConditionalOperation(ast, sourceFile, indent);
-  } else if (ast instanceof JavaScriptFunction) {
-    return compileJavaScriptFunction(ast, sourceFile, indent);
-  } else if (ast instanceof JavaScriptFunctionCall) {
+  } else if (ast.type === JavaScriptNodeType.FUNCTION_CALL) {
     return compileJavaScriptFunctionCall(ast, sourceFile, indent);
-  } else if (ast instanceof JavaScriptIIFE) {
+  } else if (ast.type === JavaScriptNodeType.FUNCTION_DEFINITION) {
+    return compileJavaScriptFunction(ast, sourceFile, indent);
+  } else if (ast.type === JavaScriptNodeType.IIFE) {
     return compileJavaScriptIIFE(ast, sourceFile, indent);
-  } else if (ast instanceof JavaScriptNull) {
+  } else if (ast.type === JavaScriptNodeType.NULL) {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
       "null",
     );
-  } else if (ast instanceof JavaScriptNumber) {
+  } else if (ast.type === JavaScriptNodeType.NUMBER) {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
       ast.value.toString(),
     );
-  } else if (ast instanceof JavaScriptString) {
+  } else if (ast.type === JavaScriptNodeType.STRING) {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
       escapeString(ast.value),
     );
-  } else if (ast instanceof JavaScriptVariable) {
+  } else if (ast.type === JavaScriptNodeType.VARIABLE) {
     return new SourceNode(
       ast.line,
       ast.column,

@@ -1,13 +1,12 @@
 import JavaScriptNode from "./JavaScriptNode";
+import JavaScriptNodeBase from "./JavaScriptNodeBase";
+import JavaScriptNodeType from "./JavaScriptNodeType";
 
-class JavaScriptBinaryOperation {
-  public constructor(
-    public readonly line: number,
-    public readonly column: number,
-    public readonly operator: string,
-    public readonly leftSide: JavaScriptNode,
-    public readonly rightSide: JavaScriptNode,
-  ) {}
+interface JavaScriptBinaryOperation extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.BINARY_OPERATION;
+  operator: string;
+  leftSide: JavaScriptNode;
+  rightSide: JavaScriptNode;
 }
 
 export default JavaScriptBinaryOperation;
