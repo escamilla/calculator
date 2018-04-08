@@ -28,9 +28,19 @@ import {
 
 const binaryOperators: string[] = ["!=", "%", "*", "+", "-", "/", "<", "<=", "=", ">", ">="];
 
-function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode): JavaScriptNode {
+function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): JavaScriptNode {
   const line: number = ast.line as number;
   const column: number = (ast.column as number) - 1;
+
+  if (root) {
+    return {
+      type: JavaScriptNodeType.IIFE,
+      nodes: [convertSquirrelNodeToJavaScriptNode(ast, false)],
+      isRootNode: true,
+      line,
+      column,
+    };
+  }
 
   if (ast.type === SquirrelNodeType.LIST) {
     const head: SquirrelNode = ast.items[0];
@@ -42,24 +52,24 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode): JavaScriptNode 
         } else if (operator === "!=") {
           operator = "!==";
         }
-        const leftSide: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1]);
-        const rightSide: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2]);
+        const leftSide: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const rightSide: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.BINARY_OPERATION, operator, leftSide, rightSide, line, column };
       } else if (head.name === "def") {
         if (ast.items[1].type !== SquirrelNodeType.SYMBOL) {
           throw new Error("first argument to def must be a symbol");
         }
         const name: string = (ast.items[1] as SquirrelSymbol).name;
-        const value: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2]);
+        const value: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.ASSIGNMENT_OPERATION, name, value, line, column };
       } else if (head.name === "do") {
         const nodes: JavaScriptNode[] =
-          ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item));
-        return { type: JavaScriptNodeType.IIFE, nodes, line, column };
+          ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
+        return { type: JavaScriptNodeType.IIFE, nodes, isRootNode: false, line, column };
       } else if (head.name === "if") {
-        const condition: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1]);
-        const valueIfTrue: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2]);
-        const valueIfFalse: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[3]);
+        const condition: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const valueIfTrue: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        const valueIfFalse: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[3], false);
         return { type: JavaScriptNodeType.CONDITIONAL_OPERATION, condition, valueIfTrue, valueIfFalse, line, column };
       } else if (head.name === "lambda") {
         if (ast.items[1].type !== SquirrelNodeType.LIST) {
@@ -68,19 +78,20 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode): JavaScriptNode 
         const paramList: SquirrelList = ast.items[1] as SquirrelList;
         const paramSymbols: SquirrelSymbol[] = paramList.items.map((item: SquirrelNode) => item as SquirrelSymbol);
         const params: string[] = paramSymbols.map((item: SquirrelSymbol) => item.name);
-        const body: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2]);
+        const body: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.FUNCTION_DEFINITION, params, body, line, column };
       } else if (head.name === "log") {
-        const obj: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1]);
+        const obj: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
         return { type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT, obj, line, column };
       } else {
         const functionName: string = head.name;
         const args: JavaScriptNode[] =
-          ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item));
+          ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
         return { type: JavaScriptNodeType.FUNCTION_CALL, functionName, args, line, column };
       }
     }
-    const items: JavaScriptNode[] = ast.items.map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item));
+    const items: JavaScriptNode[] =
+      ast.items.map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
     return { type: JavaScriptNodeType.ARRAY, items, line, column };
   } else if (ast.type === SquirrelNodeType.BOOLEAN) {
     return { type: JavaScriptNodeType.BOOLEAN, value: ast.value, line, column };
@@ -152,7 +163,7 @@ function compileJavaScriptAssignmentOperation(ast: JavaScriptAssignmentOperation
     ast.line,
     ast.column,
     sourceFile,
-    [" ".repeat(indent), `_var['${ast.name}'] = `, valueNode, ";"],
+    [" ".repeat(indent), `_var['${ast.name}'] = `, valueNode, ";\n"],
   );
 }
 
@@ -198,7 +209,7 @@ function compileJavaScriptConsoleLogStatement(ast: JavaScriptConsoleLogStatement
 function compileJavaScriptFunctionDefinition(ast: JavaScriptFunctionDefinition,
                                              sourceFile: string | null = null,
                                              indent: number = 0): SourceNode {
-    const functionBodyNode: SourceNode = compileJavaScriptToSourceNode(ast.body, sourceFile, indent);
+    const functionBodyNode: SourceNode = compileJavaScriptToSourceNode(ast.body, sourceFile, indent + 2);
     const argUnpackingChunks: any[] = [];
     for (let i: number = 0; i < ast.params.length; i++) {
       argUnpackingChunks.push(" ".repeat(indent + 2));
@@ -245,25 +256,36 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
     .map((node: JavaScriptNode) => compileJavaScriptToSourceNode(node, sourceFile, indent + 2));
   const statementNodesWithLineBreaks: any[] = [];
   statementNodes.forEach((statementNode: SourceNode) => {
+    statementNodesWithLineBreaks.push(" ".repeat(indent + 2));
     statementNodesWithLineBreaks.push(statementNode);
     statementNodesWithLineBreaks.push("\n");
   });
   const returnValueNode: SourceNode =
-    compileJavaScriptToSourceNode(ast.nodes[ast.nodes.length - 1], sourceFile, indent);
+    compileJavaScriptToSourceNode(ast.nodes[ast.nodes.length - 1], sourceFile, indent + 2);
+
+  const lastChunk: string = ast.isRootNode ? "})({})" : "})(Object.assign(_var, {}))";
   if (statementNodes.length === 0) {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
-      ["(function () {\n", " ".repeat(indent + 2), "return ", returnValueNode, ";\n})()"],
+      [
+        "(function (_var) {\n",
+        " ".repeat(indent + 2), "return ", returnValueNode, ";\n",
+        " ".repeat(indent), lastChunk,
+      ],
     );
   } else {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
-      ["(function () {\n", " ".repeat(indent + 2), "const _var = {};\n",
-      ...statementNodes, "\n", " ".repeat(indent + 2), "return ", returnValueNode, ";\n})()"],
+      [
+        "(function (_var) {\n",
+        ...statementNodes,
+        " ".repeat(indent + 2), "return ", returnValueNode, ";\n",
+        " ".repeat(indent), lastChunk,
+      ],
     );
   }
 }
@@ -333,7 +355,7 @@ function compileSquirrelFileToJavaScript(path: string): void {
   const parser: Parser = new Parser(tokenizer.tokenize());
   const squirrelAst: SquirrelNode = parser.parse();
 
-  const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst);
+  const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst, true);
   const javaScriptCodeFile: string = path.replace(/.\w+$/, ".js");
   const javaScriptSourceMapFile: string = javaScriptCodeFile + ".map";
 

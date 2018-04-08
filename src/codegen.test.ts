@@ -43,7 +43,7 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(<= 0 1)`, expectedOutput: true },
   { input: `(<= 1 1)`, expectedOutput: true },
   { input: `(<= 2 1)`, expectedOutput: false },
-  { input: `(def pi 3.14)`, expectedOutput: undefined },
+  { input: `(def pi 3.14)`, expectedOutput: 3.14 },
   { input: `(do (def pi 3.14) pi)`, expectedOutput: 3.14 },
   { input: `(do (do (def pi 3.14) pi))`, expectedOutput: 3.14 },
   { input: `(do (def square (lambda (x) (* x x))) (square 3))`, expectedOutput: 9 },
@@ -62,7 +62,7 @@ describe("code generation produces equivalent JavaScript code", () => {
       const tokenizer: Tokenizer = new Tokenizer(testCase.input);
       const parser: Parser = new Parser(tokenizer.tokenize());
       const squirrelAst: SquirrelNode = parser.parse();
-      const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst);
+      const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst, true);
       const javaScriptCode: string = compileJavaScriptToSourceNode(javaScriptAst).toString();
       const actualOutput: string = eval(javaScriptCode); // tslint:disable-line:no-eval
       expect(actualOutput).toEqual(testCase.expectedOutput);
