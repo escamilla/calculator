@@ -28,6 +28,10 @@ import {
 
 const binaryOperators: string[] = ["!=", "%", "*", "+", "-", "/", "<", "<=", "=", ">", ">="];
 
+function sanitizeJavaScriptIdentifier(identifier: string): string {
+  return identifier.replace(/\W/g, "_");
+}
+
 function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): JavaScriptNode {
   const line: number = ast.line as number;
   const column: number = (ast.column as number) - 1;
@@ -59,7 +63,7 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         if (ast.items[1].type !== SquirrelNodeType.SYMBOL) {
           throw new Error("first argument to def must be a symbol");
         }
-        const name: string = (ast.items[1] as SquirrelSymbol).name;
+        const name: string = sanitizeJavaScriptIdentifier((ast.items[1] as SquirrelSymbol).name);
         const value: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.ASSIGNMENT_OPERATION, name, value, line, column };
       } else if (head.name === "do") {
@@ -84,7 +88,7 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         const obj: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
         return { type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT, obj, line, column };
       } else {
-        const functionName: string = head.name;
+        const functionName: string = sanitizeJavaScriptIdentifier(head.name);
         const args: JavaScriptNode[] =
           ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
         return { type: JavaScriptNodeType.FUNCTION_CALL, functionName, args, line, column };
@@ -109,7 +113,7 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
     } else if (ast.name === "false") {
       return { type: JavaScriptNodeType.BOOLEAN, value: false, line, column };
     } else {
-      return { type: JavaScriptNodeType.VARIABLE, name: ast.name, line, column };
+      return { type: JavaScriptNodeType.VARIABLE, name: sanitizeJavaScriptIdentifier(ast.name), line, column };
     }
   }
 
@@ -163,7 +167,7 @@ function compileJavaScriptAssignmentOperation(ast: JavaScriptAssignmentOperation
     ast.line,
     ast.column,
     sourceFile,
-    [" ".repeat(indent), `scope.set('${ast.name}', `, valueNode, ");\n"],
+    [" ".repeat(indent), `const ${ast.name} = `, valueNode, ";\n"],
   );
 }
 
@@ -210,16 +214,11 @@ function compileJavaScriptFunctionDefinition(ast: JavaScriptFunctionDefinition,
                                              sourceFile: string | null = null,
                                              indent: number = 0): SourceNode {
     const functionBodyNode: SourceNode = compileJavaScriptToSourceNode(ast.body, sourceFile, indent + 2);
-    const argUnpackingChunks: any[] = [];
-    for (let i: number = 0; i < ast.params.length; i++) {
-      argUnpackingChunks.push(" ".repeat(indent + 2));
-      argUnpackingChunks.push(`scope.set('${ast.params[i]}', scope.get('${i}'));\n`);
-    }
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
-      ["(function (scope) {\n", ...argUnpackingChunks,
+      ["(function (", ast.params.join(", "), ") {\n",
       " ".repeat(indent + 2), "return ", functionBodyNode, ";\n", " ".repeat(indent), "})"],
     );
 }
@@ -229,22 +228,18 @@ function compileJavaScriptFunctionCall(ast: JavaScriptFunctionCall,
                                        indent: number = 0): SourceNode {
   const argNodes: SourceNode[] =
     ast.args.map((item: JavaScriptNode) => compileJavaScriptToSourceNode(item, sourceFile, indent));
-
-  const argDictChunks: any[] = [];
-  argDictChunks.push("[");
+  const argNodesWithCommas: any[] = [];
   for (let i: number = 0; i < argNodes.length; i++) {
-    argDictChunks.push(argNodes[i]);
+    argNodesWithCommas.push(argNodes[i]);
     if (i !== argNodes.length - 1) {
-      argDictChunks.push(", ");
+      argNodesWithCommas.push(", ");
     }
   }
-  argDictChunks.push("]");
-
   return new SourceNode(
     ast.line,
     ast.column,
     sourceFile,
-    [`scope.get('${ast.functionName}')(new Scope(scope, `, ...argDictChunks, "))"],
+    [ast.functionName, "(", ...argNodesWithCommas, ")"],
   );
 }
 
@@ -262,18 +257,16 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
   const returnValueNode: SourceNode =
     compileJavaScriptToSourceNode(ast.nodes[ast.nodes.length - 1], sourceFile, indent + 2);
 
-  const firstChunk: string = ast.isRootNode ? "(function () {\n" : "(function (scope) {\n";
-  const lastChunk: string = ast.isRootNode ? "})()" : "})(new Scope(scope))";
   if (statementNodes.length === 0) {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
       [
-        firstChunk,
+        "(function () {\n",
         ast.isRootNode ? preamble : "",
         " ".repeat(indent + 2), "return ", returnValueNode, ";\n",
-        " ".repeat(indent), lastChunk,
+        " ".repeat(indent), "})()",
       ],
     );
   } else {
@@ -282,11 +275,11 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
       ast.column,
       sourceFile,
       [
-        firstChunk,
-        ast.isRootNode ? scopeDefinition : "",
+        "(function () {\n",
+        ast.isRootNode ? preamble : "",
         ...statementNodes,
         " ".repeat(indent + 2), "return ", returnValueNode, ";\n",
-        " ".repeat(indent), lastChunk,
+        " ".repeat(indent), "})()",
       ],
     );
   }
@@ -344,7 +337,7 @@ function compileJavaScriptToSourceNode(ast: JavaScriptNode,
       ast.line,
       ast.column,
       sourceFile,
-      `scope.get('${ast.name}')`,
+      ast.name,
     );
   } else {
     throw new Error("unrecognized node");
@@ -369,33 +362,6 @@ function compileSquirrelFileToJavaScript(path: string): void {
 }
 
 let preamble: string = "";
-
-const scopeDefinition: string =
-`  const Scope = (function () {
-    function Scope(parent, bindValues) {
-      this.parent = parent;
-      this.data = new Map();
-      if (bindValues) {
-        for (let i = 0; i < bindValues.length; i++) {
-          this.data.set(\`\${i}\`, bindValues[i]);
-        }
-      }
-    }
-    Scope.prototype.set = function (key, value) {
-      this.data.set(key, value);
-    };
-    Scope.prototype.get = function (key) {
-      if (this.data.has(key)) {
-        return this.data.get(key);
-      } else if (this.parent) {
-        return this.parent.get(key);
-      }
-    };
-    return Scope;
-  }());
-  const scope = new Scope();\n`;
-
-preamble += scopeDefinition;
 
 const squirrelFunctions: string[] = [
   "(def abs (lambda (x) (if (< x 0) (* -1 x) x)))",
