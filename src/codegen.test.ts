@@ -53,6 +53,8 @@ const positiveTestCases: IPositiveTestCase[] = [
     input: `(do (def factorial (lambda (x) (if (= x 0) 1 (* x (factorial (- x 1)))))) (factorial 10))`,
     expectedOutput: 3628800,
   },
+  { input: `(abs -1)`, expectedOutput: 1 },
+  { input: `(join (list 1) (list 2 3))`, expectedOutput: [1, 2, 3]},
 ];
 
 describe("code generation produces equivalent JavaScript code", () => {

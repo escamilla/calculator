@@ -7,6 +7,7 @@ enum JavaScriptNodeType {
   FUNCTION_CALL,
   FUNCTION_DEFINITION,
   IIFE,
+  METHOD_CALL,
   NULL,
   NUMBER,
   STRING,

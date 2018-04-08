@@ -7,6 +7,7 @@ import JavaScriptConsoleLogStatement from "./JavaScriptConsoleLogStatement";
 import JavaScriptFunctionCall from "./JavaScriptFunctionCall";
 import JavaScriptFunctionDefinition from "./JavaScriptFunctionDefinition";
 import JavaScriptIIFE from "./JavaScriptIIFE";
+import JavaScriptMethodCall from "./JavaScriptMethodCall";
 import JavaScriptNull from "./JavaScriptNull";
 import JavaScriptNumber from "./JavaScriptNumber";
 import JavaScriptString from "./JavaScriptString";
@@ -21,6 +22,7 @@ type JavaScriptNode = JavaScriptArray
                     | JavaScriptFunctionCall
                     | JavaScriptFunctionDefinition
                     | JavaScriptIIFE
+                    | JavaScriptMethodCall
                     | JavaScriptNull
                     | JavaScriptNumber
                     | JavaScriptString

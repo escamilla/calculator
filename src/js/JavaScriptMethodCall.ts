@@ -2,9 +2,11 @@ import JavaScriptNode from "./JavaScriptNode";
 import JavaScriptNodeBase from "./JavaScriptNodeBase";
 import JavaScriptNodeType from "./JavaScriptNodeType";
 
-interface JavaScriptConsoleLogStatement extends JavaScriptNodeBase {
-  type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT;
+interface JavaScriptMethodCall extends JavaScriptNodeBase {
+  type: JavaScriptNodeType.METHOD_CALL;
   object: JavaScriptNode;
+  methodName: string;
+  args: JavaScriptNode[];
 }
 
-export default JavaScriptConsoleLogStatement;
+export default JavaScriptMethodCall;
