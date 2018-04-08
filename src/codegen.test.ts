@@ -43,7 +43,7 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(<= 0 1)`, expectedOutput: true },
   { input: `(<= 1 1)`, expectedOutput: true },
   { input: `(<= 2 1)`, expectedOutput: false },
-  { input: `(def pi 3.14)`, expectedOutput: 3.14 },
+  { input: `(def pi 3.14)`, expectedOutput: undefined },
   { input: `(do (def pi 3.14) pi)`, expectedOutput: 3.14 },
   { input: `(do (do (def pi 3.14) pi))`, expectedOutput: 3.14 },
   { input: `(do (def square (lambda (x) (* x x))) (square 3))`, expectedOutput: 9 },

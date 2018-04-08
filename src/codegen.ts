@@ -163,7 +163,7 @@ function compileJavaScriptAssignmentOperation(ast: JavaScriptAssignmentOperation
     ast.line,
     ast.column,
     sourceFile,
-    [" ".repeat(indent), `_var['${ast.name}'] = `, valueNode, ";\n"],
+    [" ".repeat(indent), `scope.set('${ast.name}', `, valueNode, ");\n"],
   );
 }
 
@@ -213,13 +213,13 @@ function compileJavaScriptFunctionDefinition(ast: JavaScriptFunctionDefinition,
     const argUnpackingChunks: any[] = [];
     for (let i: number = 0; i < ast.params.length; i++) {
       argUnpackingChunks.push(" ".repeat(indent + 2));
-      argUnpackingChunks.push(`_var['${ast.params[i]}'] = _var[${i}];\n`);
+      argUnpackingChunks.push(`scope.set('${ast.params[i]}', scope.get('${i}'));\n`);
     }
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
-      ["(function (_var) {\n", ...argUnpackingChunks,
+      ["(function (scope) {\n", ...argUnpackingChunks,
       " ".repeat(indent + 2), "return ", functionBodyNode, ";\n", " ".repeat(indent), "})"],
     );
 }
@@ -231,23 +231,47 @@ function compileJavaScriptFunctionCall(ast: JavaScriptFunctionCall,
     ast.args.map((item: JavaScriptNode) => compileJavaScriptToSourceNode(item, sourceFile, indent));
 
   const argDictChunks: any[] = [];
-  argDictChunks.push("{ ");
+  argDictChunks.push("[");
   for (let i: number = 0; i < argNodes.length; i++) {
-    argDictChunks.push(`${i}: `);
     argDictChunks.push(argNodes[i]);
     if (i !== argNodes.length - 1) {
       argDictChunks.push(", ");
     }
   }
-  argDictChunks.push(" }");
+  argDictChunks.push("]");
 
   return new SourceNode(
     ast.line,
     ast.column,
     sourceFile,
-    [`_var['${ast.functionName}']`, "(Object.assign(_var, ", ...argDictChunks, "))"],
+    [`scope.get('${ast.functionName}')(new Scope(scope, `, ...argDictChunks, "))"],
   );
 }
+
+const scopeDefinition: string =
+`  const Scope = (function () {
+    function Scope(parent, bindValues) {
+      this.parent = parent;
+      this.data = new Map();
+      if (bindValues) {
+        for (let i = 0; i < bindValues.length; i++) {
+          this.data.set(\`\${i}\`, bindValues[i]);
+        }
+      }
+    }
+    Scope.prototype.set = function (key, value) {
+      this.data.set(key, value);
+    };
+    Scope.prototype.get = function (key) {
+      if (this.data.has(key)) {
+        return this.data.get(key);
+      } else if (this.parent) {
+        return this.parent.get(key);
+      }
+    };
+    return Scope;
+  }());
+  const scope = new Scope();\n`;
 
 function compileJavaScriptIIFE(ast: JavaScriptIIFE,
                                sourceFile: string | null = null,
@@ -263,14 +287,16 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
   const returnValueNode: SourceNode =
     compileJavaScriptToSourceNode(ast.nodes[ast.nodes.length - 1], sourceFile, indent + 2);
 
-  const lastChunk: string = ast.isRootNode ? "})({})" : "})(Object.assign(_var, {}))";
+  const firstChunk: string = ast.isRootNode ? "(function () {\n" : "(function (scope) {\n";
+  const lastChunk: string = ast.isRootNode ? "})()" : "})(new Scope(scope))";
   if (statementNodes.length === 0) {
     return new SourceNode(
       ast.line,
       ast.column,
       sourceFile,
       [
-        "(function (_var) {\n",
+        firstChunk,
+        ast.isRootNode ? scopeDefinition : "",
         " ".repeat(indent + 2), "return ", returnValueNode, ";\n",
         " ".repeat(indent), lastChunk,
       ],
@@ -281,7 +307,8 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
       ast.column,
       sourceFile,
       [
-        "(function (_var) {\n",
+        firstChunk,
+        ast.isRootNode ? scopeDefinition : "",
         ...statementNodes,
         " ".repeat(indent + 2), "return ", returnValueNode, ";\n",
         " ".repeat(indent), lastChunk,
@@ -342,7 +369,7 @@ function compileJavaScriptToSourceNode(ast: JavaScriptNode,
       ast.line,
       ast.column,
       sourceFile,
-      `_var['${ast.name}']`,
+      `scope.get('${ast.name}')`,
     );
   } else {
     throw new Error("unrecognized node");
