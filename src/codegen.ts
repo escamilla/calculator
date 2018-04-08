@@ -248,31 +248,6 @@ function compileJavaScriptFunctionCall(ast: JavaScriptFunctionCall,
   );
 }
 
-const scopeDefinition: string =
-`  const Scope = (function () {
-    function Scope(parent, bindValues) {
-      this.parent = parent;
-      this.data = new Map();
-      if (bindValues) {
-        for (let i = 0; i < bindValues.length; i++) {
-          this.data.set(\`\${i}\`, bindValues[i]);
-        }
-      }
-    }
-    Scope.prototype.set = function (key, value) {
-      this.data.set(key, value);
-    };
-    Scope.prototype.get = function (key) {
-      if (this.data.has(key)) {
-        return this.data.get(key);
-      } else if (this.parent) {
-        return this.parent.get(key);
-      }
-    };
-    return Scope;
-  }());
-  const scope = new Scope();\n`;
-
 function compileJavaScriptIIFE(ast: JavaScriptIIFE,
                                sourceFile: string | null = null,
                                indent: number = 0): SourceNode {
@@ -296,7 +271,7 @@ function compileJavaScriptIIFE(ast: JavaScriptIIFE,
       sourceFile,
       [
         firstChunk,
-        ast.isRootNode ? scopeDefinition : "",
+        ast.isRootNode ? preamble : "",
         " ".repeat(indent + 2), "return ", returnValueNode, ";\n",
         " ".repeat(indent), lastChunk,
       ],
@@ -392,6 +367,48 @@ function compileSquirrelFileToJavaScript(path: string): void {
   fs.writeFileSync(javaScriptCodeFile, generatedCode.code + "\n//# sourceMappingURL=" + javaScriptSourceMapFile);
   fs.writeFileSync(javaScriptSourceMapFile, generatedCode.map);
 }
+
+let preamble: string = "";
+
+const scopeDefinition: string =
+`  const Scope = (function () {
+    function Scope(parent, bindValues) {
+      this.parent = parent;
+      this.data = new Map();
+      if (bindValues) {
+        for (let i = 0; i < bindValues.length; i++) {
+          this.data.set(\`\${i}\`, bindValues[i]);
+        }
+      }
+    }
+    Scope.prototype.set = function (key, value) {
+      this.data.set(key, value);
+    };
+    Scope.prototype.get = function (key) {
+      if (this.data.has(key)) {
+        return this.data.get(key);
+      } else if (this.parent) {
+        return this.parent.get(key);
+      }
+    };
+    return Scope;
+  }());
+  const scope = new Scope();\n`;
+
+preamble += scopeDefinition;
+
+const squirrelFunctions: string[] = [
+  "(def abs (lambda (x) (if (< x 0) (* -1 x) x)))",
+];
+
+squirrelFunctions.forEach((value: string) => {
+  const tokenizer: Tokenizer = new Tokenizer(value);
+  const parser: Parser = new Parser(tokenizer.tokenize());
+  const squirrelAst: SquirrelNode = parser.parse();
+  const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst, false);
+  const generatedCode: string = compileJavaScriptToSourceNode(javaScriptAst, null, 2).toString();
+  preamble += generatedCode;
+});
 
 export {
   compileJavaScriptToSourceNode,
