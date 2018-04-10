@@ -2,7 +2,7 @@ import TokenType from "./TokenType";
 
 interface Token {
   type: TokenType;
-  value: any;
+  value: string;
   line: number;
   column: number;
 }

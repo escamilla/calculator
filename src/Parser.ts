@@ -63,7 +63,7 @@ class Parser {
     const token: Token = this.consumeToken(TokenType.NUMBER);
     return {
       type: SquirrelNodeType.NUMBER,
-      value: token.value,
+      value: parseFloat(token.value),
       line: token.line,
       column: token.column,
     };

@@ -100,7 +100,7 @@ class Tokenizer {
     }
   }
 
-  private readNumber(): number {
+  private readNumber(): string {
     let str: string = "";
     if (this.peek() === "-") {
       str += this.next();
@@ -114,7 +114,7 @@ class Tokenizer {
         str += this.next();
       }
     }
-    return parseFloat(str);
+    return str;
   }
 
   private readSymbol(): string {
