@@ -111,6 +111,15 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         const params: string[] = paramSymbols.map((item: SquirrelSymbol) => sanitizeJavaScriptIdentifier(item.name));
         const body: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.FUNCTION_DEFINITION, params, body, line, column };
+      } else if (head.name === "length") {
+        const object: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        return {
+          type: JavaScriptNodeType.PROPERTY_ACCESS,
+          object,
+          propertyName: "length",
+          line,
+          column,
+        };
       } else if (head.name === "list") {
         const listItems: JavaScriptNode[] =
           ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
@@ -385,6 +394,14 @@ function compileJavaScriptToSourceNode(ast: JavaScriptNode,
       ast.column,
       sourceFile,
       ast.value.toString(),
+    );
+  } else if (ast.type === JavaScriptNodeType.PROPERTY_ACCESS) {
+    const objectNode: SourceNode = compileJavaScriptToSourceNode(ast.object, sourceFile, indent);
+    return new SourceNode(
+      ast.line,
+      ast.column,
+      sourceFile,
+      [objectNode, ".", ast.propertyName],
     );
   } else if (ast.type === JavaScriptNodeType.STRING) {
     return new SourceNode(

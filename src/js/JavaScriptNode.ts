@@ -10,6 +10,7 @@ import JavaScriptIIFE from "./JavaScriptIIFE";
 import JavaScriptMethodCall from "./JavaScriptMethodCall";
 import JavaScriptNull from "./JavaScriptNull";
 import JavaScriptNumber from "./JavaScriptNumber";
+import JavaScriptPropertyAccess from "./JavaScriptPropertyAccess";
 import JavaScriptString from "./JavaScriptString";
 import JavaScriptVariable from "./JavaScriptVariable";
 
@@ -25,6 +26,7 @@ type JavaScriptNode = JavaScriptArray
                     | JavaScriptMethodCall
                     | JavaScriptNull
                     | JavaScriptNumber
+                    | JavaScriptPropertyAccess
                     | JavaScriptString
                     | JavaScriptVariable;
 
