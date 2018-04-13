@@ -1,4 +1,5 @@
 import JavaScriptArray from "./JavaScriptArray";
+import JavaScriptArrayAccess from "./JavaScriptArrayAccess";
 import JavaScriptAssignmentOperation from "./JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./JavaScriptBinaryOperation";
 import JavaScriptBoolean from "./JavaScriptBoolean";
@@ -15,6 +16,7 @@ import JavaScriptString from "./JavaScriptString";
 import JavaScriptVariable from "./JavaScriptVariable";
 
 type JavaScriptNode = JavaScriptArray
+                    | JavaScriptArrayAccess
                     | JavaScriptAssignmentOperation
                     | JavaScriptBinaryOperation
                     | JavaScriptBoolean

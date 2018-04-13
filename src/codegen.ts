@@ -6,6 +6,7 @@ import {
 } from "source-map";
 
 import JavaScriptArray from "./js/JavaScriptArray";
+import JavaScriptArrayAccess from "./js/JavaScriptArrayAccess";
 import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation";
 import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation";
 import JavaScriptConditionalOperation from "./js/JavaScriptConditionalOperation";
@@ -75,6 +76,17 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
           line,
           column,
         };
+      } else if (head.name === "concat" || head.name === "join") {
+        const firstList: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const secondList: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        return {
+          type: JavaScriptNodeType.METHOD_CALL,
+          object: firstList,
+          methodName: "concat",
+          args: [secondList],
+          line,
+          column,
+        };
       } else if (head.name === "def") {
         if (ast.items[1].type !== SquirrelNodeType.SYMBOL) {
           throw new Error("first argument to def must be a symbol");
@@ -91,17 +103,6 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         const valueIfTrue: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
         const valueIfFalse: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[3], false);
         return { type: JavaScriptNodeType.CONDITIONAL_OPERATION, condition, valueIfTrue, valueIfFalse, line, column };
-      } else if (head.name === "join") {
-        const firstList: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
-        const secondList: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
-        return {
-          type: JavaScriptNodeType.METHOD_CALL,
-          object: firstList,
-          methodName: "concat",
-          args: [secondList],
-          line,
-          column,
-        };
       } else if (head.name === "lambda") {
         if (ast.items[1].type !== SquirrelNodeType.LIST) {
           throw new Error("first argument to lambda must be list of parameters");
@@ -124,9 +125,16 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         const listItems: JavaScriptNode[] =
           ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
         return { type: JavaScriptNodeType.ARRAY, items: listItems, line, column };
+      } else if (head.name === "nth") {
+        const array: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const index: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        return { type: JavaScriptNodeType.ARRAY_ACCESS, array, index, line, column };
       } else if (head.name === "print-line") {
         const object: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
         return { type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT, object, line, column };
+      } else if (head.name === "to-string") {
+        const object: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        return { type: JavaScriptNodeType.FUNCTION_CALL, functionName: "String", args: [object], line, column };
       } else {
         const functionName: string = sanitizeJavaScriptIdentifier(head.name);
         const args: JavaScriptNode[] =
@@ -146,7 +154,9 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
   } else if (ast.type === SquirrelNodeType.STRING) {
     return { type: JavaScriptNodeType.STRING, value: ast.value, line, column };
   } else if (ast.type === SquirrelNodeType.SYMBOL) {
-    if (ast.name === "null") {
+    if (ast.name === "argv") {
+      return { type: JavaScriptNodeType.VARIABLE, name: "process.argv.slice(2)", line, column };
+    } else if (ast.name === "null") {
       return { type: JavaScriptNodeType.NULL, line, column };
     } else if (ast.name === "true") {
       return { type: JavaScriptNodeType.BOOLEAN, value: true, line, column };
@@ -206,6 +216,19 @@ function compileJavaScriptArray(ast: JavaScriptArray,
       ["[", ...itemNodesWithCommas, "]"],
     );
   }
+}
+
+function compileJavaScriptArrayAccess(ast: JavaScriptArrayAccess,
+                                      sourceFile: string | null = null,
+                                      indent: number = 0): SourceNode {
+  const arrayNode: SourceNode = compileJavaScriptToSourceNode(ast.array, sourceFile, indent);
+  const indexNode: SourceNode = compileJavaScriptToSourceNode(ast.index, sourceFile, indent);
+  return new SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    [arrayNode, "[", indexNode, "]"],
+  );
 }
 
 function compileJavaScriptAssignmentOperation(ast: JavaScriptAssignmentOperation,
@@ -358,6 +381,8 @@ function compileJavaScriptToSourceNode(ast: JavaScriptNode,
                                        indent: number = 0): SourceNode {
   if (ast.type === JavaScriptNodeType.ARRAY) {
     return compileJavaScriptArray(ast, sourceFile, indent);
+  } else if (ast.type === JavaScriptNodeType.ARRAY_ACCESS) {
+    return compileJavaScriptArrayAccess(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.ASSIGNMENT_OPERATION) {
     return compileJavaScriptAssignmentOperation(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.BINARY_OPERATION) {
