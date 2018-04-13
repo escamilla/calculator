@@ -418,7 +418,7 @@ function compileSquirrelFileToJavaScript(path: string): void {
   const generatedCode: CodeWithSourceMap = compileJavaScriptToSourceNode(javaScriptAst, path).toStringWithSourceMap({
     file: javaScriptCodeFile,
   });
-  fs.writeFileSync(javaScriptCodeFile, generatedCode.code + "\n//# sourceMappingURL=" + javaScriptSourceMapFile);
+  fs.writeFileSync(javaScriptCodeFile, generatedCode.code + "\n//# sourceMappingURL=" + javaScriptSourceMapFile + "\n");
   fs.writeFileSync(javaScriptSourceMapFile, generatedCode.map);
 }
 
