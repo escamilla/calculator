@@ -115,7 +115,7 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         const listItems: JavaScriptNode[] =
           ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
         return { type: JavaScriptNodeType.ARRAY, items: listItems, line, column };
-      } else if (head.name === "log") {
+      } else if (head.name === "print-line") {
         const object: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
         return { type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT, object, line, column };
       } else {
