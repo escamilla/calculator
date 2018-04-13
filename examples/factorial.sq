@@ -1,3 +1,4 @@
+[ print the factorial of a number]
 (do
   (def factorial (lambda (x)
     (if (= x 0)

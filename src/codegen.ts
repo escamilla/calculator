@@ -278,7 +278,13 @@ function compileJavaScriptConsoleLogStatement(ast: JavaScriptConsoleLogStatement
     ast.line,
     ast.column,
     sourceFile,
-    ["(function () { const _ = ", objectNode, "; console.log(_); return _; })()"],
+    [
+      "(function () {\n",
+      " ".repeat(indent + 2), "const _ = ", objectNode, ";\n",
+      " ".repeat(indent + 2), "console.log(_);\n",
+      " ".repeat(indent + 2), "return _;\n",
+      " ".repeat(indent), "})()",
+    ],
   );
 }
 
