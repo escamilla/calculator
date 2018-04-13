@@ -278,7 +278,7 @@ function compileJavaScriptConsoleLogStatement(ast: JavaScriptConsoleLogStatement
     ast.line,
     ast.column,
     sourceFile,
-    ["(function () { const _tmp = ", objectNode, "; console.log(_tmp); return _tmp; })()"],
+    ["(function () { const _ = ", objectNode, "; console.log(_); return _; })()"],
   );
 }
 
