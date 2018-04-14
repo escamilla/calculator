@@ -84,6 +84,8 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(concat "a" "b" "c")`, expectedOutput: `"abc"` },
   { input: `(parse-integer "3")`, expectedOutput: "3" },
   { input: `(parse-float "3.14")`, expectedOutput: "3.14" },
+  { input: `(do (def pi 3.14) (set pi 3.142) pi)`, expectedOutput: "3.142" },
+  { input: `(do (def pi 3.14) (do (set pi 3.142)) pi)`, expectedOutput: "3.142" },
 ];
 
 const negativeTestCases: INegativeTestCase[] = [
@@ -93,6 +95,11 @@ const negativeTestCases: INegativeTestCase[] = [
   { input: "foo-", reason: "a symbol cannot end with a hyphen" },
   { input: ".1", reason: "a number cannot begin with a decimal point" },
   { input: "1.", reason: "a number cannot end with a decimal point" },
+  { input: '(def "pi" 3.14)', reason: "the first argument to def must be a symbol" },
+  { input: '(do (def pi 3.14) (set "pi" 3.142))', reason: "the first argument to set must be a symbol" },
+  { input: "(if 1 true false)", reason: "the first argument to if must be a boolean" },
+  { input: '(lambda "x" x)', reason: "the first argument to lambda must be a list of symbols" },
+  { input: '(lambda ("x") x)', reason: "the first argument to lambda must be a list of symbols" },
 ];
 
 describe("interpret() follows expected behavior", () => {

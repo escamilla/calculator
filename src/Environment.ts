@@ -12,17 +12,21 @@ class Environment {
     }
   }
 
+  public find(key: string): Environment {
+    if (this.data.has(key)) {
+      return this;
+    } else if (this.outerEnv) {
+      return this.outerEnv.find(key);
+    }
+    throw new Error(`symbol not found: ${key}`);
+  }
+
   public set(key: string, value: ChipmunkNode): void {
     this.data.set(key, value);
   }
 
   public get(key: string): ChipmunkNode {
-    if (this.data.has(key)) {
-      return this.data.get(key) as ChipmunkNode;
-    } else if (this.outerEnv) {
-      return this.outerEnv.get(key);
-    }
-    throw new Error(`symbol not bound: ${key}`);
+    return this.find(key).data.get(key) as ChipmunkNode;
   }
 }
 
