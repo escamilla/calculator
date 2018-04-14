@@ -1,14 +1,14 @@
 import interpret from "./interpret";
 import IOHandler from "./io/IOHandler";
-import SquirrelBoolean from "./nodes/SquirrelBoolean";
-import SquirrelFunction from "./nodes/SquirrelFunction";
-import SquirrelList from "./nodes/SquirrelList";
-import SquirrelNil from "./nodes/SquirrelNil";
-import SquirrelNode from "./nodes/SquirrelNode";
-import SquirrelNodeType from "./nodes/SquirrelNodeType";
-import SquirrelNumber from "./nodes/SquirrelNumber";
-import SquirrelString from "./nodes/SquirrelString";
-import SquirrelSymbol from "./nodes/SquirrelSymbol";
+import ChipmunkBoolean from "./nodes/ChipmunkBoolean";
+import ChipmunkFunction from "./nodes/ChipmunkFunction";
+import ChipmunkList from "./nodes/ChipmunkList";
+import ChipmunkNil from "./nodes/ChipmunkNil";
+import ChipmunkNode from "./nodes/ChipmunkNode";
+import ChipmunkNodeType from "./nodes/ChipmunkNodeType";
+import ChipmunkNumber from "./nodes/ChipmunkNumber";
+import ChipmunkString from "./nodes/ChipmunkString";
+import ChipmunkSymbol from "./nodes/ChipmunkSymbol";
 import Parser from "./Parser";
 import replEnv from "./replEnv";
 import Tokenizer from "./Tokenizer";
@@ -19,15 +19,15 @@ export {
   escapeString,
   interpret,
   IOHandler,
-  SquirrelBoolean,
-  SquirrelFunction,
-  SquirrelList,
-  SquirrelNil,
-  SquirrelNode,
-  SquirrelNodeType,
-  SquirrelNumber,
-  SquirrelString,
-  SquirrelSymbol,
+  ChipmunkBoolean,
+  ChipmunkFunction,
+  ChipmunkList,
+  ChipmunkNil,
+  ChipmunkNode,
+  ChipmunkNodeType,
+  ChipmunkNumber,
+  ChipmunkString,
+  ChipmunkSymbol,
   Parser,
   replEnv,
   Tokenizer,

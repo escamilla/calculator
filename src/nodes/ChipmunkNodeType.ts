@@ -1,4 +1,4 @@
-enum SquirrelNodeType {
+enum ChipmunkNodeType {
   BOOLEAN,
   FUNCTION,
   LIST,
@@ -8,4 +8,4 @@ enum SquirrelNodeType {
   SYMBOL,
 }
 
-export default SquirrelNodeType;
+export default ChipmunkNodeType;

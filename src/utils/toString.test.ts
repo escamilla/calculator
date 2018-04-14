@@ -25,12 +25,12 @@ const testCases: ITestCase[] = [
   { input: "nil", expectedOutput: "nil" },
   { input: "3.14", expectedOutput: "3.14" },
   { input: "'pi", expectedOutput: "pi" },
-  // SquirrelString test cases (printable = false)
+  // ChipmunkString test cases (printable = false)
   { input: `"test"`, expectedOutput: `"test"`, printable: false },
   { input: `"test\\ntest"`, expectedOutput: `"test\\ntest"`, printable: false },
   { input: `"\\"test\\""`, expectedOutput: `"\\"test\\""`, printable: false },
   { input: `"\\\\test\\\\"`, expectedOutput: `"\\\\test\\\\"`, printable: false },
-  // SquirrelString test cases (printable = true)
+  // ChipmunkString test cases (printable = true)
   { input: `"test"`, expectedOutput: `test`, printable: true },
   { input: `"test\\ntest"`, expectedOutput: `test\ntest`, printable: true },
   { input: `"\\"test\\""`, expectedOutput: `"test"`, printable: true },

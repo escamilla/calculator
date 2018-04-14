@@ -3,227 +3,227 @@ import evaluate from "./evaluate";
 import interpret from "./interpret";
 import dummyIOHandler from "./io/dummyIOHandler";
 import IOHandler from "./io/IOHandler";
-import SquirrelBoolean from "./nodes/SquirrelBoolean";
-import SquirrelList from "./nodes/SquirrelList";
-import SquirrelNil from "./nodes/SquirrelNil";
-import SquirrelNode from "./nodes/SquirrelNode";
-import SquirrelNodeType from "./nodes/SquirrelNodeType";
-import SquirrelNumber from "./nodes/SquirrelNumber";
-import SquirrelString from "./nodes/SquirrelString";
+import ChipmunkBoolean from "./nodes/ChipmunkBoolean";
+import ChipmunkList from "./nodes/ChipmunkList";
+import ChipmunkNil from "./nodes/ChipmunkNil";
+import ChipmunkNode from "./nodes/ChipmunkNode";
+import ChipmunkNodeType from "./nodes/ChipmunkNodeType";
+import ChipmunkNumber from "./nodes/ChipmunkNumber";
+import ChipmunkString from "./nodes/ChipmunkString";
 import Parser from "./Parser";
 import Tokenizer from "./Tokenizer";
 import toString from "./utils/toString";
 
 const replEnv: Environment = new Environment();
 
-type SquirrelCallable = (args: SquirrelNode[], ioHandler: IOHandler) => SquirrelNode;
+type ChipmunkCallable = (args: ChipmunkNode[], ioHandler: IOHandler) => ChipmunkNode;
 
-function defineSquirrelFunction(name: string, callable: SquirrelCallable): void {
+function defineChipmunkFunction(name: string, callable: ChipmunkCallable): void {
   replEnv.set(name, {
-    type: SquirrelNodeType.FUNCTION,
+    type: ChipmunkNodeType.FUNCTION,
     callable,
     isUserDefined: false,
     name,
   });
 }
 
-defineSquirrelFunction("+",
-  (args: SquirrelNode[]): SquirrelNumber => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.NUMBER, value: x.value + y.value };
+defineChipmunkFunction("+",
+  (args: ChipmunkNode[]): ChipmunkNumber => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.NUMBER, value: x.value + y.value };
   },
 );
 
-defineSquirrelFunction("-",
-  (args: SquirrelNode[]): SquirrelNumber => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.NUMBER, value: x.value - y.value };
+defineChipmunkFunction("-",
+  (args: ChipmunkNode[]): ChipmunkNumber => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.NUMBER, value: x.value - y.value };
   },
 );
 
-defineSquirrelFunction("*",
-  (args: SquirrelNode[]): SquirrelNumber => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.NUMBER, value: x.value * y.value };
+defineChipmunkFunction("*",
+  (args: ChipmunkNode[]): ChipmunkNumber => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.NUMBER, value: x.value * y.value };
   },
 );
 
-defineSquirrelFunction("/",
-  (args: SquirrelNode[]): SquirrelNumber => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.NUMBER, value: x.value / y.value };
+defineChipmunkFunction("/",
+  (args: ChipmunkNode[]): ChipmunkNumber => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.NUMBER, value: x.value / y.value };
   },
 );
 
-defineSquirrelFunction("%",
-  (args: SquirrelNode[]): SquirrelNumber => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.NUMBER, value: x.value % y.value };
+defineChipmunkFunction("%",
+  (args: ChipmunkNode[]): ChipmunkNumber => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.NUMBER, value: x.value % y.value };
   },
 );
 
-defineSquirrelFunction("pow",
-  (args: SquirrelNode[]): SquirrelNumber => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.NUMBER, value: Math.pow(x.value, y.value) };
+defineChipmunkFunction("pow",
+  (args: ChipmunkNode[]): ChipmunkNumber => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.NUMBER, value: Math.pow(x.value, y.value) };
   },
 );
 
-defineSquirrelFunction("=",
-  (args: SquirrelNode[]): SquirrelBoolean => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.BOOLEAN, value: x.value === y.value };
+defineChipmunkFunction("=",
+  (args: ChipmunkNode[]): ChipmunkBoolean => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.BOOLEAN, value: x.value === y.value };
   },
 );
 
-defineSquirrelFunction("<",
-  (args: SquirrelNode[]): SquirrelBoolean => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.BOOLEAN, value: x.value < y.value };
+defineChipmunkFunction("<",
+  (args: ChipmunkNode[]): ChipmunkBoolean => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.BOOLEAN, value: x.value < y.value };
   },
 );
 
-defineSquirrelFunction(">",
-  (args: SquirrelNode[]): SquirrelNode => {
-    const x: SquirrelNumber = args[0] as SquirrelNumber;
-    const y: SquirrelNumber = args[1] as SquirrelNumber;
-    return { type: SquirrelNodeType.BOOLEAN, value: x.value > y.value };
+defineChipmunkFunction(">",
+  (args: ChipmunkNode[]): ChipmunkNode => {
+    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.BOOLEAN, value: x.value > y.value };
   },
 );
 
-defineSquirrelFunction("list",
-  (args: SquirrelNode[]): SquirrelList => {
-    return { type: SquirrelNodeType.LIST, items: args };
+defineChipmunkFunction("list",
+  (args: ChipmunkNode[]): ChipmunkList => {
+    return { type: ChipmunkNodeType.LIST, items: args };
   },
 );
 
-defineSquirrelFunction("length",
-  (args: SquirrelNode[]): SquirrelNumber => {
-    const arg: SquirrelNode = args[0];
-    if (arg.type === SquirrelNodeType.LIST) {
-      return { type: SquirrelNodeType.NUMBER, value: arg.items.length };
-    } else if (arg.type === SquirrelNodeType.STRING) {
-      return { type: SquirrelNodeType.NUMBER, value: arg.value.length };
+defineChipmunkFunction("length",
+  (args: ChipmunkNode[]): ChipmunkNumber => {
+    const arg: ChipmunkNode = args[0];
+    if (arg.type === ChipmunkNodeType.LIST) {
+      return { type: ChipmunkNodeType.NUMBER, value: arg.items.length };
+    } else if (arg.type === ChipmunkNodeType.STRING) {
+      return { type: ChipmunkNodeType.NUMBER, value: arg.value.length };
     } else {
       throw new Error("length() takes a list or string");
     }
   },
 );
 
-defineSquirrelFunction("nth",
-  (args: SquirrelNode[]): SquirrelNode => {
-    const arg: SquirrelNode = args[0];
-    const index: SquirrelNumber = args[1] as SquirrelNumber;
+defineChipmunkFunction("nth",
+  (args: ChipmunkNode[]): ChipmunkNode => {
+    const arg: ChipmunkNode = args[0];
+    const index: ChipmunkNumber = args[1] as ChipmunkNumber;
 
-    if (arg.type === SquirrelNodeType.LIST) {
+    if (arg.type === ChipmunkNodeType.LIST) {
       return arg.items[index.value];
-    } else if (arg.type === SquirrelNodeType.STRING) {
-      return { type: SquirrelNodeType.STRING, value: arg.value.charAt(index.value) };
+    } else if (arg.type === ChipmunkNodeType.STRING) {
+      return { type: ChipmunkNodeType.STRING, value: arg.value.charAt(index.value) };
     } else {
       throw new Error("nth() takes a list or string");
     }
   },
 );
 
-defineSquirrelFunction("slice",
-  (args: SquirrelNode[]): SquirrelList => {
-    const list: SquirrelList = args[0] as SquirrelList;
-    const start: SquirrelNumber = args[1] as SquirrelNumber;
-    const end: SquirrelNumber = args[2] as SquirrelNumber;
-    return { type: SquirrelNodeType.LIST, items: list.items.slice(start.value, end.value) };
+defineChipmunkFunction("slice",
+  (args: ChipmunkNode[]): ChipmunkList => {
+    const list: ChipmunkList = args[0] as ChipmunkList;
+    const start: ChipmunkNumber = args[1] as ChipmunkNumber;
+    const end: ChipmunkNumber = args[2] as ChipmunkNumber;
+    return { type: ChipmunkNodeType.LIST, items: list.items.slice(start.value, end.value) };
   },
 );
 
-defineSquirrelFunction("join",
-  (args: SquirrelNode[]): SquirrelList => {
-    const list1: SquirrelList = args[0] as SquirrelList;
-    const list2: SquirrelList = args[1] as SquirrelList;
-    return { type: SquirrelNodeType.LIST, items: list1.items.concat(list2.items) };
+defineChipmunkFunction("join",
+  (args: ChipmunkNode[]): ChipmunkList => {
+    const list1: ChipmunkList = args[0] as ChipmunkList;
+    const list2: ChipmunkList = args[1] as ChipmunkList;
+    return { type: ChipmunkNodeType.LIST, items: list1.items.concat(list2.items) };
   },
 );
 
-defineSquirrelFunction("concat",
-  (args: SquirrelNode[]): SquirrelString => {
-    const castedArgs: SquirrelString[] = args.map((arg: SquirrelNode) => arg as SquirrelString);
-    const strings: string[] = castedArgs.map((arg: SquirrelString) => arg.value);
-    return { type: SquirrelNodeType.STRING, value: strings.join("") };
+defineChipmunkFunction("concat",
+  (args: ChipmunkNode[]): ChipmunkString => {
+    const castedArgs: ChipmunkString[] = args.map((arg: ChipmunkNode) => arg as ChipmunkString);
+    const strings: string[] = castedArgs.map((arg: ChipmunkString) => arg.value);
+    return { type: ChipmunkNodeType.STRING, value: strings.join("") };
   },
 );
 
-defineSquirrelFunction("to-string",
-  (args: SquirrelNode[]): SquirrelString => {
-    return { type: SquirrelNodeType.STRING, value: toString(args[0]) };
+defineChipmunkFunction("to-string",
+  (args: ChipmunkNode[]): ChipmunkString => {
+    return { type: ChipmunkNodeType.STRING, value: toString(args[0]) };
   },
 );
 
-defineSquirrelFunction("print",
-  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNil => {
+defineChipmunkFunction("print",
+  (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkNil => {
     const message: string = toString(args[0], true);
     ioHandler.print(message);
-    return { type: SquirrelNodeType.NIL };
+    return { type: ChipmunkNodeType.NIL };
   },
 );
 
-defineSquirrelFunction("print-line",
-  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNil => {
+defineChipmunkFunction("print-line",
+  (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkNil => {
     if (args.length === 0) {
       ioHandler.printLine();
     } else {
       const message: string = toString(args[0], true);
       ioHandler.printLine(message);
     }
-    return { type: SquirrelNodeType.NIL };
+    return { type: ChipmunkNodeType.NIL };
   },
 );
 
-defineSquirrelFunction("parse-string",
-  (args: SquirrelNode[]): SquirrelNode => {
-    const input: SquirrelString = args[0] as SquirrelString;
+defineChipmunkFunction("parse-string",
+  (args: ChipmunkNode[]): ChipmunkNode => {
+    const input: ChipmunkString = args[0] as ChipmunkString;
     const tokenizer: Tokenizer = new Tokenizer(input.value);
     const parser: Parser = new Parser(tokenizer.tokenize());
     return parser.parse();
   },
 );
 
-defineSquirrelFunction("read-file",
-  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelString => {
-    const path: string = (args[0] as SquirrelString).value;
+defineChipmunkFunction("read-file",
+  (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkString => {
+    const path: string = (args[0] as ChipmunkString).value;
     const contents: string = ioHandler.readFile(path);
-    return { type: SquirrelNodeType.STRING, value: contents };
+    return { type: ChipmunkNodeType.STRING, value: contents };
   },
 );
 
-defineSquirrelFunction("read-line",
-  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelString => {
-    const prompt: string = (args[0] as SquirrelString).value;
+defineChipmunkFunction("read-line",
+  (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkString => {
+    const prompt: string = (args[0] as ChipmunkString).value;
     const line: string = ioHandler.readLine(prompt);
-    return { type: SquirrelNodeType.STRING, value: line };
+    return { type: ChipmunkNodeType.STRING, value: line };
   },
 );
 
-defineSquirrelFunction("do",
-  (args: SquirrelNode[]): SquirrelNode => {
+defineChipmunkFunction("do",
+  (args: ChipmunkNode[]): ChipmunkNode => {
     return args[args.length - 1];
   },
 );
 
-defineSquirrelFunction("eval",
-  (args: SquirrelNode[], ioHandler: IOHandler): SquirrelNode => {
+defineChipmunkFunction("eval",
+  (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkNode => {
     return evaluate(args[0], replEnv, ioHandler);
   },
 );
 
-replEnv.set("nil", { type: SquirrelNodeType.NIL });
-replEnv.set("true", { type: SquirrelNodeType.BOOLEAN, value: true });
-replEnv.set("false", { type: SquirrelNodeType.BOOLEAN, value: false });
+replEnv.set("nil", { type: ChipmunkNodeType.NIL });
+replEnv.set("true", { type: ChipmunkNodeType.BOOLEAN, value: true });
+replEnv.set("false", { type: ChipmunkNodeType.BOOLEAN, value: false });
 
 const inputs: string[] = [
   // logic functions

@@ -130,7 +130,7 @@ Prints the value to stdout followed by a newline. Returns `nil`.
 ```
 
 ## (parse-string string)
-Parses the string as Squirrel source code and returns the resulting Squirrel data type.
+Parses the string as Chipmunk source code and returns the resulting Chipmunk data type.
 ```
 (eval (parse-string "(+ 1 2)")) [ 3 ]
 ```

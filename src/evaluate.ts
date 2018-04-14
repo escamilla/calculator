@@ -1,27 +1,27 @@
 import Environment from "./Environment";
 import IOHandler from "./io/IOHandler";
-import SquirrelFunction from "./nodes/SquirrelFunction";
-import SquirrelList from "./nodes/SquirrelList";
-import SquirrelNode from "./nodes/SquirrelNode";
-import SquirrelNodeType from "./nodes/SquirrelNodeType";
-import SquirrelSymbol from "./nodes/SquirrelSymbol";
+import ChipmunkFunction from "./nodes/ChipmunkFunction";
+import ChipmunkList from "./nodes/ChipmunkList";
+import ChipmunkNode from "./nodes/ChipmunkNode";
+import ChipmunkNodeType from "./nodes/ChipmunkNodeType";
+import ChipmunkSymbol from "./nodes/ChipmunkSymbol";
 
-function evaluate(ast: SquirrelNode, env: Environment, ioHandler: IOHandler): SquirrelNode {
-  if (ast.type === SquirrelNodeType.SYMBOL) {
+function evaluate(ast: ChipmunkNode, env: Environment, ioHandler: IOHandler): ChipmunkNode {
+  if (ast.type === ChipmunkNodeType.SYMBOL) {
     return env.get(ast.name);
   }
 
-  if (ast.type === SquirrelNodeType.LIST) {
+  if (ast.type === ChipmunkNodeType.LIST) {
     if (ast.items.length === 0) {
       return ast;
     }
 
-    const head: SquirrelNode = ast.items[0];
-    if (head.type === SquirrelNodeType.SYMBOL) {
+    const head: ChipmunkNode = ast.items[0];
+    if (head.type === ChipmunkNodeType.SYMBOL) {
       if (head.name === "if") {
-        const condition: SquirrelNode = ast.items[1];
-        const result: SquirrelNode = evaluate(condition, env, ioHandler);
-        if (result.type === SquirrelNodeType.BOOLEAN) {
+        const condition: ChipmunkNode = ast.items[1];
+        const result: ChipmunkNode = evaluate(condition, env, ioHandler);
+        if (result.type === ChipmunkNodeType.BOOLEAN) {
           if (result.value) {
             return evaluate(ast.items[2], env, ioHandler);
           } else {
@@ -31,18 +31,18 @@ function evaluate(ast: SquirrelNode, env: Environment, ioHandler: IOHandler): Sq
           throw new Error("test condition in if expression must evaluate to a boolean value");
         }
       } else if (head.name === "lambda") {
-        const binds: SquirrelList = ast.items[1] as SquirrelList;
-        const functionParams: SquirrelSymbol[] = binds.items.map((item: SquirrelNode) => {
-          if (item.type !== SquirrelNodeType.SYMBOL) {
+        const binds: ChipmunkList = ast.items[1] as ChipmunkList;
+        const functionParams: ChipmunkSymbol[] = binds.items.map((item: ChipmunkNode) => {
+          if (item.type !== ChipmunkNodeType.SYMBOL) {
             throw new Error("expected list of symbols for function parameters");
           }
-          return item as SquirrelSymbol;
+          return item as ChipmunkSymbol;
         });
-        const functionBody: SquirrelNode = ast.items[2];
+        const functionBody: ChipmunkNode = ast.items[2];
 
-        const newFunction: SquirrelFunction = {
-          type: SquirrelNodeType.FUNCTION,
-          callable: (functionArgs: SquirrelNode[]): SquirrelNode => {
+        const newFunction: ChipmunkFunction = {
+          type: ChipmunkNodeType.FUNCTION,
+          callable: (functionArgs: ChipmunkNode[]): ChipmunkNode => {
             return evaluate(functionBody, new Environment(env, functionParams, functionArgs), ioHandler);
           },
           isUserDefined: true,
@@ -52,8 +52,8 @@ function evaluate(ast: SquirrelNode, env: Environment, ioHandler: IOHandler): Sq
 
         return newFunction;
       } else if (head.name === "def") {
-        const key: string = (ast.items[1] as SquirrelSymbol).name;
-        const value: SquirrelNode = evaluate(ast.items[2], env, ioHandler);
+        const key: string = (ast.items[1] as ChipmunkSymbol).name;
+        const value: ChipmunkNode = evaluate(ast.items[2], env, ioHandler);
         env.set(key, value);
         return value;
       } else if (head.name === "quote") {
@@ -61,12 +61,12 @@ function evaluate(ast: SquirrelNode, env: Environment, ioHandler: IOHandler): Sq
       }
     }
 
-    const evaluatedList: SquirrelList = {
-      type: SquirrelNodeType.LIST,
-      items: ast.items.map((item: SquirrelNode) => evaluate(item, env, ioHandler)),
+    const evaluatedList: ChipmunkList = {
+      type: ChipmunkNodeType.LIST,
+      items: ast.items.map((item: ChipmunkNode) => evaluate(item, env, ioHandler)),
     };
-    const fn: SquirrelFunction = evaluatedList.items[0] as SquirrelFunction;
-    const args: SquirrelNode[] = evaluatedList.items.slice(1);
+    const fn: ChipmunkFunction = evaluatedList.items[0] as ChipmunkFunction;
+    const args: ChipmunkNode[] = evaluatedList.items.slice(1);
     return fn.callable(args, ioHandler);
   }
 
