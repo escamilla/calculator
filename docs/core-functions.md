@@ -115,6 +115,18 @@ Returns the result of concatenating the two strings.
 ## (to-string value)
 Returns a string representation of the value that will produce the value when entered into the shell.
 
+## (parse-integer string)
+Converts a string to an integer.
+```
+(parse-integer "3") [ 3 ]
+```
+
+## (parse-float string)
+Converts a string to a floating-point number.
+```
+(parse-float "3.14") [ 3.14 ]
+```
+
 # I/O Functions
 
 ## (print value)

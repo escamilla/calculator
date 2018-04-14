@@ -164,6 +164,20 @@ defineChipmunkFunction("to-string",
   },
 );
 
+defineChipmunkFunction("parse-integer",
+  (args: ChipmunkNode[]): ChipmunkNode => {
+    const arg: ChipmunkString = args[0] as ChipmunkString;
+    return { type: ChipmunkNodeType.NUMBER, value: parseInt(arg.value, 10) };
+  },
+);
+
+defineChipmunkFunction("parse-float",
+  (args: ChipmunkNode[]): ChipmunkNode => {
+    const arg: ChipmunkString = args[0] as ChipmunkString;
+    return { type: ChipmunkNodeType.NUMBER, value: parseFloat(arg.value) };
+  },
+);
+
 defineChipmunkFunction("print",
   (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkNil => {
     const message: string = toString(args[0], true);

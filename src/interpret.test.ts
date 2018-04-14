@@ -82,6 +82,8 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: '(nth "hi" 1)', expectedOutput: '"i"' },
   { input: "(join '(a) '(b c))", expectedOutput: "(a b c)" },
   { input: `(concat "a" "b" "c")`, expectedOutput: `"abc"` },
+  { input: `(parse-integer "3")`, expectedOutput: "3" },
+  { input: `(parse-float "3.14")`, expectedOutput: "3.14" },
 ];
 
 const negativeTestCases: INegativeTestCase[] = [
