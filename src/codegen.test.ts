@@ -1,10 +1,10 @@
 import {
+  ChipmunkNode,
   Parser,
-  SquirrelNode,
   Tokenizer,
-} from "squirrel-core";
+} from "chipmunk-core";
 
-import { compileJavaScriptToSourceNode, convertSquirrelNodeToJavaScriptNode } from "../src/codegen";
+import { compileJavaScriptToSourceNode, convertChipmunkNodeToJavaScriptNode } from "../src/codegen";
 import JavaScriptNode from "../src/js/JavaScriptNode";
 
 interface IPositiveTestCase {
@@ -62,8 +62,8 @@ describe("code generation produces equivalent JavaScript code", () => {
     test(`${testCase.input} => ${testCase.expectedOutput}`, () => {
       const tokenizer: Tokenizer = new Tokenizer(testCase.input);
       const parser: Parser = new Parser(tokenizer.tokenize());
-      const squirrelAst: SquirrelNode = parser.parse();
-      const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst, true);
+      const chipmunkAst: ChipmunkNode = parser.parse();
+      const javaScriptAst: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(chipmunkAst, true);
       const javaScriptCode: string = compileJavaScriptToSourceNode(javaScriptAst).toString();
       const actualOutput: string = eval(javaScriptCode); // tslint:disable-line:no-eval
       expect(actualOutput).toEqual(testCase.expectedOutput);

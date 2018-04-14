@@ -1,9 +1,9 @@
 {
-  "name": "squirrel-cli",
+  "name": "chipmunk-cli",
   "author": "Joshua Escamilla <joshua.escamilla@selu.edu>",
   "version": "0.3.0",
   "license": "MIT",
-  "description": "A command line interface for running Squirrel programs",
+  "description": "A command line interface for running Chipmunk programs",
   "keywords": [
     "javascript",
     "language",
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/escamilla/squirrel-cli.git"
+    "url": "https://github.com/escamilla/chipmunk-cli.git"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -35,13 +35,13 @@
     ]
   },
   "dependencies": {
+    "chipmunk-core": "^0.4.1",
     "readline-sync": "^1.4.9",
-    "source-map": "^0.7.2",
-    "squirrel-core": "^0.4.0"
+    "source-map": "^0.7.2"
   },
   "devDependencies": {
-    "@types/jest": "^22.2.2",
-    "@types/node": "^9.6.2",
+    "@types/jest": "^22.2.3",
+    "@types/node": "^9.6.5",
     "@types/readline-sync": "^1.4.3",
     "jest": "^22.4.3",
     "ts-jest": "^22.4.2",

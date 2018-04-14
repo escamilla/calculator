@@ -1,13 +1,13 @@
 import * as readlineSync from "readline-sync";
 
 import {
+  ChipmunkNode,
+  ChipmunkNodeType,
+  ChipmunkString,
   interpret,
   replEnv,
-  SquirrelNode,
-  SquirrelNodeType,
-  SquirrelString,
   toString,
-} from "squirrel-core";
+} from "chipmunk-core";
 
 import nodeIOHandler from "./nodeIOHandler";
 
@@ -17,15 +17,15 @@ const loadFileDefinition: string =
 interpret(loadFileDefinition, replEnv, nodeIOHandler);
 
 if (process.argv.length > 2) {
-  const paths: SquirrelString[] = [];
+  const paths: ChipmunkString[] = [];
   process.argv.slice(3).forEach((value: string) => {
     paths.push({
-      type: SquirrelNodeType.STRING,
+      type: ChipmunkNodeType.STRING,
       value,
     });
   });
   replEnv.set("argv", {
-    type: SquirrelNodeType.LIST,
+    type: ChipmunkNodeType.LIST,
     items: paths,
   });
   interpret(`(load-file "${process.argv[2]}")`, replEnv, nodeIOHandler);
@@ -41,7 +41,7 @@ while (true) {
     if (line === "exit") {
       process.exit(0);
     }
-    let result: SquirrelNode;
+    let result: ChipmunkNode;
     try {
       result = interpret(line, replEnv, nodeIOHandler);
     } catch (e) {
@@ -49,7 +49,7 @@ while (true) {
       continue;
     }
     replEnv.set("_", result);
-    if (result.type !== SquirrelNodeType.NIL) {
+    if (result.type !== ChipmunkNodeType.NIL) {
       process.stdout.write(toString(result) + "\n");
     }
   }

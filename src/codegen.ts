@@ -19,14 +19,14 @@ import JavaScriptNode from "./js/JavaScriptNode";
 import JavaScriptNodeType from "./js/JavaScriptNodeType";
 
 import {
+  ChipmunkList,
+  ChipmunkNode,
+  ChipmunkNodeType,
+  ChipmunkSymbol,
   escapeString,
   Parser,
-  SquirrelList,
-  SquirrelNode,
-  SquirrelNodeType,
-  SquirrelSymbol,
   Tokenizer,
-} from "squirrel-core";
+} from "chipmunk-core";
 
 const binaryOperators: string[] = ["!=", "%", "*", "+", "-", "/", "<", "<=", "=", ">", ">="];
 
@@ -34,23 +34,23 @@ function sanitizeJavaScriptIdentifier(identifier: string): string {
   return identifier.replace(/\W/g, "_");
 }
 
-function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): JavaScriptNode {
+function convertChipmunkNodeToJavaScriptNode(ast: ChipmunkNode, root: boolean): JavaScriptNode {
   const line: number = ast.line as number;
   const column: number = (ast.column as number) - 1;
 
   if (root) {
     return {
       type: JavaScriptNodeType.IIFE,
-      nodes: [convertSquirrelNodeToJavaScriptNode(ast, false)],
+      nodes: [convertChipmunkNodeToJavaScriptNode(ast, false)],
       isRootNode: true,
       line,
       column,
     };
   }
 
-  if (ast.type === SquirrelNodeType.LIST) {
-    const head: SquirrelNode = ast.items[0];
-    if (head.type === SquirrelNodeType.SYMBOL) {
+  if (ast.type === ChipmunkNodeType.LIST) {
+    const head: ChipmunkNode = ast.items[0];
+    if (head.type === ChipmunkNodeType.SYMBOL) {
       if (binaryOperators.includes(head.name)) {
         let operator: string = head.name;
         if (operator === "=") {
@@ -58,11 +58,11 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         } else if (operator === "!=") {
           operator = "!==";
         }
-        const leftSide: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
-        const rightSide: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        const leftSide: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
+        const rightSide: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.BINARY_OPERATION, operator, leftSide, rightSide, line, column };
       } else if (head.name === "abs") {
-        const argument: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const argument: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
         return {
           type: JavaScriptNodeType.METHOD_CALL,
           object: {
@@ -77,8 +77,8 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
           column,
         };
       } else if (head.name === "concat" || head.name === "join") {
-        const firstList: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
-        const secondList: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        const firstList: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
+        const secondList: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[2], false);
         return {
           type: JavaScriptNodeType.METHOD_CALL,
           object: firstList,
@@ -88,32 +88,32 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
           column,
         };
       } else if (head.name === "def") {
-        if (ast.items[1].type !== SquirrelNodeType.SYMBOL) {
+        if (ast.items[1].type !== ChipmunkNodeType.SYMBOL) {
           throw new Error("first argument to def must be a symbol");
         }
-        const name: string = sanitizeJavaScriptIdentifier((ast.items[1] as SquirrelSymbol).name);
-        const value: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        const name: string = sanitizeJavaScriptIdentifier((ast.items[1] as ChipmunkSymbol).name);
+        const value: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.ASSIGNMENT_OPERATION, name, value, line, column };
       } else if (head.name === "do") {
         const nodes: JavaScriptNode[] =
-          ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
+          ast.items.slice(1).map((item: ChipmunkNode) => convertChipmunkNodeToJavaScriptNode(item, false));
         return { type: JavaScriptNodeType.IIFE, nodes, isRootNode: false, line, column };
       } else if (head.name === "if") {
-        const condition: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
-        const valueIfTrue: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
-        const valueIfFalse: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[3], false);
+        const condition: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
+        const valueIfTrue: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[2], false);
+        const valueIfFalse: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[3], false);
         return { type: JavaScriptNodeType.CONDITIONAL_OPERATION, condition, valueIfTrue, valueIfFalse, line, column };
       } else if (head.name === "lambda") {
-        if (ast.items[1].type !== SquirrelNodeType.LIST) {
+        if (ast.items[1].type !== ChipmunkNodeType.LIST) {
           throw new Error("first argument to lambda must be list of parameters");
         }
-        const paramList: SquirrelList = ast.items[1] as SquirrelList;
-        const paramSymbols: SquirrelSymbol[] = paramList.items.map((item: SquirrelNode) => item as SquirrelSymbol);
-        const params: string[] = paramSymbols.map((item: SquirrelSymbol) => sanitizeJavaScriptIdentifier(item.name));
-        const body: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        const paramList: ChipmunkList = ast.items[1] as ChipmunkList;
+        const paramSymbols: ChipmunkSymbol[] = paramList.items.map((item: ChipmunkNode) => item as ChipmunkSymbol);
+        const params: string[] = paramSymbols.map((item: ChipmunkSymbol) => sanitizeJavaScriptIdentifier(item.name));
+        const body: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.FUNCTION_DEFINITION, params, body, line, column };
       } else if (head.name === "length") {
-        const object: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
         return {
           type: JavaScriptNodeType.PROPERTY_ACCESS,
           object,
@@ -123,37 +123,37 @@ function convertSquirrelNodeToJavaScriptNode(ast: SquirrelNode, root: boolean): 
         };
       } else if (head.name === "list") {
         const listItems: JavaScriptNode[] =
-          ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
+          ast.items.slice(1).map((item: ChipmunkNode) => convertChipmunkNodeToJavaScriptNode(item, false));
         return { type: JavaScriptNodeType.ARRAY, items: listItems, line, column };
       } else if (head.name === "nth") {
-        const array: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
-        const index: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[2], false);
+        const array: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
+        const index: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[2], false);
         return { type: JavaScriptNodeType.ARRAY_ACCESS, array, index, line, column };
       } else if (head.name === "print-line") {
-        const object: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
         return { type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT, object, line, column };
       } else if (head.name === "to-string") {
-        const object: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(ast.items[1], false);
+        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
         return { type: JavaScriptNodeType.FUNCTION_CALL, functionName: "String", args: [object], line, column };
       } else {
         const functionName: string = sanitizeJavaScriptIdentifier(head.name);
         const args: JavaScriptNode[] =
-          ast.items.slice(1).map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
+          ast.items.slice(1).map((item: ChipmunkNode) => convertChipmunkNodeToJavaScriptNode(item, false));
         return { type: JavaScriptNodeType.FUNCTION_CALL, functionName, args, line, column };
       }
     }
     const items: JavaScriptNode[] =
-      ast.items.map((item: SquirrelNode) => convertSquirrelNodeToJavaScriptNode(item, false));
+      ast.items.map((item: ChipmunkNode) => convertChipmunkNodeToJavaScriptNode(item, false));
     return { type: JavaScriptNodeType.ARRAY, items, line, column };
-  } else if (ast.type === SquirrelNodeType.BOOLEAN) {
+  } else if (ast.type === ChipmunkNodeType.BOOLEAN) {
     return { type: JavaScriptNodeType.BOOLEAN, value: ast.value, line, column };
-  } else if (ast.type === SquirrelNodeType.NIL) {
+  } else if (ast.type === ChipmunkNodeType.NIL) {
     return { type: JavaScriptNodeType.NULL, line, column };
-  } else if (ast.type === SquirrelNodeType.NUMBER) {
+  } else if (ast.type === ChipmunkNodeType.NUMBER) {
     return { type: JavaScriptNodeType.NUMBER, value: ast.value, line, column };
-  } else if (ast.type === SquirrelNodeType.STRING) {
+  } else if (ast.type === ChipmunkNodeType.STRING) {
     return { type: JavaScriptNodeType.STRING, value: ast.value, line, column };
-  } else if (ast.type === SquirrelNodeType.SYMBOL) {
+  } else if (ast.type === ChipmunkNodeType.SYMBOL) {
     if (ast.name === "argv") {
       return { type: JavaScriptNodeType.VARIABLE, name: "process.argv.slice(2)", line, column };
     } else if (ast.name === "null") {
@@ -453,13 +453,13 @@ function compileJavaScriptToSourceNode(ast: JavaScriptNode,
   }
 }
 
-function compileSquirrelFileToJavaScript(path: string): void {
+function compileChipmunkFileToJavaScript(path: string): void {
   const input: string = fs.readFileSync(path).toString();
   const tokenizer: Tokenizer = new Tokenizer(input);
   const parser: Parser = new Parser(tokenizer.tokenize());
-  const squirrelAst: SquirrelNode = parser.parse();
+  const chipmunkAst: ChipmunkNode = parser.parse();
 
-  const javaScriptAst: JavaScriptNode = convertSquirrelNodeToJavaScriptNode(squirrelAst, true);
+  const javaScriptAst: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(chipmunkAst, true);
   const javaScriptCodeFile: string = path.replace(/.\w+$/, ".js");
   const javaScriptSourceMapFile: string = javaScriptCodeFile + ".map";
 
@@ -472,6 +472,6 @@ function compileSquirrelFileToJavaScript(path: string): void {
 
 export {
   compileJavaScriptToSourceNode,
-  compileSquirrelFileToJavaScript,
-  convertSquirrelNodeToJavaScriptNode,
+  compileChipmunkFileToJavaScript,
+  convertChipmunkNodeToJavaScriptNode,
 };

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as readlineSync from "readline-sync";
 
-import { IOHandler } from "squirrel-core";
+import { IOHandler } from "chipmunk-core";
 
 const nodeIOHandler: IOHandler = {
   print(message: string): void {

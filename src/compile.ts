@@ -1,5 +1,5 @@
-import { compileSquirrelFileToJavaScript } from "./codegen";
+import { compileChipmunkFileToJavaScript } from "./codegen";
 
 process.argv.slice(2).forEach((path: string) => {
-  compileSquirrelFileToJavaScript(path);
+  compileChipmunkFileToJavaScript(path);
 });
