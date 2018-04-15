@@ -198,12 +198,11 @@ defineChipmunkFunction("print-line",
   },
 );
 
-defineChipmunkFunction("parse-string",
-  (args: ChipmunkNode[]): ChipmunkNode => {
-    const input: ChipmunkString = args[0] as ChipmunkString;
-    const tokenizer: Tokenizer = new Tokenizer(input.value);
-    const parser: Parser = new Parser(tokenizer.tokenize());
-    return parser.parse();
+defineChipmunkFunction("read-line",
+  (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkString => {
+    const prompt: string = (args[0] as ChipmunkString).value;
+    const line: string = ioHandler.readLine(prompt);
+    return { type: ChipmunkNodeType.STRING, value: line };
   },
 );
 
@@ -215,17 +214,18 @@ defineChipmunkFunction("read-file",
   },
 );
 
-defineChipmunkFunction("read-line",
-  (args: ChipmunkNode[], ioHandler: IOHandler): ChipmunkString => {
-    const prompt: string = (args[0] as ChipmunkString).value;
-    const line: string = ioHandler.readLine(prompt);
-    return { type: ChipmunkNodeType.STRING, value: line };
-  },
-);
-
 defineChipmunkFunction("do",
   (args: ChipmunkNode[]): ChipmunkNode => {
     return args[args.length - 1];
+  },
+);
+
+defineChipmunkFunction("parse-string",
+  (args: ChipmunkNode[]): ChipmunkNode => {
+    const input: ChipmunkString = args[0] as ChipmunkString;
+    const tokenizer: Tokenizer = new Tokenizer(input.value);
+    const parser: Parser = new Parser(tokenizer.tokenize());
+    return parser.parse();
   },
 );
 
