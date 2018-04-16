@@ -17,6 +17,13 @@ function toString(ast: ChipmunkNode, printable: boolean = false): string {
     }
   } else if (ast.type === ChipmunkNodeType.LIST) {
     return `(${ast.items.map((item: ChipmunkNode) => toString(item)).join(" ")})`;
+  } else if (ast.type === ChipmunkNodeType.MAP) {
+    const chunks: string[] = [];
+    ast.entries.forEach((value: ChipmunkNode, key: string) => {
+      chunks.push(toString({ type: ChipmunkNodeType.STRING, value: key }));
+      chunks.push(toString(value));
+    });
+    return `{${chunks.join(" ")}}`;
   } else if (ast.type === ChipmunkNodeType.NIL) {
     return "nil";
   } else if (ast.type === ChipmunkNodeType.NUMBER) {

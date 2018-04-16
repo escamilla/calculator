@@ -172,14 +172,18 @@ class Tokenizer {
     }
 
     switch (char) {
-      case "(":
-        return { type: TokenType.LEFT_PARENTHESIS, value: this.next(), line, column };
-      case ")":
-        return { type: TokenType.RIGHT_PARENTHESIS, value: this.next(), line, column };
       case "\"":
         return { type: TokenType.STRING, value: this.readString(), line, column };
       case "'":
         return { type: TokenType.SINGLE_QUOTE, value: this.next(), line, column };
+      case "(":
+        return { type: TokenType.LEFT_PARENTHESIS, value: this.next(), line, column };
+      case ")":
+        return { type: TokenType.RIGHT_PARENTHESIS, value: this.next(), line, column };
+      case "{":
+        return { type: TokenType.LEFT_CURLY_BRACE, value: this.next(), line, column };
+      case "}":
+        return { type: TokenType.RIGHT_CURLY_BRACE, value: this.next(), line, column };
       default:
         this.die(`unexpected character: ${char}`);
     }

@@ -2,6 +2,7 @@ enum ChipmunkNodeType {
   BOOLEAN,
   FUNCTION,
   LIST,
+  MAP,
   NIL,
   NUMBER,
   STRING,

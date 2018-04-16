@@ -1,4 +1,5 @@
 import ChipmunkList from "./nodes/ChipmunkList";
+import ChipmunkMap from "./nodes/ChipmunkMap";
 import ChipmunkNode from "./nodes/ChipmunkNode";
 import ChipmunkNodeType from "./nodes/ChipmunkNodeType";
 import ChipmunkNumber from "./nodes/ChipmunkNumber";
@@ -44,19 +45,43 @@ class Parser {
 
   private parseExpression(): ChipmunkNode {
     switch (this.peek().type) {
+      case TokenType.LEFT_CURLY_BRACE:
+        return this.parseMap();
       case TokenType.LEFT_PARENTHESIS:
         return this.parseSymbolicExpression();
       case TokenType.NUMBER:
         return this.parseNumber();
-      case TokenType.SYMBOL:
-        return this.parseSymbol();
-      case TokenType.STRING:
-        return this.parseString();
       case TokenType.SINGLE_QUOTE:
         return this.parseQuotedExpression();
+      case TokenType.STRING:
+        return this.parseString();
+      case TokenType.SYMBOL:
+        return this.parseSymbol();
       default:
-        throw new Error("Expected number, symbol, or symbolic expression");
+        const actualType: string = TokenType[this.peek().type];
+        throw new Error(`expected expression but got token of type ${actualType}`);
     }
+  }
+
+  private parseMap(): ChipmunkMap {
+    const firstToken: Token = this.consumeToken(TokenType.LEFT_CURLY_BRACE);
+    const entries: Map<string, ChipmunkNode> = new Map();
+    while (this.peek().type !== TokenType.RIGHT_CURLY_BRACE) {
+      const key: ChipmunkNode = this.parseExpression();
+      if (key.type !== ChipmunkNodeType.STRING) {
+        const actualType: string = ChipmunkNodeType[key.type];
+        throw new Error(`expected dictionary key to be of type STRING, but got type ${actualType}`);
+      }
+      const value: ChipmunkNode = this.parseExpression();
+      entries.set(key.value, value);
+    }
+    this.consumeToken(TokenType.RIGHT_CURLY_BRACE);
+    return {
+      type: ChipmunkNodeType.MAP,
+      entries,
+      line: firstToken.line,
+      column: firstToken.column,
+    };
   }
 
   private parseNumber(): ChipmunkNumber {
@@ -69,21 +94,21 @@ class Parser {
     };
   }
 
-  private parseSymbol(): ChipmunkSymbol {
-    const token: Token = this.consumeToken(TokenType.SYMBOL);
-    return {
-      type: ChipmunkNodeType.SYMBOL,
-      name: token.value,
-      line: token.line,
-      column: token.column,
-    };
-  }
-
   private parseString(): ChipmunkString {
     const token: Token = this.consumeToken(TokenType.STRING);
     return {
       type: ChipmunkNodeType.STRING,
       value: token.value,
+      line: token.line,
+      column: token.column,
+    };
+  }
+
+  private parseSymbol(): ChipmunkSymbol {
+    const token: Token = this.consumeToken(TokenType.SYMBOL);
+    return {
+      type: ChipmunkNodeType.SYMBOL,
+      name: token.value,
       line: token.line,
       column: token.column,
     };

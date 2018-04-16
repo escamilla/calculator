@@ -86,6 +86,7 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(parse-float "3.14")`, expectedOutput: "3.14" },
   { input: `(do (def pi 3.14) (set pi 3.142) pi)`, expectedOutput: "3.142" },
   { input: `(do (def pi 3.14) (do (set pi 3.142)) pi)`, expectedOutput: "3.142" },
+  { input: '{"name" "John Smith" "age" 42}', expectedOutput: '{"name" "John Smith" "age" 42}' },
 ];
 
 const negativeTestCases: INegativeTestCase[] = [
@@ -100,6 +101,8 @@ const negativeTestCases: INegativeTestCase[] = [
   { input: "(if 1 true false)", reason: "the first argument to if must be a boolean" },
   { input: '(lambda "x" x)', reason: "the first argument to lambda must be a list of symbols" },
   { input: '(lambda ("x") x)', reason: "the first argument to lambda must be a list of symbols" },
+  { input: '{name "John Smith"}', reason: "dictionary keys must be strings" },
+  { input: '{"name"}', reason: "dictionaries cannot have missing keys" },
 ];
 
 describe("interpret() follows expected behavior", () => {
