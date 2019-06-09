@@ -1,5 +1,4 @@
-import Token from "./tokens/Token";
-import TokenType from "./tokens/TokenType";
+import { Token, TokenType } from "./tokens";
 import {
   ChipmunkList,
   ChipmunkMap,
@@ -47,17 +46,17 @@ class Parser {
 
   private parseExpression(): ChipmunkType {
     switch (this.peek().type) {
-      case TokenType.LEFT_CURLY_BRACE:
+      case TokenType.LeftCurlyBrace:
         return this.parseMap();
-      case TokenType.LEFT_PARENTHESIS:
+      case TokenType.LeftParenthesis:
         return this.parseSymbolicExpression();
-      case TokenType.NUMBER:
+      case TokenType.Number:
         return this.parseNumber();
-      case TokenType.SINGLE_QUOTE:
+      case TokenType.SingleQuote:
         return this.parseQuotedExpression();
-      case TokenType.STRING:
+      case TokenType.String:
         return this.parseString();
-      case TokenType.SYMBOL:
+      case TokenType.Symbol:
         return this.parseSymbol();
       default:
         const actualType: string = TokenType[this.peek().type];
@@ -66,9 +65,9 @@ class Parser {
   }
 
   private parseMap(): ChipmunkMap {
-    const firstToken: Token = this.consumeToken(TokenType.LEFT_CURLY_BRACE);
+    const firstToken: Token = this.consumeToken(TokenType.LeftCurlyBrace);
     const entries: Map<string, ChipmunkType> = new Map();
-    while (this.peek().type !== TokenType.RIGHT_CURLY_BRACE) {
+    while (this.peek().type !== TokenType.RightCurlyBrace) {
       const key: ChipmunkType = this.parseExpression();
       if (key.type !== ChipmunkNodeType.String) {
         const actualType: string = ChipmunkNodeType[key.type];
@@ -77,7 +76,7 @@ class Parser {
       const value: ChipmunkType = this.parseExpression();
       entries.set(key.value, value);
     }
-    this.consumeToken(TokenType.RIGHT_CURLY_BRACE);
+    this.consumeToken(TokenType.RightCurlyBrace);
     return {
       type: ChipmunkNodeType.Map,
       entries,
@@ -87,7 +86,7 @@ class Parser {
   }
 
   private parseNumber(): ChipmunkNumber {
-    const token: Token = this.consumeToken(TokenType.NUMBER);
+    const token: Token = this.consumeToken(TokenType.Number);
     return {
       type: ChipmunkNodeType.Number,
       value: parseFloat(token.value),
@@ -97,7 +96,7 @@ class Parser {
   }
 
   private parseString(): ChipmunkString {
-    const token: Token = this.consumeToken(TokenType.STRING);
+    const token: Token = this.consumeToken(TokenType.String);
     return {
       type: ChipmunkNodeType.String,
       value: token.value,
@@ -107,7 +106,7 @@ class Parser {
   }
 
   private parseSymbol(): ChipmunkSymbol {
-    const token: Token = this.consumeToken(TokenType.SYMBOL);
+    const token: Token = this.consumeToken(TokenType.Symbol);
     return {
       type: ChipmunkNodeType.Symbol,
       name: token.value,
@@ -117,12 +116,12 @@ class Parser {
   }
 
   private parseSymbolicExpression(): ChipmunkList {
-    const firstToken: Token = this.consumeToken(TokenType.LEFT_PARENTHESIS);
+    const firstToken: Token = this.consumeToken(TokenType.LeftParenthesis);
     const items: ChipmunkType[] = [];
-    while (this.peek().type !== TokenType.RIGHT_PARENTHESIS) {
+    while (this.peek().type !== TokenType.RightParenthesis) {
       items.push(this.parseExpression());
     }
-    this.consumeToken(TokenType.RIGHT_PARENTHESIS);
+    this.consumeToken(TokenType.RightParenthesis);
     return {
       type: ChipmunkNodeType.List,
       items,
@@ -132,7 +131,7 @@ class Parser {
   }
 
   private parseQuotedExpression(): ChipmunkList {
-    const firstToken: Token = this.consumeToken(TokenType.SINGLE_QUOTE);
+    const firstToken: Token = this.consumeToken(TokenType.SingleQuote);
     return {
       type: ChipmunkNodeType.List,
       items: [

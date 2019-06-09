@@ -1,5 +1,4 @@
-import Token from "./tokens/Token";
-import TokenType from "./tokens/TokenType";
+import { Token, TokenType } from "./tokens";
 
 class Tokenizer {
   private position: number = 0;
@@ -164,26 +163,26 @@ class Tokenizer {
     const column: number = this.column;
 
     if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
-      return { type: TokenType.NUMBER, value: this.readNumber(), line, column };
+      return { type: TokenType.Number, value: this.readNumber(), line, column };
     }
 
     if (this.isSymbolCharacter(char)) {
-      return { type: TokenType.SYMBOL, value: this.readSymbol(), line, column };
+      return { type: TokenType.Symbol, value: this.readSymbol(), line, column };
     }
 
     switch (char) {
       case "\"":
-        return { type: TokenType.STRING, value: this.readString(), line, column };
+        return { type: TokenType.String, value: this.readString(), line, column };
       case "'":
-        return { type: TokenType.SINGLE_QUOTE, value: this.next(), line, column };
+        return { type: TokenType.SingleQuote, value: this.next(), line, column };
       case "(":
-        return { type: TokenType.LEFT_PARENTHESIS, value: this.next(), line, column };
+        return { type: TokenType.LeftParenthesis, value: this.next(), line, column };
       case ")":
-        return { type: TokenType.RIGHT_PARENTHESIS, value: this.next(), line, column };
+        return { type: TokenType.RightParenthesis, value: this.next(), line, column };
       case "{":
-        return { type: TokenType.LEFT_CURLY_BRACE, value: this.next(), line, column };
+        return { type: TokenType.LeftCurlyBrace, value: this.next(), line, column };
       case "}":
-        return { type: TokenType.RIGHT_CURLY_BRACE, value: this.next(), line, column };
+        return { type: TokenType.RightCurlyBrace, value: this.next(), line, column };
       default:
         this.die(`unexpected character: ${char}`);
     }
