@@ -1,6 +1,6 @@
-import Parser from "./Parser";
-import Tokenizer from "./Tokenizer";
-import Token from "./tokens/Token";
+import Parser from "../src/Parser";
+import Tokenizer from "../src/Tokenizer";
+import Token from "../src/tokens/Token";
 
 interface INegativeTestCase {
   input: string;

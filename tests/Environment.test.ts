@@ -1,5 +1,5 @@
-import Environment from "./Environment";
-import ChipmunkNodeType from "./nodes/ChipmunkNodeType";
+import Environment from "../src/Environment";
+import ChipmunkNodeType from "../src/nodes/ChipmunkNodeType";
 
 describe("Environment.get()", () => {
   test("returns a value defined in the current environment", () => {
