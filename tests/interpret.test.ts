@@ -13,7 +13,6 @@ interface INegativeTestCase {
   reason: string;
 }
 
-// tslint:disable:object-literal-sort-keys
 const positiveTestCases: IPositiveTestCase[] = [
   { input: "1", expectedOutput: "1" },
   { input: "-1", expectedOutput: "-1" },

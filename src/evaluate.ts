@@ -1,41 +1,37 @@
 import Environment from "./Environment";
 import IOHandler from "./io/IOHandler";
-import ChipmunkFunction from "./nodes/ChipmunkFunction";
-import ChipmunkList from "./nodes/ChipmunkList";
-import ChipmunkNode from "./nodes/ChipmunkNode";
-import ChipmunkNodeType from "./nodes/ChipmunkNodeType";
-import ChipmunkSymbol from "./nodes/ChipmunkSymbol";
+import { ChipmunkFunction, ChipmunkList, ChipmunkNodeType, ChipmunkSymbol, ChipmunkType } from "./types";
 
-function evaluate(ast: ChipmunkNode, env: Environment, ioHandler: IOHandler): ChipmunkNode {
-  if (ast.type === ChipmunkNodeType.SYMBOL) {
+function evaluate(ast: ChipmunkType, env: Environment, ioHandler: IOHandler): ChipmunkType {
+  if (ast.type === ChipmunkNodeType.Symbol) {
     return env.get(ast.name);
   }
 
-  if (ast.type === ChipmunkNodeType.LIST) {
+  if (ast.type === ChipmunkNodeType.List) {
     if (ast.items.length === 0) {
       return ast;
     }
 
-    const head: ChipmunkNode = ast.items[0];
-    if (head.type === ChipmunkNodeType.SYMBOL) {
+    const head: ChipmunkType = ast.items[0];
+    if (head.type === ChipmunkNodeType.Symbol) {
       if (head.name === "def") {
-        const arg1: ChipmunkNode = ast.items[1];
-        if (arg1.type !== ChipmunkNodeType.SYMBOL) {
-          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.SYMBOL];
+        const arg1: ChipmunkType = ast.items[1];
+        if (arg1.type !== ChipmunkNodeType.Symbol) {
+          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.Symbol];
           const actualType: string = ChipmunkNodeType[arg1.type];
           throw new Error(`expected first argument to '${head.name}' to be of type ` +
             `${expectedType} but got type ${actualType}`);
         }
         const key: string = arg1.name;
-        const value: ChipmunkNode = evaluate(ast.items[2], env, ioHandler);
+        const value: ChipmunkType = evaluate(ast.items[2], env, ioHandler);
         env.set(key, value);
         return value;
       } else if (head.name === "if") {
-        const condition: ChipmunkNode = ast.items[1];
-        const result: ChipmunkNode = evaluate(condition, env, ioHandler);
+        const condition: ChipmunkType = ast.items[1];
+        const result: ChipmunkType = evaluate(condition, env, ioHandler);
 
-        if (result.type !== ChipmunkNodeType.BOOLEAN) {
-          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.BOOLEAN];
+        if (result.type !== ChipmunkNodeType.Boolean) {
+          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.Boolean];
           const actualType: string = ChipmunkNodeType[result.type];
           throw new Error(`expected first argument to '${head.name}' to be of type ` +
             `${expectedType} but got type ${actualType}`);
@@ -47,17 +43,17 @@ function evaluate(ast: ChipmunkNode, env: Environment, ioHandler: IOHandler): Ch
           return evaluate(ast.items[3], env, ioHandler);
         }
       } else if (head.name === "lambda") {
-        const arg1: ChipmunkNode = ast.items[1];
-        if (arg1.type !== ChipmunkNodeType.LIST) {
-          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.LIST];
+        const arg1: ChipmunkType = ast.items[1];
+        if (arg1.type !== ChipmunkNodeType.List) {
+          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.List];
           const actualType: string = ChipmunkNodeType[arg1.type];
           throw new Error(`expected first argument to '${head.name}' to be of type ` +
             `${expectedType} but got type ${actualType}`);
         }
 
-        const functionParams: ChipmunkSymbol[] = arg1.items.map((item: ChipmunkNode) => {
-          if (item.type !== ChipmunkNodeType.SYMBOL) {
-            const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.SYMBOL];
+        const functionParams: ChipmunkSymbol[] = arg1.items.map((item: ChipmunkType) => {
+          if (item.type !== ChipmunkNodeType.Symbol) {
+            const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.Symbol];
             const actualType: string = ChipmunkNodeType[item.type];
             throw new Error(`expected first argument to '${head.name}' to be list containing ` +
               `items of type ${expectedType} but got type ${actualType}`);
@@ -65,11 +61,11 @@ function evaluate(ast: ChipmunkNode, env: Environment, ioHandler: IOHandler): Ch
           return item;
         });
 
-        const functionBody: ChipmunkNode = ast.items[2];
+        const functionBody: ChipmunkType = ast.items[2];
 
         const newFunction: ChipmunkFunction = {
-          type: ChipmunkNodeType.FUNCTION,
-          callable: (functionArgs: ChipmunkNode[]): ChipmunkNode => {
+          type: ChipmunkNodeType.Function,
+          callable: (functionArgs: ChipmunkType[]): ChipmunkType => {
             return evaluate(functionBody, new Environment(env, functionParams, functionArgs), ioHandler);
           },
           isUserDefined: true,
@@ -81,35 +77,35 @@ function evaluate(ast: ChipmunkNode, env: Environment, ioHandler: IOHandler): Ch
       } else if (head.name === "quote") {
         return ast.items[1];
       } else if (head.name === "set") {
-        const arg1: ChipmunkNode = ast.items[1];
-        if (arg1.type !== ChipmunkNodeType.SYMBOL) {
-          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.SYMBOL];
+        const arg1: ChipmunkType = ast.items[1];
+        if (arg1.type !== ChipmunkNodeType.Symbol) {
+          const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.Symbol];
           const actualType: string = ChipmunkNodeType[arg1.type];
           throw new Error(`expected first argument to '${head.name}' to be of type ` +
             `${expectedType} but got type ${actualType}`);
         }
         const key: string = arg1.name;
         const envToUpdate: Environment = env.find(key);
-        const value: ChipmunkNode = evaluate(ast.items[2], env, ioHandler);
+        const value: ChipmunkType = evaluate(ast.items[2], env, ioHandler);
         envToUpdate.set(key, value);
         return value;
       }
     }
 
     const evaluatedList: ChipmunkList = {
-      type: ChipmunkNodeType.LIST,
-      items: ast.items.map((item: ChipmunkNode) => evaluate(item, env, ioHandler)),
+      type: ChipmunkNodeType.List,
+      items: ast.items.map((item: ChipmunkType) => evaluate(item, env, ioHandler)),
     };
 
-    const item0: ChipmunkNode = evaluatedList.items[0];
-    if (item0.type !== ChipmunkNodeType.FUNCTION) {
+    const item0: ChipmunkType = evaluatedList.items[0];
+    if (item0.type !== ChipmunkNodeType.Function) {
       const actualType: string = ChipmunkNodeType[item0.type];
       throw new Error("expected first item of list to be of type FUNCTION but got type " +
         actualType);
     }
 
     const fn: ChipmunkFunction = item0;
-    const args: ChipmunkNode[] = evaluatedList.items.slice(1);
+    const args: ChipmunkType[] = evaluatedList.items.slice(1);
     return fn.callable(args, ioHandler);
   }
 

@@ -1,16 +1,15 @@
 
 import { compileJavaScriptToSourceNode, convertChipmunkNodeToJavaScriptNode } from "../src/codegen";
 import JavaScriptNode from "../src/js/JavaScriptNode";
-import ChipmunkNode from "../src/nodes/ChipmunkNode";
 import Parser from "../src/Parser";
 import Tokenizer from "../src/Tokenizer";
+import { ChipmunkNode } from "../src/types";
 
 interface IPositiveTestCase {
   input: string;
   expectedOutput: any;
 }
 
-// tslint:disable:object-literal-sort-keys
 const positiveTestCases: IPositiveTestCase[] = [
   { input: "1", expectedOutput: 1 },
   { input: "-1", expectedOutput: -1 },

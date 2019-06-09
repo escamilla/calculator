@@ -9,7 +9,6 @@ interface ITestCase {
   printable?: boolean;
 }
 
-// tslint:disable:object-literal-sort-keys
 const testCases: ITestCase[] = [
   { input: "true", expectedOutput: "true" },
   { input: "false", expectedOutput: "false" },
@@ -36,7 +35,6 @@ const testCases: ITestCase[] = [
   { input: `"\\"test\\""`, expectedOutput: `"test"`, printable: true },
   { input: `"\\\\test\\\\"`, expectedOutput: `\\test\\`, printable: true },
 ];
-// tslint:enable:object-literal-sort-keys
 
 testCases.forEach((testCase: ITestCase) => {
   test(`\`${testCase.input}\` => \`${testCase.expectedOutput}\` (printable = ${testCase.printable})`, () => {
