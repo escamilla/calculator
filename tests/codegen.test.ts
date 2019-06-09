@@ -3,7 +3,7 @@ import { compileJavaScriptToSourceNode, convertChipmunkNodeToJavaScriptNode } fr
 import JavaScriptNode from "../src/js/JavaScriptNode";
 import Parser from "../src/Parser";
 import Tokenizer from "../src/Tokenizer";
-import { ChipmunkNode } from "../src/types";
+import { ChipmunkType } from "../src/types";
 
 interface IPositiveTestCase {
   input: string;
@@ -59,7 +59,7 @@ describe("code generation produces equivalent JavaScript code", () => {
     test(`${testCase.input} => ${testCase.expectedOutput}`, () => {
       const tokenizer: Tokenizer = new Tokenizer(testCase.input);
       const parser: Parser = new Parser(tokenizer.tokenize());
-      const chipmunkAst: ChipmunkNode = parser.parse();
+      const chipmunkAst: ChipmunkType = parser.parse();
       const javaScriptAst: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(chipmunkAst, true);
       const javaScriptCode: string = compileJavaScriptToSourceNode(javaScriptAst).toString();
       const actualOutput: string = eval(javaScriptCode); // tslint:disable-line:no-eval
