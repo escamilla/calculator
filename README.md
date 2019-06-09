@@ -1,9 +1,7 @@
-Chipmunk Core
-=============
-Chipmunk is a Lisp-like programming language that I made for fun. This package contains the implementation of the Chipmunk interpreter. To run Chipmunk programs, check out the [chipmunk-cli](https://github.com/escamilla/chipmunk-cli) package.
+# Chipmunk
+Chipmunk is a toy Lisp-like language
 
-Example Program
----------------
+## Example
 ```
 (do
   (def factorial (lambda (x)
@@ -13,9 +11,17 @@ Example Program
 
   (print-line (map factorial (range 10))))
 
-[ (1 1 2 6 24 120 720 5040 40320 362880) ]
+[ prints "(1 1 2 6 24 120 720 5040 40320 362880)" ]
 ```
 
-Resources
----------
+## Usage
+```
+# start a Chipmunk REPL
+npm start
+
+# run a Chipmunk program
+npm start examples/game-of-life.ch
+```
+
+## Resources
 - [List of Chipmunk Functions](docs/functions.md)

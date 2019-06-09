@@ -4,9 +4,17 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch REPL",
+      "preLaunchTask": "npm: build",
+      "program": "${workspaceRoot}/dist/index.js",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch Jest",
       "preLaunchTask": "npm: build",
-      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
       "console": "integratedTerminal"
     }
   ]
