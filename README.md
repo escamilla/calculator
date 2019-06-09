@@ -1,7 +1,5 @@
 Chipmunk Core
 =============
-[日本語 (Japanese)](README.jp.md)
-
 Chipmunk is a Lisp-like programming language that I made for fun. This package contains the implementation of the Chipmunk interpreter. To run Chipmunk programs, check out the [chipmunk-cli](https://github.com/escamilla/chipmunk-cli) package.
 
 Example Program
