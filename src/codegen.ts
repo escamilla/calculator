@@ -461,7 +461,7 @@ function compileChipmunkFileToJavaScript(path: string): void {
     file: javaScriptCodeFile,
   });
   fs.writeFileSync(javaScriptCodeFile, generatedCode.code + "\n//# sourceMappingURL=" + javaScriptSourceMapFile + "\n");
-  fs.writeFileSync(javaScriptSourceMapFile, generatedCode.map);
+  fs.writeFileSync(javaScriptSourceMapFile, generatedCode.map.toString());
 }
 
 export {
