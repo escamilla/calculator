@@ -7,17 +7,17 @@ function toString(ast: ChipmunkType, printable: boolean = false): string {
   } else if (ast.type === ChipmunkNodeType.Function) {
     if (ast.isUserDefined) {
       const stringParams: string = (ast.params as ChipmunkSymbol[])
-        .map((param: ChipmunkSymbol) => param.name).join(" ");
+        .map((param: ChipmunkSymbol): string => param.name).join(" ");
       const stringBody: string = toString(ast.body as ChipmunkType);
       return `(lambda (${stringParams}) ${stringBody})`;
     } else {
       return ast.name as string;
     }
   } else if (ast.type === ChipmunkNodeType.List) {
-    return `(${ast.items.map((item: ChipmunkType) => toString(item)).join(" ")})`;
+    return `(${ast.items.map((item: ChipmunkType): string => toString(item)).join(" ")})`;
   } else if (ast.type === ChipmunkNodeType.Map) {
     const chunks: string[] = [];
-    ast.entries.forEach((value: ChipmunkType, key: string) => {
+    ast.entries.forEach((value: ChipmunkType, key: string): void => {
       chunks.push(toString({ type: ChipmunkNodeType.String, value: key }));
       chunks.push(toString(value));
     });

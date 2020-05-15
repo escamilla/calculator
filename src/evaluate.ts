@@ -51,7 +51,7 @@ function evaluate(ast: ChipmunkType, env: Environment, ioHandler: IOHandler): Ch
             `${expectedType} but got type ${actualType}`);
         }
 
-        const functionParams: ChipmunkSymbol[] = arg1.items.map((item: ChipmunkType) => {
+        const functionParams: ChipmunkSymbol[] = arg1.items.map((item: ChipmunkType): ChipmunkSymbol => {
           if (item.type !== ChipmunkNodeType.Symbol) {
             const expectedType: string = ChipmunkNodeType[ChipmunkNodeType.Symbol];
             const actualType: string = ChipmunkNodeType[item.type];
@@ -94,7 +94,7 @@ function evaluate(ast: ChipmunkType, env: Environment, ioHandler: IOHandler): Ch
 
     const evaluatedList: ChipmunkList = {
       type: ChipmunkNodeType.List,
-      items: ast.items.map((item: ChipmunkType) => evaluate(item, env, ioHandler)),
+      items: ast.items.map((item: ChipmunkType): ChipmunkType => evaluate(item, env, ioHandler)),
     };
 
     const item0: ChipmunkType = evaluatedList.items[0];

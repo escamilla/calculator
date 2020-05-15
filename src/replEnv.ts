@@ -154,8 +154,8 @@ defineChipmunkFunction("join",
 
 defineChipmunkFunction("concat",
   (args: ChipmunkType[]): ChipmunkString => {
-    const castedArgs: ChipmunkString[] = args.map((arg: ChipmunkType) => arg as ChipmunkString);
-    const strings: string[] = castedArgs.map((arg: ChipmunkString) => arg.value);
+    const castedArgs: ChipmunkString[] = args.map((arg: ChipmunkType): ChipmunkString => arg as ChipmunkString);
+    const strings: string[] = castedArgs.map((arg: ChipmunkString): string => arg.value);
     return { type: ChipmunkNodeType.String, value: strings.join("") };
   },
 );
@@ -321,7 +321,7 @@ const inputs: string[] = [
                    (find predicate (tail collection)))))))`,
 ];
 
-inputs.forEach((input: string) => {
+inputs.forEach((input: string): void => {
   interpret(input, replEnv, dummyIOHandler);
 });
 

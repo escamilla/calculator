@@ -13,7 +13,7 @@ interpret(loadFileDefinition, replEnv, nodeIOHandler);
 
 if (process.argv.length > 2) {
   const paths: ChipmunkString[] = [];
-  process.argv.slice(3).forEach((value: string) => {
+  process.argv.slice(3).forEach((value: string): void => {
     paths.push({
       type: ChipmunkNodeType.String,
       value,
