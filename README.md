@@ -17,11 +17,15 @@ Chipmunk is a toy Lisp-like language
 ## Usage
 ```
 # start a Chipmunk REPL
-npm start
+deno run src/index.ts
 
 # run a Chipmunk program
-npm start examples/game-of-life.ch
+deno run --allow-read src/index.ts examples/game-of-life.ch
+
+# compile a Chipmunk program to JavaScript with a source map (not all Chipmunk functions are supported)
+deno run --allow-read --allow-write src/compile.ts examples/fibonacci-sequence.ch
 ```
 
 ## Resources
 - [List of Chipmunk Functions](docs/functions.md)
+- [Source Map Visualization](https://sokra.github.io/source-map-visualization/)

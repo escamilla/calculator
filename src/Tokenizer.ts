@@ -1,11 +1,11 @@
-import { Token, TokenType } from "./tokens";
+import { Token, TokenType } from "./tokens.ts";
 
 class Tokenizer {
   private position: number = 0;
   private line: number = 1;
   private column: number = 1;
 
-  public constructor(private readonly input: string) { }
+  public constructor(private readonly input: string) {}
 
   public tokenize(): Token[] {
     const tokens: Token[] = [];
@@ -162,7 +162,9 @@ class Tokenizer {
     const line: number = this.line;
     const column: number = this.column;
 
-    if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
+    if (
+      this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))
+    ) {
       return { type: TokenType.Number, value: this.readNumber(), line, column };
     }
 
@@ -171,18 +173,48 @@ class Tokenizer {
     }
 
     switch (char) {
-      case "\"":
-        return { type: TokenType.String, value: this.readString(), line, column };
+      case '"':
+        return {
+          type: TokenType.String,
+          value: this.readString(),
+          line,
+          column,
+        };
       case "'":
-        return { type: TokenType.SingleQuote, value: this.next(), line, column };
+        return {
+          type: TokenType.SingleQuote,
+          value: this.next(),
+          line,
+          column,
+        };
       case "(":
-        return { type: TokenType.LeftParenthesis, value: this.next(), line, column };
+        return {
+          type: TokenType.LeftParenthesis,
+          value: this.next(),
+          line,
+          column,
+        };
       case ")":
-        return { type: TokenType.RightParenthesis, value: this.next(), line, column };
+        return {
+          type: TokenType.RightParenthesis,
+          value: this.next(),
+          line,
+          column,
+        };
       case "{":
-        return { type: TokenType.LeftCurlyBrace, value: this.next(), line, column };
+        return {
+          type: TokenType.LeftCurlyBrace,
+          value: this.next(),
+          line,
+          column,
+        };
       case "}":
-        return { type: TokenType.RightCurlyBrace, value: this.next(), line, column };
+        return {
+          type: TokenType.RightCurlyBrace,
+          value: this.next(),
+          line,
+          column,
+        };
       default:
         this.die(`unexpected character: ${char}`);
     }

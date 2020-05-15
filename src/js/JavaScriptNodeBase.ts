@@ -1,4 +1,4 @@
-import JavaScriptNodeType from "./JavaScriptNodeType";
+import JavaScriptNodeType from "./JavaScriptNodeType.ts";
 
 interface JavaScriptNodeBase {
   type: JavaScriptNodeType;

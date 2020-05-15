@@ -1,11 +1,13 @@
-import { ChipmunkSymbol, ChipmunkType } from "./types";
+import { ChipmunkSymbol, ChipmunkType } from "./types.ts";
 
 class Environment {
   private data: Map<string, ChipmunkType> = new Map();
 
-  public constructor(public readonly outerEnv?: Environment,
-                     bindSymbols: ChipmunkSymbol[] = [],
-                     bindExpressions: ChipmunkType[] = []) {
+  public constructor(
+    public readonly outerEnv?: Environment,
+    bindSymbols: ChipmunkSymbol[] = [],
+    bindExpressions: ChipmunkType[] = [],
+  ) {
     for (let i: number = 0; i < bindSymbols.length; i++) {
       this.set(bindSymbols[i].name, bindExpressions[i]);
     }

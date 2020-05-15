@@ -1,6 +1,6 @@
-import JavaScriptNode from "./JavaScriptNode";
-import JavaScriptNodeBase from "./JavaScriptNodeBase";
-import JavaScriptNodeType from "./JavaScriptNodeType";
+import JavaScriptNode from "./JavaScriptNode.ts";
+import JavaScriptNodeBase from "./JavaScriptNodeBase.ts";
+import JavaScriptNodeType from "./JavaScriptNodeType.ts";
 
 interface JavaScriptConditionalOperation extends JavaScriptNodeBase {
   type: JavaScriptNodeType.CONDITIONAL_OPERATION;

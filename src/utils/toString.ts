@@ -1,5 +1,5 @@
-import { ChipmunkNodeType, ChipmunkSymbol, ChipmunkType } from "../types";
-import escapeString from "./escapeString";
+import { ChipmunkNodeType, ChipmunkSymbol, ChipmunkType } from "../types.ts";
+import escapeString from "./escapeString.ts";
 
 function toString(ast: ChipmunkType, printable: boolean = false): string {
   if (ast.type === ChipmunkNodeType.Boolean) {
@@ -14,7 +14,10 @@ function toString(ast: ChipmunkType, printable: boolean = false): string {
       return ast.name as string;
     }
   } else if (ast.type === ChipmunkNodeType.List) {
-    return `(${ast.items.map((item: ChipmunkType) => toString(item)).join(" ")})`;
+    const joined = ast.items.map((item: ChipmunkType) => toString(item)).join(
+      " ",
+    );
+    return `(${joined})`;
   } else if (ast.type === ChipmunkNodeType.Map) {
     const chunks: string[] = [];
     ast.entries.forEach((value: ChipmunkType, key: string) => {

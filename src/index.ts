@@ -1,19 +1,18 @@
-import * as readlineSync from "readline-sync";
+import { readLines } from "https://deno.land/std/io/bufio.ts";
 
-import interpret from "./interpret";
-import nodeIOHandler from "./nodeIOHandler";
-import replEnv from "./replEnv";
-import { ChipmunkNodeType, ChipmunkString, ChipmunkType } from "./types";
-import toString from "./utils/toString";
+import interpret from "./interpret.ts";
+import nodeIOHandler from "./nodeIOHandler.ts";
+import replEnv from "./replEnv.ts";
+import { ChipmunkNodeType, ChipmunkString, ChipmunkType } from "./types.ts";
+import toString from "./utils/toString.ts";
 
-const loadFileDefinition: string =
-  `(def load-file (lambda (path)
+const loadFileDefinition: string = `(def load-file (lambda (path)
      (eval (parse-string (concat "(do " (read-file path) ")")))))`;
 interpret(loadFileDefinition, replEnv, nodeIOHandler);
 
-if (process.argv.length > 2) {
+if (Deno.args.length > 0) {
   const paths: ChipmunkString[] = [];
-  process.argv.slice(3).forEach((value: string) => {
+  Deno.args.slice(1).forEach((value: string) => {
     paths.push({
       type: ChipmunkNodeType.String,
       value,
@@ -23,29 +22,39 @@ if (process.argv.length > 2) {
     type: ChipmunkNodeType.List,
     items: paths,
   });
-  interpret(`(load-file "${process.argv[2]}")`, replEnv, nodeIOHandler);
-  process.exit(0);
+  interpret(`(load-file "${Deno.args[0]}")`, replEnv, nodeIOHandler);
+  Deno.exit(0);
 }
 
-process.stdout.write('Enter "exit" or press ^C to exit\n');
-process.stdout.write('Tip: The underscore symbol ("_") always contains the value of the last expression\n');
-readlineSync.setPrompt("> ");
+Deno.stdout.writeSync(
+  new TextEncoder().encode('Enter "exit" or press ^C to exit\n'),
+);
+Deno.stdout.writeSync(
+  new TextEncoder().encode(
+    'Tip: The underscore symbol ("_") always contains the value of the last expression\n',
+  ),
+);
 while (true) {
-  const line: string = readlineSync.prompt().trim();
-  if (line) {
-    if (line === "exit") {
-      process.exit(0);
+  Deno.stdout.writeSync(new TextEncoder().encode("> "));
+  for await (const line of readLines(Deno.stdin)) {
+    if (line) {
+      if (line === "exit") {
+        Deno.exit(0);
+      }
+      let result: ChipmunkType;
+      try {
+        result = interpret(line, replEnv, nodeIOHandler);
+      } catch (e) {
+        Deno.stdout.writeSync(new TextEncoder().encode(e.message + "\n"));
+        continue;
+      }
+      replEnv.set("_", result);
+      if (result.type !== ChipmunkNodeType.Nil) {
+        Deno.stdout.writeSync(
+          new TextEncoder().encode(toString(result) + "\n"),
+        );
+      }
     }
-    let result: ChipmunkType;
-    try {
-      result = interpret(line, replEnv, nodeIOHandler);
-    } catch (e) {
-      process.stdout.write(e.message + "\n");
-      continue;
-    }
-    replEnv.set("_", result);
-    if (result.type !== ChipmunkNodeType.Nil) {
-      process.stdout.write(toString(result) + "\n");
-    }
+    Deno.stdout.writeSync(new TextEncoder().encode("> "));
   }
 }

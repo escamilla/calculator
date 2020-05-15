@@ -235,12 +235,6 @@ Prints the value to stdout followed by a newline and returns `nil`.
 (print-line "Hello, World!")
 ```
 
-### read-line
-
-`(read-line prompt)`
-
-Displays the prompt and returns a line entered by the user.
-
 ### read-file
 
 `(read-file path)`

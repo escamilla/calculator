@@ -1,14 +1,18 @@
-import Environment from "./Environment";
-import evaluate from "./evaluate";
-import IOHandler from "./io/IOHandler";
-import Parser from "./Parser";
-import Tokenizer from "./Tokenizer";
-import { ChipmunkType } from "./types";
+import Environment from "./Environment.ts";
+import evaluate from "./evaluate.ts";
+import IOHandler from "./io/IOHandler.ts";
+import Parser from "./Parser.ts";
+import Tokenizer from "./Tokenizer.ts";
+import { ChipmunkType } from "./types.ts";
 
-function interpret(input: string, environment: Environment, ioHandler: IOHandler): ChipmunkType {
-    const tokenizer: Tokenizer = new Tokenizer(input);
-    const parser: Parser = new Parser(tokenizer.tokenize());
-    return evaluate(parser.parse(), environment, ioHandler);
+function interpret(
+  input: string,
+  environment: Environment,
+  ioHandler: IOHandler,
+): ChipmunkType {
+  const tokenizer: Tokenizer = new Tokenizer(input);
+  const parser: Parser = new Parser(tokenizer.tokenize());
+  return evaluate(parser.parse(), environment, ioHandler);
 }
 
 export default interpret;

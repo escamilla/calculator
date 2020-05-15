@@ -1,4 +1,4 @@
-import IOHandler from "./io/IOHandler";
+import IOHandler from "./io/IOHandler.ts";
 
 export enum ChipmunkNodeType {
   Boolean,
@@ -61,11 +61,11 @@ export interface ChipmunkSymbol extends ChipmunkTypeBase {
 }
 
 export type ChipmunkType =
-  ChipmunkBoolean |
-  ChipmunkFunction |
-  ChipmunkList |
-  ChipmunkMap |
-  ChipmunkNil |
-  ChipmunkNumber |
-  ChipmunkString |
-  ChipmunkSymbol;
+  | ChipmunkBoolean
+  | ChipmunkFunction
+  | ChipmunkList
+  | ChipmunkMap
+  | ChipmunkNil
+  | ChipmunkNumber
+  | ChipmunkString
+  | ChipmunkSymbol;
