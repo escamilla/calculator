@@ -1,5 +1,10 @@
 import IOHandler from "./io/IOHandler.ts";
 
+export interface SourceNode {
+  line?: number;
+  column?: number;
+}
+
 export enum ChipmunkNodeType {
   Boolean,
   Function,
@@ -11,18 +16,12 @@ export enum ChipmunkNodeType {
   Symbol,
 }
 
-export interface ChipmunkTypeBase {
-  type: ChipmunkNodeType;
-  line?: number;
-  column?: number;
-}
-
-export interface ChipmunkBoolean extends ChipmunkTypeBase {
+export interface ChipmunkBoolean extends SourceNode {
   type: ChipmunkNodeType.Boolean;
   value: boolean;
 }
 
-export interface ChipmunkFunction extends ChipmunkTypeBase {
+export interface ChipmunkFunction extends SourceNode {
   type: ChipmunkNodeType.Function;
   callable: (args: ChipmunkType[], ioHandler: IOHandler) => ChipmunkType;
   isUserDefined: boolean;
@@ -31,31 +30,31 @@ export interface ChipmunkFunction extends ChipmunkTypeBase {
   body?: ChipmunkType;
 }
 
-export interface ChipmunkList extends ChipmunkTypeBase {
+export interface ChipmunkList extends SourceNode {
   type: ChipmunkNodeType.List;
   items: ChipmunkType[];
 }
 
-export interface ChipmunkMap extends ChipmunkTypeBase {
+export interface ChipmunkMap extends SourceNode {
   type: ChipmunkNodeType.Map;
   entries: Map<string, ChipmunkType>;
 }
 
-export interface ChipmunkNil extends ChipmunkTypeBase {
+export interface ChipmunkNil extends SourceNode {
   type: ChipmunkNodeType.Nil;
 }
 
-export interface ChipmunkNumber extends ChipmunkTypeBase {
+export interface ChipmunkNumber extends SourceNode {
   type: ChipmunkNodeType.Number;
   value: number;
 }
 
-export interface ChipmunkString extends ChipmunkTypeBase {
+export interface ChipmunkString extends SourceNode {
   type: ChipmunkNodeType.String;
   value: string;
 }
 
-export interface ChipmunkSymbol extends ChipmunkTypeBase {
+export interface ChipmunkSymbol extends SourceNode {
   type: ChipmunkNodeType.Symbol;
   name: string;
 }
