@@ -5,6 +5,7 @@ import JavaScriptArray from "./js/JavaScriptArray.ts";
 import JavaScriptArrayAccess from "./js/JavaScriptArrayAccess.ts";
 import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation.ts";
 import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation.ts";
+import JavaScriptBoolean from "./js/JavaScriptBoolean.ts";
 import JavaScriptConditionalOperation from "./js/JavaScriptConditionalOperation.ts";
 import JavaScriptConsoleLogStatement from "./js/JavaScriptConsoleLogStatement.ts";
 import JavaScriptFunctionCall from "./js/JavaScriptFunctionCall.ts";
@@ -13,6 +14,11 @@ import JavaScriptIIFE from "./js/JavaScriptIIFE.ts";
 import JavaScriptMethodCall from "./js/JavaScriptMethodCall.ts";
 import JavaScriptNode from "./js/JavaScriptNode.ts";
 import JavaScriptNodeType from "./js/JavaScriptNodeType.ts";
+import JavaScriptNull from "./js/JavaScriptNull.ts";
+import JavaScriptNumber from "./js/JavaScriptNumber.ts";
+import JavaScriptPropertyAccess from "./js/JavaScriptPropertyAccess.ts";
+import JavaScriptString from "./js/JavaScriptString.ts";
+import JavaScriptVariable from "./js/JavaScriptVariable.ts";
 import Parser from "./Parser.ts";
 import Tokenizer from "./Tokenizer.ts";
 import {
@@ -584,6 +590,19 @@ function compileJavaScriptBinaryOperation(
   );
 }
 
+function compileJavaScriptBoolean(
+  ast: JavaScriptBoolean,
+  sourceFile: string | null = null,
+  indent: number = 0,
+): sourcemap.SourceNode {
+  return new sourcemap.SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    ast.value ? "true" : "false",
+  );
+}
+
 function compileJavaScriptConditionalOperation(
   ast: JavaScriptConditionalOperation,
   sourceFile: string | null = null,
@@ -705,12 +724,6 @@ function compileJavaScriptIIFE(
     .map((node: JavaScriptNode) =>
       compileJavaScriptToSourceNode(node, sourceFile, indent + 2)
     );
-  const statementNodesWithLineBreaks: any[] = [];
-  statementNodes.forEach((statementNode: sourcemap.SourceNode) => {
-    statementNodesWithLineBreaks.push(" ".repeat(indent + 2));
-    statementNodesWithLineBreaks.push(statementNode);
-    statementNodesWithLineBreaks.push("\n");
-  });
   const returnValueNode: sourcemap.SourceNode = compileJavaScriptToSourceNode(
     ast.nodes[ast.nodes.length - 1],
     sourceFile,
@@ -779,6 +792,72 @@ function compileJavaScriptMethodCall(
   );
 }
 
+function compileJavaScriptNull(
+  ast: JavaScriptNull,
+  sourceFile: string | null = null,
+): sourcemap.SourceNode {
+  return new sourcemap.SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    "null",
+  );
+}
+
+function compileJavaScriptNumber(
+  ast: JavaScriptNumber,
+  sourceFile: string | null = null,
+): sourcemap.SourceNode {
+  return new sourcemap.SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    ast.value.toString(),
+  );
+}
+
+function compileJavaScriptPropertyAccess(
+  ast: JavaScriptPropertyAccess,
+  sourceFile: string | null = null,
+  indent: number = 0,
+): sourcemap.SourceNode {
+  const objectNode: sourcemap.SourceNode = compileJavaScriptToSourceNode(
+    ast.object,
+    sourceFile,
+    indent,
+  );
+  return new sourcemap.SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    [objectNode, ".", ast.propertyName],
+  );
+}
+
+function compileJavaScriptString(
+  ast: JavaScriptString,
+  sourceFile: string | null = null,
+): sourcemap.SourceNode {
+  return new sourcemap.SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    escapeString(ast.value),
+  );
+}
+
+function compileJavaScriptVariable(
+  ast: JavaScriptVariable,
+  sourceFile: string | null = null,
+): sourcemap.SourceNode {
+  return new sourcemap.SourceNode(
+    ast.line,
+    ast.column,
+    sourceFile,
+    ast.name,
+  );
+}
+
 function compileJavaScriptToSourceNode(
   ast: JavaScriptNode,
   sourceFile: string | null = null,
@@ -793,12 +872,7 @@ function compileJavaScriptToSourceNode(
   } else if (ast.type === JavaScriptNodeType.BINARY_OPERATION) {
     return compileJavaScriptBinaryOperation(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.BOOLEAN) {
-    return new sourcemap.SourceNode(
-      ast.line,
-      ast.column,
-      sourceFile,
-      ast.value ? "true" : "false",
-    );
+    return compileJavaScriptBoolean(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.CONDITIONAL_OPERATION) {
     return compileJavaScriptConditionalOperation(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.CONSOLE_LOG_STATEMENT) {
@@ -812,45 +886,15 @@ function compileJavaScriptToSourceNode(
   } else if (ast.type === JavaScriptNodeType.METHOD_CALL) {
     return compileJavaScriptMethodCall(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.NULL) {
-    return new sourcemap.SourceNode(
-      ast.line,
-      ast.column,
-      sourceFile,
-      "null",
-    );
+    return compileJavaScriptNull(ast, sourceFile);
   } else if (ast.type === JavaScriptNodeType.NUMBER) {
-    return new sourcemap.SourceNode(
-      ast.line,
-      ast.column,
-      sourceFile,
-      ast.value.toString(),
-    );
+    return compileJavaScriptNumber(ast, sourceFile);
   } else if (ast.type === JavaScriptNodeType.PROPERTY_ACCESS) {
-    const objectNode: sourcemap.SourceNode = compileJavaScriptToSourceNode(
-      ast.object,
-      sourceFile,
-      indent,
-    );
-    return new sourcemap.SourceNode(
-      ast.line,
-      ast.column,
-      sourceFile,
-      [objectNode, ".", ast.propertyName],
-    );
+    return compileJavaScriptPropertyAccess(ast, sourceFile, indent);
   } else if (ast.type === JavaScriptNodeType.STRING) {
-    return new sourcemap.SourceNode(
-      ast.line,
-      ast.column,
-      sourceFile,
-      escapeString(ast.value),
-    );
+    return compileJavaScriptString(ast, sourceFile);
   } else if (ast.type === JavaScriptNodeType.VARIABLE) {
-    return new sourcemap.SourceNode(
-      ast.line,
-      ast.column,
-      sourceFile,
-      ast.name,
-    );
+    return compileJavaScriptVariable(ast, sourceFile);
   } else {
     throw new Error("unrecognized node");
   }
