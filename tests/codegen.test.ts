@@ -20,7 +20,7 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: "0.1", expectedOutput: 0.1 },
   { input: "-0.1", expectedOutput: -0.1 },
   { input: `"string"`, expectedOutput: "string" },
-  { input: `null`, expectedOutput: null },
+  { input: `nil`, expectedOutput: null },
   { input: `true`, expectedOutput: true },
   { input: `false`, expectedOutput: false },
   { input: `[]`, expectedOutput: [] },

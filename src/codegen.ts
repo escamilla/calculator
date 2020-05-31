@@ -452,7 +452,7 @@ function convertChipmunkNodeToJavaScriptNode(
         line,
         column,
       };
-    } else if (ast.name === "null") {
+    } else if (ast.name === "nil") {
       return { type: JavaScriptNodeType.NULL, line, column };
     } else if (ast.name === "true") {
       return { type: JavaScriptNodeType.BOOLEAN, value: true, line, column };
