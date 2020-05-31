@@ -220,10 +220,17 @@ function convertChipmunkNodeToJavaScriptNode(
           column,
         };
       } else if (head.name === "print-line") {
-        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
-          ast.items[1],
-          false,
-        );
+        let object: JavaScriptNode;
+        if (ast.items.length === 1) {
+          object = {
+            type: JavaScriptNodeType.STRING,
+            value: "\n",
+            line,
+            column,
+          };
+        } else {
+          object = convertChipmunkNodeToJavaScriptNode(ast.items[1], false);
+        }
         return {
           type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT,
           object,
@@ -292,7 +299,7 @@ function convertChipmunkNodeToJavaScriptNode(
     }
   } else if (ast.type === ChipmunkNodeType.Vector) {
     const items: JavaScriptNode[] = ast.items.map((item: ChipmunkType) => {
-      return convertChipmunkNodeToJavaScriptNode(item, false)
+      return convertChipmunkNodeToJavaScriptNode(item, false);
     });
     return { type: JavaScriptNodeType.ARRAY, items, line, column };
   }
