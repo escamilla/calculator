@@ -37,6 +37,11 @@ function toString(ast: ChipmunkType, printable: boolean = false): string {
     }
   } else if (ast.type === ChipmunkNodeType.Symbol) {
     return ast.name;
+  } else if (ast.type === ChipmunkNodeType.Vector) {
+    const joined = ast.items.map((item: ChipmunkType) => toString(item)).join(
+      " ",
+    );
+    return `[${joined}]`;
   }
   throw new Error("unknown data type");
 }

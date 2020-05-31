@@ -12,12 +12,12 @@ interpret(loadFileDefinition, replEnv, nodeIOHandler);
 
 if (Deno.args.length > 0) {
   const paths: ChipmunkString[] = [];
-  Deno.args.slice(1).forEach((value: string) => {
+  for (const arg of Deno.args.slice(1)) {
     paths.push({
       type: ChipmunkNodeType.String,
-      value,
+      value: arg,
     });
-  });
+  }
   replEnv.set("argv", {
     type: ChipmunkNodeType.List,
     items: paths,

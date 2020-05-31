@@ -14,16 +14,7 @@ interface ITestCase {
 const testCases: ITestCase[] = [
   { input: "true", expectedOutput: "true" },
   { input: "false", expectedOutput: "false" },
-  {
-    input: `(lambda () (list true (lambda (x) (* x x)) + 3.14 'pi "pi"))`,
-    expectedOutput:
-      `(lambda () (list true (lambda (x) (* x x)) + 3.14 (quote pi) "pi"))`,
-  },
   { input: "+", expectedOutput: "+" },
-  {
-    input: `(list true (lambda (x) (* x x)) + 3.14 'pi "pi")`,
-    expectedOutput: `(true (lambda (x) (* x x)) + 3.14 pi "pi")`,
-  },
   { input: "nil", expectedOutput: "nil" },
   { input: "3.14", expectedOutput: "3.14" },
   { input: "'pi", expectedOutput: "pi" },

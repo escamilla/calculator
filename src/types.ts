@@ -14,6 +14,7 @@ export enum ChipmunkNodeType {
   Number,
   String,
   Symbol,
+  Vector,
 }
 
 export interface ChipmunkBoolean extends SourceNode {
@@ -59,6 +60,11 @@ export interface ChipmunkSymbol extends SourceNode {
   name: string;
 }
 
+export interface ChipmunkVector extends SourceNode {
+  type: ChipmunkNodeType.Vector;
+  items: ChipmunkType[];
+}
+
 export type ChipmunkType =
   | ChipmunkBoolean
   | ChipmunkFunction
@@ -67,4 +73,5 @@ export type ChipmunkType =
   | ChipmunkNil
   | ChipmunkNumber
   | ChipmunkString
-  | ChipmunkSymbol;
+  | ChipmunkSymbol
+  | ChipmunkVector;

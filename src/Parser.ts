@@ -7,6 +7,7 @@ import {
   ChipmunkString,
   ChipmunkSymbol,
   ChipmunkType,
+  ChipmunkVector,
 } from "./types.ts";
 
 class Parser {
@@ -52,6 +53,8 @@ class Parser {
         return this.parseMap();
       case TokenType.LeftParenthesis:
         return this.parseSymbolicExpression();
+      case TokenType.LeftSquareBracket:
+        return this.parseVector();
       case TokenType.Number:
         return this.parseNumber();
       case TokenType.SingleQuote:
@@ -147,6 +150,21 @@ class Parser {
         },
         this.parseExpression(),
       ],
+      line: firstToken.line,
+      column: firstToken.column,
+    };
+  }
+
+  private parseVector(): ChipmunkVector {
+    const firstToken: Token = this.consumeToken(TokenType.LeftSquareBracket);
+    const items: ChipmunkType[] = [];
+    while (this.peek().type !== TokenType.RightSquareBracket) {
+      items.push(this.parseExpression());
+    }
+    this.consumeToken(TokenType.RightSquareBracket);
+    return {
+      type: ChipmunkNodeType.Vector,
+      items,
       line: firstToken.line,
       column: firstToken.column,
     };

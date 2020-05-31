@@ -4,7 +4,7 @@
 
 * [Arithmetic Functions](#arithmetic-functions)
 * [Comparison Functions](#comparison-functions)
-* [List Functions](#list-functions)
+* [Vector Functions](#vector-functions)
 * [String Functions](#string-functions)
 * [I/O Functions](#i-o-functions)
 * [Other Functions](#other-functions)
@@ -17,7 +17,7 @@
 
 Returns the sum of `x` and `y`.
 ```
-(+ 1 2) [ => 3 ]
+(+ 1 2) ; => 3
 ```
 
 ### - (subtraction)
@@ -26,7 +26,7 @@ Returns the sum of `x` and `y`.
 
 Subtracts `y` from `x` and returns the result.
 ```
-(- 3 2) [ => 1 ]
+(- 3 2) ; => 1
 ```
 
 ### * (multiplication)
@@ -35,7 +35,7 @@ Subtracts `y` from `x` and returns the result.
 
 Returns the product of `x` and `y`.
 ```
-(* 2 3) [ => 6 ]
+(* 2 3) ; => 6
 ```
 
 ### / (division)
@@ -44,8 +44,8 @@ Returns the product of `x` and `y`.
 
 Returns the quotient of `x` and `y`.
 ```
-(/ 6 3)  [ => 2 ]
-(/ 22 7) [ => 3.142857142857143 ]
+(/ 6 3)  ; => 2
+(/ 22 7) ; => 3.142857142857143
 ```
 
 ### % (remainder)
@@ -54,8 +54,8 @@ Returns the quotient of `x` and `y`.
 
 Divides `x` by `y` and returns the remainder.
 ```
-(% 5 2)  [ => 1 ]
-(% -5 2) [ => -1 ]
+(% 5 2)  ; => 1
+(% -5 2) ; => -1
 ```
 
 ### pow
@@ -64,7 +64,7 @@ Divides `x` by `y` and returns the remainder.
 
 Returns the result of raising `x` to the power of `y`.
 ```
-(pow 2 3) [ => 8 ]
+(pow 2 3) ; => 8
 ```
 
 # Comparison Functions
@@ -75,8 +75,8 @@ Returns the result of raising `x` to the power of `y`.
 
 Returns `true` if `x` equals `y`, otherwise `false`.
 ```
-(= 1 1) [ => true ]
-(= 1 2) [ => false ]
+(= 1 1) ; => true
+(= 1 2) ; => false
 ```
 
 ### < (less than)
@@ -85,9 +85,9 @@ Returns `true` if `x` equals `y`, otherwise `false`.
 
 Returns `true` if `x` is less than `y`, otherwise `false`.
 ```
-(< 2 1) [ => false ]
-(< 2 2) [ => false ]
-(< 2 3) [ => true ]
+(< 2 1) ; => false
+(< 2 2) ; => false
+(< 2 3) ; => true
 ```
 
 ### > (greater than)
@@ -96,56 +96,47 @@ Returns `true` if `x` is less than `y`, otherwise `false`.
 
 Returns `true` if `x` is greater than `y`, otherwise `false`.
 ```
-(> 2 1) [ => true ]
-(> 2 2) [ => false ]
-(> 2 3) [ => false ]
+(> 2 1) ; => true
+(> 2 2) ; => false
+(> 2 3) ; => false
 ```
 
-## List Functions
-
-### list
-
-`(list items...)`
-
-Returns a new list containing the items.
-```
-(list 1 2 3) [ => (1 2 3) ]
-```
+## Vector Functions
 
 ### length
 
-`(length lst)`
+`(length vec)`
 
-Returns the number of items in `lst`.
+Returns the number of items in `vec`.
 ```
-(length '(a b c)) [ => 3 ]
+(length [1 2 3]) ; => 3
 ```
 
 ### nth
 
-`(nth lst n)`
+`(nth vec n)`
 
-Returns the `nth` item of `lst`. Indexing is zero-based.
+Returns the `nth` item of `vec`. Indexing is zero-based.
 ```
-(nth '(a b c) 2) [ => c ]
+(nth [1 2 3] 2) ; => 3
 ```
 
 ### slice
 
-`(slice lst begin end)`
+`(slice vec begin end)`
 
-Returns a slice of `lst` from index `begin` up to but not including index `end`. Indices are zero-based.
+Returns a slice of `vec` from index `begin` up to but not including index `end`. Indices are zero-based.
 ```
-(slice '(a b c d e) 1 4) [ => (b c d) ]
+(slice [1 2 3 4 5] 1 4) ; => [2 3 4]
 ```
 
 ### join
 
-`(join lst1 lst2)`
+`(join vec1 vec2)`
 
-Returns a new list containing the items of `lst1` followed by the items of `lst2`.
+Returns a new vector containing the items of `vec1` followed by the items of `vec2`.
 ```
-(join '(a b c) '(1 2 3)) [ => (a b c 1 2 3) ]
+(join [1 2] [3]) ; => [1 2 3]
 ```
 
 ## String Functions
@@ -156,7 +147,7 @@ Returns a new list containing the items of `lst1` followed by the items of `lst2
 
 Returns the number of characters in the string.
 ```
-(length "hello") [ => 5 ]
+(length "hello") ; => 5
 ```
 
 ### nth
@@ -165,7 +156,7 @@ Returns the number of characters in the string.
 
 Returns the `nth` character of the string. Indexing is zero-based.
 ```
-(nth "hello" 1) [ => "e" ]
+(nth "hello" 1) ; => "e"
 ```
 
 ### concat
@@ -174,7 +165,7 @@ Returns the `nth` character of the string. Indexing is zero-based.
 
 Returns the result of concatenating the two strings.
 ```
-(concat "good" "bye") [ "goodbye" ]
+(concat "good" "bye") [ "goodbye"
 ```
 
 ### to-string
@@ -183,18 +174,18 @@ Returns the result of concatenating the two strings.
 
 Returns a string representation of the value that will produce the value when entered into the shell.
 ```
-(to-string true)           [ => "true" ]
-(to-string false)          [ => "false" ]
-(to-string (lambda (x) x)) [ => "(lambda (x) x)" ]
-(to-string '(1 2 3))       [ => "(1 2 3)" ]
-(to-string nil)            [ => "nil" ]
-(to-string 3)              [ => "3" ]
-(to-string 3.14)           [ => "3.14" ]
-(to-string "hello")        [ => "\"hello\"" ]
-(to-string "hello\nworld") [ => "\"hello\\nworld\"" ]
-(to-string "\"hello\"")    [ => "\"\\\"hello\\\"\"" ]
-(to-string "\\hello\\")    [ => "\"\\\\hello\\\\\"" ]
-(to-string 'x)             [ => "x" ]
+(to-string true)           ; => "true"
+(to-string false)          ; => "false"
+(to-string (lambda (x) x)) ; => "(lambda (x) x)"
+(to-string '(1 2 3))       ; => "(1 2 3)"
+(to-string nil)            ; => "nil"
+(to-string 3)              ; => "3"
+(to-string 3.14)           ; => "3.14"
+(to-string "hello")        ; => "\"hello\""
+(to-string "hello\nworld") ; => "\"hello\\nworld\""
+(to-string "\"hello\"")    ; => "\"\\\"hello\\\"\""
+(to-string "\\hello\\")    ; => "\"\\\\hello\\\\\""
+(to-string 'x)             ; => "x"
 ```
 
 ### parse-integer
@@ -203,7 +194,7 @@ Returns a string representation of the value that will produce the value when en
 
 Converts the string to an integer.
 ```
-(parse-integer "3") [ => 3 ]
+(parse-integer "3") ; => 3
 ```
 
 ### parse-float
@@ -212,7 +203,7 @@ Converts the string to an integer.
 
 Converts the string to a floating-point number.
 ```
-(parse-float "3.14") [ => 3.14 ]
+(parse-float "3.14") ; => 3.14
 ```
 
 ## I/O Functions
@@ -251,7 +242,7 @@ Groups multiple expressions into a single expression. The expressions are evalua
 ```
 (do
   (def pi 3.14)
-  (* pi 2)) [ => 6.28 ]
+  (* pi 2)) ; => 6.28
 ```
 
 ### parse-string
@@ -260,7 +251,7 @@ Groups multiple expressions into a single expression. The expressions are evalua
 
 Parses the string as a Chipmunk program and returns the resulting Chipmunk expression.
 ```
-(parse-string "(+ 1 2)") [ => (+ 1 2) ]
+(parse-string "(+ 1 2)") ; => (+ 1 2)
 ```
 
 ### eval
@@ -269,5 +260,5 @@ Parses the string as a Chipmunk program and returns the resulting Chipmunk expre
 
 Evaluates the expression. Useful for evaluating a Chipmunk expression parsed by the `parse-string` function.
 ```
-(eval (parse-string "(+ 1 2)")) [ => 3 ]
+(eval (parse-string "(+ 1 2)")) ; => 3
 ```

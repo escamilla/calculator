@@ -7,12 +7,12 @@ import Parser from "./Parser.ts";
 import Tokenizer from "./Tokenizer.ts";
 import {
   ChipmunkBoolean,
-  ChipmunkList,
   ChipmunkNil,
   ChipmunkNodeType,
   ChipmunkNumber,
   ChipmunkString,
   ChipmunkType,
+  ChipmunkVector,
 } from "./types.ts";
 import toString from "./utils/toString.ts";
 
@@ -89,54 +89,52 @@ defineChipmunkFunction(">", (args: ChipmunkType[]): ChipmunkType => {
   return { type: ChipmunkNodeType.Boolean, value: x.value > y.value };
 });
 
-defineChipmunkFunction("list", (args: ChipmunkType[]): ChipmunkList => {
-  return { type: ChipmunkNodeType.List, items: args };
-});
-
 defineChipmunkFunction("length", (args: ChipmunkType[]): ChipmunkNumber => {
   const arg: ChipmunkType = args[0];
   if (arg.type === ChipmunkNodeType.List) {
     return { type: ChipmunkNodeType.Number, value: arg.items.length };
   } else if (arg.type === ChipmunkNodeType.String) {
     return { type: ChipmunkNodeType.Number, value: arg.value.length };
+  } else if (arg.type === ChipmunkNodeType.Vector) {
+    return { type: ChipmunkNodeType.Number, value: arg.items.length };
   } else {
-    throw new Error("length() takes a list or string");
+    throw new Error("length() takes a list, vector, or string");
   }
 });
 
 defineChipmunkFunction("nth", (args: ChipmunkType[]): ChipmunkType => {
-  const arg: ChipmunkType = args[0];
-  const index: ChipmunkNumber = args[1] as ChipmunkNumber;
-
-  if (arg.type === ChipmunkNodeType.List) {
-    return arg.items[index.value];
-  } else if (arg.type === ChipmunkNodeType.String) {
+  if (args[0].type === ChipmunkNodeType.String && args[1].type === ChipmunkNodeType.Number) {
     return {
       type: ChipmunkNodeType.String,
-      value: arg.value.charAt(index.value),
+      value: args[0].value.charAt(args[1].value),
     };
+  } else if (args[0].type === ChipmunkNodeType.Vector && args[1].type === ChipmunkNodeType.Number) {
+    return args[0].items[args[1].value];
   } else {
-    throw new Error("nth() takes a list or string");
+    throw new Error("nth() takes a vector or string and a number");
   }
 });
 
-defineChipmunkFunction("slice", (args: ChipmunkType[]): ChipmunkList => {
-  const list: ChipmunkList = args[0] as ChipmunkList;
-  const start: ChipmunkNumber = args[1] as ChipmunkNumber;
-  const end: ChipmunkNumber = args[2] as ChipmunkNumber;
-  return {
-    type: ChipmunkNodeType.List,
-    items: list.items.slice(start.value, end.value),
-  };
+defineChipmunkFunction("slice", (args: ChipmunkType[]): ChipmunkVector => {
+  if (args[0].type === ChipmunkNodeType.Vector && args[1].type === ChipmunkNodeType.Number && args[2].type === ChipmunkNodeType.Number) {
+    return {
+      type: ChipmunkNodeType.Vector,
+      items: args[0].items.slice(args[1].value, args[2].value),
+    };
+  } else {
+    throw new Error("slice() takes a vector and two numbers");
+  }
 });
 
-defineChipmunkFunction("join", (args: ChipmunkType[]): ChipmunkList => {
-  const list1: ChipmunkList = args[0] as ChipmunkList;
-  const list2: ChipmunkList = args[1] as ChipmunkList;
-  return {
-    type: ChipmunkNodeType.List,
-    items: list1.items.concat(list2.items),
-  };
+defineChipmunkFunction("join", (args: ChipmunkType[]): ChipmunkVector => {
+  if (args[0].type === ChipmunkNodeType.Vector && args[1].type === ChipmunkNodeType.Vector) {
+    return {
+      type: ChipmunkNodeType.Vector,
+      items: args[0].items.concat(args[1].items),
+    };
+  } else {
+    throw new Error("join() takes two vectors");
+  }
 });
 
 defineChipmunkFunction("concat", (args: ChipmunkType[]): ChipmunkString => {
@@ -249,20 +247,20 @@ const inputs: string[] = [
      (slice collection 1 (+ (length collection) 1))))`,
   `(def range (lambda (x)
      (if (<= x 0)
-       '()
+       []
        (join (range (- x 1))
-             (list (- x 1))))))`,
+             [(- x 1)]))))`,
   `(def map (lambda (function collection)
      (if (empty? collection)
-       '()
-       (join (list (function (head collection)))
+       []
+       (join [(function (head collection))]
              (map function (tail collection))))))`,
   `(def filter (lambda (predicate collection)
      (if (empty? collection)
-       '()
+       []
        (join (if (predicate (head collection))
-               (list (head collection))
-               '())
+               [(head collection)]
+               [])
              (filter predicate (tail collection))))))`,
   `(def any? (lambda (predicate collection)
      (if (empty? collection)
@@ -296,7 +294,7 @@ const inputs: string[] = [
      (if (empty? collection)
        collection
        (join (reverse (tail collection))
-             (list (head collection))))))`,
+             [(head collection)]))))`,
   `(def find (lambda (predicate collection)
      (if (empty? collection)
        nil

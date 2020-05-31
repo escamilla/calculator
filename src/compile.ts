@@ -1,5 +1,5 @@
 import { compileChipmunkFileToJavaScript } from "./codegen.ts";
 
-Deno.args.forEach((path: string) => {
+for (const path of Deno.args) {
   compileChipmunkFileToJavaScript(path);
-});
+}

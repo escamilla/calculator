@@ -1,9 +1,11 @@
 export enum TokenType {
   LeftCurlyBrace,
   LeftParenthesis,
+  LeftSquareBracket,
   Number,
   RightCurlyBrace,
   RightParenthesis,
+  RightSquareBracket,
   SingleQuote,
   String,
   Symbol,

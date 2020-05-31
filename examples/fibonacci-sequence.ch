@@ -4,6 +4,6 @@
       (def fibonacci-sequence-iter (lambda (a b sequence)
         (if (= (length sequence) count)
           sequence
-          (fibonacci-sequence-iter b (+ a b) (join sequence (list a))))))
-      (fibonacci-sequence-iter 1 1 (list)))))
+          (fibonacci-sequence-iter b (+ a b) (join sequence [a])))))
+      (fibonacci-sequence-iter 1 1 []))))
   (print-line (fibonacci-sequence 10)))

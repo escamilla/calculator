@@ -75,23 +75,20 @@ class Tokenizer {
   }
 
   private skipComment(): void {
-    const lineNumber: number = this.line;
-    const columnNumber: number = this.column;
     while (!this.eof()) {
-      if (this.peek() === "]") {
+      if (this.peek() === "\n") {
         this.next();
         return;
       }
       this.next();
     }
-    this.die(`unterminated comment starting at ${lineNumber}:${columnNumber}`);
   }
 
   private skipWhitespaceAndComments(): void {
     while (true) {
       if (this.isWhitespace(this.peek())) {
         this.skipWhitespace();
-      } else if (this.peek() === "[") {
+      } else if (this.peek() === ";") {
         this.skipComment();
       } else {
         break;
@@ -201,6 +198,20 @@ class Tokenizer {
           line,
           column,
         };
+      case "[":
+        return {
+          type: TokenType.LeftSquareBracket,
+          value: this.next(),
+          line,
+          column,
+        };
+      case "]":
+        return {
+          type: TokenType.RightSquareBracket,
+          value: this.next(),
+          line,
+          column,
+        };
       case "{":
         return {
           type: TokenType.LeftCurlyBrace,
@@ -218,8 +229,6 @@ class Tokenizer {
       default:
         this.die(`unexpected character: ${char}`);
     }
-
-    return null;
   }
 }
 

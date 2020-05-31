@@ -23,6 +23,9 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `null`, expectedOutput: null },
   { input: `true`, expectedOutput: true },
   { input: `false`, expectedOutput: false },
+  { input: `[]`, expectedOutput: [] },
+  { input: `[1 2 3]`, expectedOutput: [1, 2, 3] },
+  { input: `[1 (+ 1 1) (+ 1 2)]`, expectedOutput: [1, 2, 3] },
   {
     input: `(1 "string" null true false)`,
     expectedOutput: [1, "string", null, true, false],
@@ -62,7 +65,6 @@ const positiveTestCases: IPositiveTestCase[] = [
     expectedOutput: 3628800,
   },
   { input: `(abs -1)`, expectedOutput: 1 },
-  { input: `(join (list 1) (list 2 3))`, expectedOutput: [1, 2, 3] },
 ];
 
 positiveTestCases.forEach((testCase: IPositiveTestCase) => {

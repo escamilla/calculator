@@ -203,16 +203,6 @@ function convertChipmunkNodeToJavaScriptNode(
           line,
           column,
         };
-      } else if (head.name === "list") {
-        const listItems: JavaScriptNode[] = ast.items.slice(1).map((
-          item: ChipmunkType,
-        ) => convertChipmunkNodeToJavaScriptNode(item, false));
-        return {
-          type: JavaScriptNodeType.ARRAY,
-          items: listItems,
-          line,
-          column,
-        };
       } else if (head.name === "nth") {
         const array: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
           ast.items[1],
@@ -300,6 +290,11 @@ function convertChipmunkNodeToJavaScriptNode(
         column,
       };
     }
+  } else if (ast.type === ChipmunkNodeType.Vector) {
+    const items: JavaScriptNode[] = ast.items.map((item: ChipmunkType) => {
+      return convertChipmunkNodeToJavaScriptNode(item, false)
+    });
+    return { type: JavaScriptNodeType.ARRAY, items, line, column };
   }
 
   throw new Error("not implemented");

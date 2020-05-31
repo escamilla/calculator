@@ -11,7 +11,7 @@ Chipmunk is a toy Lisp-like language
 
   (print-line (map factorial (range 10))))
 
-[ prints "(1 1 2 6 24 120 720 5040 40320 362880)" ]
+; prints "(1 1 2 6 24 120 720 5040 40320 362880)"
 ```
 
 ## Usage

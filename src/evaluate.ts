@@ -17,6 +17,13 @@ function evaluate(
     return env.get(ast.name);
   }
 
+  if (ast.type === ChipmunkNodeType.Vector) {
+    return {
+      type: ChipmunkNodeType.Vector,
+      items: ast.items.map((value) => evaluate(value, env, ioHandler)),
+    };
+  }
+
   if (ast.type === ChipmunkNodeType.List) {
     if (ast.items.length === 0) {
       return ast;
