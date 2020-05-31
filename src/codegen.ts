@@ -102,20 +102,15 @@ function convertChipmunkNodeToJavaScriptNode(
           line,
           column,
         };
-      } else if (head.name === "concat" || head.name === "join") {
-        const firstList: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
-          ast.items[1],
-          false,
-        );
-        const secondList: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
-          ast.items[2],
-          false,
+      } else if (head.name === "concat") {
+        const items: JavaScriptNode[] = ast.items.slice(1).map((item) =>
+          convertChipmunkNodeToJavaScriptNode(item, false)
         );
         return {
           type: JavaScriptNodeType.METHOD_CALL,
-          object: firstList,
+          object: items[0],
           methodName: "concat",
-          args: [secondList],
+          args: items.slice(1),
           line,
           column,
         };
@@ -148,6 +143,23 @@ function convertChipmunkNodeToJavaScriptNode(
           line,
           column,
         };
+      } else if (head.name === "head") {
+        const array: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[1],
+          false,
+        );
+        return {
+          type: JavaScriptNodeType.ARRAY_ACCESS,
+          array,
+          index: {
+            type: JavaScriptNodeType.NUMBER,
+            value: 0,
+            line,
+            column,
+          },
+          line,
+          column,
+        };
       } else if (head.name === "if") {
         const condition: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
           ast.items[1],
@@ -164,6 +176,23 @@ function convertChipmunkNodeToJavaScriptNode(
           condition,
           valueIfTrue,
           valueIfFalse,
+          line,
+          column,
+        };
+      } else if (head.name === "join") {
+        const firstList: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[1],
+          false,
+        );
+        const secondList: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[2],
+          false,
+        );
+        return {
+          type: JavaScriptNodeType.METHOD_CALL,
+          object: firstList,
+          methodName: "concat",
+          args: [secondList],
           line,
           column,
         };
@@ -216,6 +245,23 @@ function convertChipmunkNodeToJavaScriptNode(
           type: JavaScriptNodeType.ARRAY_ACCESS,
           array,
           index,
+          line,
+          column,
+        };
+      } else if (head.name === "parse-integer") {
+        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[1],
+          false,
+        );
+        return {
+          type: JavaScriptNodeType.FUNCTION_CALL,
+          functionName: "parseInt",
+          args: [object, {
+            type: JavaScriptNodeType.NUMBER,
+            value: 10,
+            line,
+            column,
+          }],
           line,
           column,
         };
@@ -279,7 +325,8 @@ function convertChipmunkNodeToJavaScriptNode(
     if (ast.name === "argv") {
       return {
         type: JavaScriptNodeType.VARIABLE,
-        name: "process.argv.slice(2)",
+        name:
+          "((typeof Deno !== 'undefined') ? Deno.args : process.argv.slice(2))",
         line,
         column,
       };

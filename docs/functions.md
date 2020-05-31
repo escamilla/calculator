@@ -161,11 +161,12 @@ Returns the `nth` character of the string. Indexing is zero-based.
 
 ### concat
 
-`(concat string1 string2)`
+`(concat string1 string2 ...)`
 
-Returns the result of concatenating the two strings.
+Returns the result of concatenating two or more strings.
 ```
-(concat "good" "bye") [ "goodbye"
+(concat "good" "bye") ; => "goodbye"
+(concat "foo" "bar" "baz") ; => "foobarbaz"
 ```
 
 ### to-string

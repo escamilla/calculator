@@ -65,6 +65,10 @@ const positiveTestCases: IPositiveTestCase[] = [
     expectedOutput: 3628800,
   },
   { input: `(abs -1)`, expectedOutput: 1 },
+  { input: `(nth [1 2 3] 1)`, expectedOutput: 2 },
+  { input: `(head [1 2 3])`, expectedOutput: 1 },
+  { input: `(parse-integer "1")`, expectedOutput: 1 },
+  { input: `(concat "a" "b" "c")`, expectedOutput: "abc" },
 ];
 
 positiveTestCases.forEach((testCase: IPositiveTestCase) => {
