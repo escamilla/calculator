@@ -73,6 +73,14 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(reduce (lambda (x y) (+ x y)) 0 [1 2 3])`, expectedOutput: 6 },
   { input: `(range 3)`, expectedOutput: [0, 1, 2] },
   { input: `(sum [1 2 3])`, expectedOutput: 6 },
+  { input: `(and true true)`, expectedOutput: true },
+  { input: `(and true false)`, expectedOutput: false },
+  { input: `(and false true)`, expectedOutput: false },
+  { input: `(and false false)`, expectedOutput: false },
+  { input: `(or true true)`, expectedOutput: true },
+  { input: `(or true false)`, expectedOutput: true },
+  { input: `(or false true)`, expectedOutput: true },
+  { input: `(or false false)`, expectedOutput: false },
 ];
 
 positiveTestCases.forEach((testCase: IPositiveTestCase) => {

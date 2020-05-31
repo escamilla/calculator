@@ -41,6 +41,8 @@ const binaryOperators: string[] = [
   "=",
   ">",
   ">=",
+  "and",
+  "or",
 ];
 
 function sanitizeJavaScriptIdentifier(identifier: string): string {
@@ -73,6 +75,10 @@ function convertChipmunkNodeToJavaScriptNode(
           operator = "===";
         } else if (operator === "!=") {
           operator = "!==";
+        } else if (operator === "and") {
+          operator = "&&";
+        } else if (operator === "or") {
+          operator = "||";
         }
         const leftSide: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
           ast.items[1],
