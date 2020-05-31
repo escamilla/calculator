@@ -352,6 +352,47 @@ function convertChipmunkNodeToJavaScriptNode(
           line,
           column,
         };
+      } else if (head.name === "sum") {
+        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[1],
+          false,
+        );
+        return {
+          type: JavaScriptNodeType.METHOD_CALL,
+          object,
+          methodName: "reduce",
+          args: [{
+            type: JavaScriptNodeType.FUNCTION_DEFINITION,
+            params: ["x", "y"],
+            body: {
+              type: JavaScriptNodeType.BINARY_OPERATION,
+              operator: "+",
+              leftSide: {
+                type: JavaScriptNodeType.VARIABLE,
+                name: "x",
+                line,
+                column,
+              },
+              rightSide: {
+                type: JavaScriptNodeType.VARIABLE,
+                name: "y",
+                line,
+                column,
+              },
+              line,
+              column,
+            },
+            line,
+            column,
+          }, {
+            type: JavaScriptNodeType.NUMBER,
+            value: 0,
+            line,
+            column,
+          }],
+          line,
+          column,
+        };
       } else if (head.name === "to-string") {
         const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
           ast.items[1],

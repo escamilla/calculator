@@ -72,6 +72,7 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(map (lambda (x) (* x x)) [1 2 3])`, expectedOutput: [1, 4, 9] },
   { input: `(reduce (lambda (x y) (+ x y)) 0 [1 2 3])`, expectedOutput: 6 },
   { input: `(range 3)`, expectedOutput: [0, 1, 2] },
+  { input: `(sum [1 2 3])`, expectedOutput: 6 },
 ];
 
 positiveTestCases.forEach((testCase: IPositiveTestCase) => {
