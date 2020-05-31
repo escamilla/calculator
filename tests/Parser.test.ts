@@ -19,11 +19,13 @@ const negativeTests: INegativeTestCase[] = [
   },
   {
     input: "[",
-    reason: "an opening square bracket must have a matching closing square bracket",
+    reason:
+      "an opening square bracket must have a matching closing square bracket",
   },
   {
     input: "]",
-    reason: "a closing square bracket must have a matching opening square bracket",
+    reason:
+      "a closing square bracket must have a matching opening square bracket",
   },
   { input: "foo bar", reason: "there can only be one topmost expression" },
   {
