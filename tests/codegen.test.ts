@@ -69,6 +69,9 @@ const positiveTestCases: IPositiveTestCase[] = [
   { input: `(head [1 2 3])`, expectedOutput: 1 },
   { input: `(parse-integer "1")`, expectedOutput: 1 },
   { input: `(concat "a" "b" "c")`, expectedOutput: "abc" },
+  { input: `(map (lambda (x) (* x x)) [1 2 3])`, expectedOutput: [1, 4, 9] },
+  { input: `(reduce (lambda (x y) (+ x y)) 0 [1 2 3])`, expectedOutput: 6 },
+  { input: `(range 3)`, expectedOutput: [0, 1, 2] },
 ];
 
 positiveTestCases.forEach((testCase: IPositiveTestCase) => {

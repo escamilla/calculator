@@ -232,6 +232,23 @@ function convertChipmunkNodeToJavaScriptNode(
           line,
           column,
         };
+      } else if (head.name === "map") {
+        const fn: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[1],
+          false,
+        );
+        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[2],
+          false,
+        );
+        return {
+          type: JavaScriptNodeType.METHOD_CALL,
+          object,
+          methodName: "map",
+          args: [fn],
+          line,
+          column,
+        };
       } else if (head.name === "nth") {
         const array: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
           ast.items[1],
@@ -280,6 +297,58 @@ function convertChipmunkNodeToJavaScriptNode(
         return {
           type: JavaScriptNodeType.CONSOLE_LOG_STATEMENT,
           object,
+          line,
+          column,
+        };
+      } else if (head.name === "range") {
+        const n: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[1],
+          false,
+        );
+        return {
+          type: JavaScriptNodeType.METHOD_CALL,
+          object: {
+            type: JavaScriptNodeType.VARIABLE,
+            name: "Array",
+            line,
+            column,
+          },
+          methodName: "from",
+          args: [
+            {
+              type: JavaScriptNodeType.METHOD_CALL,
+              object: {
+                type: JavaScriptNodeType.FUNCTION_CALL,
+                functionName: "Array",
+                args: [n],
+                line,
+                column,
+              },
+              methodName: "keys",
+              args: [],
+              line,
+              column,
+            },
+          ],
+          line,
+          column,
+        };
+      } else if (head.name === "reduce") {
+        const fn: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[1],
+          false,
+        );
+        const initialValue: JavaScriptNode =
+          convertChipmunkNodeToJavaScriptNode(ast.items[2], false);
+        const object: JavaScriptNode = convertChipmunkNodeToJavaScriptNode(
+          ast.items[3],
+          false,
+        );
+        return {
+          type: JavaScriptNodeType.METHOD_CALL,
+          object,
+          methodName: "reduce",
+          args: [fn, initialValue],
           line,
           column,
         };
