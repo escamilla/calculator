@@ -23,7 +23,10 @@ deno run src/index.ts
 deno run --allow-read src/index.ts examples/game-of-life.ch
 
 # compile a Chipmunk program to JavaScript with a source map (not all Chipmunk functions are supported)
-deno run --allow-read --allow-write src/compile.ts examples/fibonacci-sequence.ch
+deno run --allow-read --allow-write src/compile.ts examples/game-of-life.ch
+
+# run the compiled JavaScript
+deno run examples/game-of-life.js
 ```
 
 ## Resources

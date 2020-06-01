@@ -452,6 +452,31 @@ function convertChipmunkNodeToJavaScriptNode(
         line,
         column,
       };
+    } else if (ast.name === "concat") {
+      return {
+        type: JavaScriptNodeType.FUNCTION_DEFINITION,
+        params: ["x", "y"],
+        body: {
+          type: JavaScriptNodeType.BINARY_OPERATION,
+          operator: "+",
+          leftSide: {
+            type: JavaScriptNodeType.VARIABLE,
+            name: "x",
+            line,
+            column,
+          },
+          rightSide: {
+            type: JavaScriptNodeType.VARIABLE,
+            name: "y",
+            line,
+            column,
+          },
+          line,
+          column,
+        },
+        line,
+        column,
+      };
     } else if (ast.name === "nil") {
       return { type: JavaScriptNodeType.NULL, line, column };
     } else if (ast.name === "true") {
@@ -914,7 +939,7 @@ function compileJavaScriptToSourceNode(
 
 function compileChipmunkFileToJavaScript(path: string): void {
   const input: string = Deno.readTextFileSync(path);
-  const tokenizer: Tokenizer = new Tokenizer(input);
+  const tokenizer: Tokenizer = new Tokenizer(`(do ${input})`);
   const parser: Parser = new Parser(tokenizer.tokenize());
   const chipmunkAst: ChipmunkType = parser.parse();
 
