@@ -569,7 +569,7 @@ function compileJavaScriptAssignmentOperation(
     ast.line,
     ast.column,
     sourceFile,
-    [" ".repeat(indent), `const ${ast.name} = `, valueNode, ";\n"],
+    [" ".repeat(indent), `const ${ast.name} = `, valueNode],
   );
 }
 
@@ -730,6 +730,12 @@ function compileJavaScriptIIFE(
     .map((node: JavaScriptNode) =>
       compileJavaScriptToSourceNode(node, sourceFile, indent + 2)
     );
+  // TODO: fix statements not being aligned in the outputted JS
+  const statementNodesWithLineBreaks: any[] = [];
+  for (const statementNode of statementNodes) {
+    statementNodesWithLineBreaks.push(statementNode);
+    statementNodesWithLineBreaks.push(";\n");
+  }
   const returnValueNode: sourcemap.SourceNode = compileJavaScriptToSourceNode(
     ast.nodes[ast.nodes.length - 1],
     sourceFile,
@@ -758,7 +764,7 @@ function compileJavaScriptIIFE(
       sourceFile,
       [
         "(function () {\n",
-        ...statementNodes,
+        ...statementNodesWithLineBreaks,
         " ".repeat(indent + 2),
         "return ",
         returnValueNode,
