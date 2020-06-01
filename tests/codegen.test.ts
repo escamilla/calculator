@@ -2,7 +2,7 @@ import {
   compileJavaScriptToSourceNode,
   convertChipmunkNodeToJavaScriptNode,
 } from "../src/codegen.ts";
-import JavaScriptNode from "../src/js/JavaScriptNode.ts";
+import { JavaScriptNode } from "../src/jstypes.ts";
 import Parser from "../src/Parser.ts";
 import Tokenizer from "../src/Tokenizer.ts";
 import { ChipmunkType } from "../src/types.ts";

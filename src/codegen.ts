@@ -1,24 +1,26 @@
 // @deno-types="./sourcemap.d.ts"
 import { default as sourcemap } from "https://dev.jspm.io/npm:source-map@0.7.3/source-map.js";
 
-import JavaScriptArray from "./js/JavaScriptArray.ts";
-import JavaScriptArrayAccess from "./js/JavaScriptArrayAccess.ts";
-import JavaScriptAssignmentOperation from "./js/JavaScriptAssignmentOperation.ts";
-import JavaScriptBinaryOperation from "./js/JavaScriptBinaryOperation.ts";
-import JavaScriptBoolean from "./js/JavaScriptBoolean.ts";
-import JavaScriptConditionalOperation from "./js/JavaScriptConditionalOperation.ts";
-import JavaScriptConsoleLogStatement from "./js/JavaScriptConsoleLogStatement.ts";
-import JavaScriptFunctionCall from "./js/JavaScriptFunctionCall.ts";
-import JavaScriptFunctionDefinition from "./js/JavaScriptFunctionDefinition.ts";
-import JavaScriptIIFE from "./js/JavaScriptIIFE.ts";
-import JavaScriptMethodCall from "./js/JavaScriptMethodCall.ts";
-import JavaScriptNode from "./js/JavaScriptNode.ts";
-import JavaScriptNodeType from "./js/JavaScriptNodeType.ts";
-import JavaScriptNull from "./js/JavaScriptNull.ts";
-import JavaScriptNumber from "./js/JavaScriptNumber.ts";
-import JavaScriptPropertyAccess from "./js/JavaScriptPropertyAccess.ts";
-import JavaScriptString from "./js/JavaScriptString.ts";
-import JavaScriptVariable from "./js/JavaScriptVariable.ts";
+import {
+  JavaScriptArray,
+  JavaScriptArrayAccess,
+  JavaScriptAssignmentOperation,
+  JavaScriptBinaryOperation,
+  JavaScriptBoolean,
+  JavaScriptConditionalOperation,
+  JavaScriptConsoleLogStatement,
+  JavaScriptFunctionCall,
+  JavaScriptFunctionDefinition,
+  JavaScriptIIFE,
+  JavaScriptMethodCall,
+  JavaScriptNode,
+  JavaScriptNodeType,
+  JavaScriptNull,
+  JavaScriptNumber,
+  JavaScriptPropertyAccess,
+  JavaScriptString,
+  JavaScriptVariable,
+} from "./jstypes.ts";
 import Parser from "./Parser.ts";
 import Tokenizer from "./Tokenizer.ts";
 import {
