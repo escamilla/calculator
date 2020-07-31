@@ -1,5 +1,4 @@
 import interpret from "../src/interpret.ts";
-import dummyIOHandler from "../src/io/dummyIOHandler.ts";
 import replEnv from "../src/replEnv.ts";
 import toString from "../src/utils/toString.ts";
 import {
@@ -146,7 +145,7 @@ positiveTestCases.forEach((testCase: IPositiveTestCase) => {
     name: `${testCase.input} => ${testCase.expectedOutput}`,
     fn: () => {
       const actualOutput: string = toString(
-        interpret(testCase.input, replEnv, dummyIOHandler),
+        interpret(testCase.input, replEnv),
       );
       assertEquals(actualOutput, testCase.expectedOutput);
     },
@@ -157,7 +156,7 @@ negativeTestCases.forEach((testCase: INegativeTestCase) => {
   Deno.test({
     name: `${testCase.input} cannot be evaluated because ${testCase.reason}`,
     fn: () => {
-      assertThrows(() => interpret(testCase.input, replEnv, dummyIOHandler));
+      assertThrows(() => interpret(testCase.input, replEnv));
     },
   });
 });

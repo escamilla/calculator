@@ -1,5 +1,4 @@
 import Environment from "./Environment.ts";
-import IOHandler from "./io/IOHandler.ts";
 import {
   ChipmunkFunction,
   ChipmunkList,
@@ -11,7 +10,6 @@ import {
 function evaluate(
   ast: ChipmunkType,
   env: Environment,
-  ioHandler: IOHandler,
 ): ChipmunkType {
   if (ast.type === ChipmunkNodeType.Symbol) {
     return env.get(ast.name);
@@ -20,7 +18,7 @@ function evaluate(
   if (ast.type === ChipmunkNodeType.Vector) {
     return {
       type: ChipmunkNodeType.Vector,
-      items: ast.items.map((value) => evaluate(value, env, ioHandler)),
+      items: ast.items.map((value) => evaluate(value, env)),
     };
   }
 
@@ -43,12 +41,12 @@ function evaluate(
           );
         }
         const key: string = arg1.name;
-        const value: ChipmunkType = evaluate(ast.items[2], env, ioHandler);
+        const value: ChipmunkType = evaluate(ast.items[2], env);
         env.set(key, value);
         return value;
       } else if (head.name === "if") {
         const condition: ChipmunkType = ast.items[1];
-        const result: ChipmunkType = evaluate(condition, env, ioHandler);
+        const result: ChipmunkType = evaluate(condition, env);
 
         if (result.type !== ChipmunkNodeType.Boolean) {
           const expectedType: string =
@@ -61,9 +59,9 @@ function evaluate(
         }
 
         if (result.value) {
-          return evaluate(ast.items[2], env, ioHandler);
+          return evaluate(ast.items[2], env);
         } else {
-          return evaluate(ast.items[3], env, ioHandler);
+          return evaluate(ast.items[3], env);
         }
       } else if (head.name === "lambda") {
         const arg1: ChipmunkType = ast.items[1];
@@ -99,7 +97,6 @@ function evaluate(
             return evaluate(
               functionBody,
               new Environment(env, functionParams, functionArgs),
-              ioHandler,
             );
           },
           isUserDefined: true,
@@ -123,7 +120,7 @@ function evaluate(
         }
         const key: string = arg1.name;
         const envToUpdate: Environment = env.find(key);
-        const value: ChipmunkType = evaluate(ast.items[2], env, ioHandler);
+        const value: ChipmunkType = evaluate(ast.items[2], env);
         envToUpdate.set(key, value);
         return value;
       }
@@ -131,9 +128,7 @@ function evaluate(
 
     const evaluatedList: ChipmunkList = {
       type: ChipmunkNodeType.List,
-      items: ast.items.map((item: ChipmunkType) =>
-        evaluate(item, env, ioHandler)
-      ),
+      items: ast.items.map((item: ChipmunkType) => evaluate(item, env)),
     };
 
     const item0: ChipmunkType = evaluatedList.items[0];
@@ -147,7 +142,7 @@ function evaluate(
 
     const fn: ChipmunkFunction = item0;
     const args: ChipmunkType[] = evaluatedList.items.slice(1);
-    return fn.callable(args, ioHandler);
+    return fn.callable(args);
   }
 
   return ast;

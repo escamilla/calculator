@@ -1,5 +1,3 @@
-import IOHandler from "./io/IOHandler.ts";
-
 export interface SourceNode {
   line?: number;
   column?: number;
@@ -24,7 +22,7 @@ export interface ChipmunkBoolean extends SourceNode {
 
 export interface ChipmunkFunction extends SourceNode {
   type: ChipmunkNodeType.Function;
-  callable: (args: ChipmunkType[], ioHandler: IOHandler) => ChipmunkType;
+  callable: (args: ChipmunkType[]) => ChipmunkType;
   isUserDefined: boolean;
   name?: string;
   params?: ChipmunkSymbol[];

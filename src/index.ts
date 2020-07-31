@@ -1,14 +1,13 @@
 import { readLines } from "https://deno.land/std/io/bufio.ts";
 
 import interpret from "./interpret.ts";
-import nodeIOHandler from "./nodeIOHandler.ts";
 import replEnv from "./replEnv.ts";
 import { ChipmunkNodeType, ChipmunkString, ChipmunkType } from "./types.ts";
 import toString from "./utils/toString.ts";
 
 const loadFileDefinition: string = `(def load-file (lambda (path)
      (eval (parse-string (concat "(do " (read-file path) ")")))))`;
-interpret(loadFileDefinition, replEnv, nodeIOHandler);
+interpret(loadFileDefinition, replEnv);
 
 if (Deno.args.length > 0) {
   const paths: ChipmunkString[] = [];
@@ -22,7 +21,7 @@ if (Deno.args.length > 0) {
     type: ChipmunkNodeType.Vector,
     items: paths,
   });
-  interpret(`(load-file "${Deno.args[0]}")`, replEnv, nodeIOHandler);
+  interpret(`(load-file "${Deno.args[0]}")`, replEnv);
   Deno.exit(0);
 }
 
@@ -43,7 +42,7 @@ while (true) {
       }
       let result: ChipmunkType;
       try {
-        result = interpret(line, replEnv, nodeIOHandler);
+        result = interpret(line, replEnv);
       } catch (e) {
         Deno.stdout.writeSync(new TextEncoder().encode(e.message + "\n"));
         continue;

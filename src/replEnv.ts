@@ -1,8 +1,6 @@
 import Environment from "./Environment.ts";
 import evaluate from "./evaluate.ts";
 import interpret from "./interpret.ts";
-import dummyIOHandler from "./io/dummyIOHandler.ts";
-import IOHandler from "./io/IOHandler.ts";
 import Parser from "./Parser.ts";
 import Tokenizer from "./Tokenizer.ts";
 import {
@@ -18,14 +16,9 @@ import toString from "./utils/toString.ts";
 
 const replEnv: Environment = new Environment();
 
-type ChipmunkCallable = (
-  args: ChipmunkType[],
-  ioHandler: IOHandler,
-) => ChipmunkType;
-
 function defineChipmunkFunction(
   name: string,
-  callable: ChipmunkCallable,
+  callable: (args: ChipmunkType[]) => ChipmunkType,
 ): void {
   replEnv.set(name, {
     type: ChipmunkNodeType.Function,
@@ -178,21 +171,21 @@ defineChipmunkFunction("parse-float", (args: ChipmunkType[]): ChipmunkType => {
 
 defineChipmunkFunction(
   "print",
-  (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkNil => {
+  (args: ChipmunkType[]): ChipmunkNil => {
     const message: string = toString(args[0], true);
-    ioHandler.print(message);
+    Deno.stdout.writeSync(new TextEncoder().encode(message));
     return { type: ChipmunkNodeType.Nil };
   },
 );
 
 defineChipmunkFunction(
   "print-line",
-  (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkNil => {
+  (args: ChipmunkType[]): ChipmunkNil => {
     if (args.length === 0) {
-      ioHandler.printLine();
+      Deno.stdout.writeSync(new TextEncoder().encode("\n"));
     } else {
       const message: string = toString(args[0], true);
-      ioHandler.printLine(message);
+      Deno.stdout.writeSync(new TextEncoder().encode(message + "\n"));
     }
     return { type: ChipmunkNodeType.Nil };
   },
@@ -200,18 +193,16 @@ defineChipmunkFunction(
 
 defineChipmunkFunction(
   "read-line",
-  (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkString => {
-    const prompt: string = (args[0] as ChipmunkString).value;
-    const line: string = ioHandler.readLine(prompt);
-    return { type: ChipmunkNodeType.String, value: line };
+  (args: ChipmunkType[]): ChipmunkString => {
+    throw new Error("not implemented");
   },
 );
 
 defineChipmunkFunction(
   "read-file",
-  (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkString => {
+  (args: ChipmunkType[]): ChipmunkString => {
     const path: string = (args[0] as ChipmunkString).value;
-    const contents: string = ioHandler.readFile(path);
+    const contents: string = Deno.readTextFileSync(path);
     return { type: ChipmunkNodeType.String, value: contents };
   },
 );
@@ -229,8 +220,8 @@ defineChipmunkFunction("parse-string", (args: ChipmunkType[]): ChipmunkType => {
 
 defineChipmunkFunction(
   "eval",
-  (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkType => {
-    return evaluate(args[0], replEnv, ioHandler);
+  (args: ChipmunkType[]): ChipmunkType => {
+    return evaluate(args[0], replEnv);
   },
 );
 
@@ -319,7 +310,7 @@ const inputs: string[] = [
 ];
 
 inputs.forEach((input: string): void => {
-  interpret(input, replEnv, dummyIOHandler);
+  interpret(input, replEnv);
 });
 
 export default replEnv;

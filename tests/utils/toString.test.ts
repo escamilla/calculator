@@ -1,5 +1,4 @@
 import interpret from "../../src/interpret.ts";
-import dummyIOHandler from "../../src/io/dummyIOHandler.ts";
 import replEnv from "../../src/replEnv.ts";
 import toString from "../../src/utils/toString.ts";
 
@@ -40,7 +39,7 @@ testCases.forEach((testCase: ITestCase) => {
       `\`${testCase.input}\` => \`${testCase.expectedOutput}\` (printable = ${testCase.printable})`,
     fn: () => {
       const actualOutput: string = toString(
-        interpret(testCase.input, replEnv, dummyIOHandler),
+        interpret(testCase.input, replEnv),
         testCase.printable,
       );
       assertEquals(actualOutput, testCase.expectedOutput);
