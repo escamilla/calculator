@@ -104,6 +104,12 @@ defineChipmunkFunction("length", (args: ChipmunkType[]): ChipmunkNumber => {
 
 defineChipmunkFunction("nth", (args: ChipmunkType[]): ChipmunkType => {
   if (
+    (args[0].type === ChipmunkNodeType.List ||
+      args[0].type === ChipmunkNodeType.Vector) &&
+    args[1].type === ChipmunkNodeType.Number
+  ) {
+    return args[0].items[args[1].value];
+  } else if (
     args[0].type === ChipmunkNodeType.String &&
     args[1].type === ChipmunkNodeType.Number
   ) {
@@ -111,13 +117,8 @@ defineChipmunkFunction("nth", (args: ChipmunkType[]): ChipmunkType => {
       type: ChipmunkNodeType.String,
       value: args[0].value.charAt(args[1].value),
     };
-  } else if (
-    args[0].type === ChipmunkNodeType.Vector &&
-    args[1].type === ChipmunkNodeType.Number
-  ) {
-    return args[0].items[args[1].value];
   } else {
-    throw new Error("nth() takes a vector or string and a number");
+    throw new Error("nth() takes a list, string, or vector and a number");
   }
 });
 

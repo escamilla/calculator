@@ -19,7 +19,7 @@ if (Deno.args.length > 0) {
     });
   }
   replEnv.set("argv", {
-    type: ChipmunkNodeType.List,
+    type: ChipmunkNodeType.Vector,
     items: paths,
   });
   interpret(`(load-file "${Deno.args[0]}")`, replEnv, nodeIOHandler);
