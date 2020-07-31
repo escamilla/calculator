@@ -1,4 +1,4 @@
-# Chipmunk Functions
+# Core Functions
 
 ## Table of Contents
 

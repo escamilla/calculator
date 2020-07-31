@@ -1,34 +1,48 @@
 # Chipmunk
-Chipmunk is an interpreted dialect of Lisp with partial support for compiling to JavaScript. Chipmunk is a hobby language with the goal of achieving self-hosting.
+Chipmunk is a Lisp interpreter with partial support for compiling to JavaScript. It's implemented in [TypeScript](https://www.typescriptlang.org/) using the [Deno](https://deno.land/) runtime. The goal is to someday achieve self-hosting.
 
-## Sample
-```
+## Example Program
+Print the factorials of the numbers 1 to 10:
+```lisp
 (do
   (def factorial (lambda (x)
     (if (= x 0)
       1
       (* x (factorial (- x 1))))))
-
   (print-line (map factorial (range 10))))
 
 ; prints "[1 1 2 6 24 120 720 5040 40320 362880]"
 ```
 
-## Usage
-```
-# start a Chipmunk REPL
+## Command Line Interface
+To start a Chipmunk REPL:
+```sh
 deno run src/index.ts
+```
 
-# run a Chipmunk program
+To run a Chipmunk program:
+```sh
 deno run --allow-read src/index.ts examples/game-of-life.ch
+```
 
-# compile a Chipmunk program to JavaScript with a source map (not all Chipmunk functions are supported)
-deno run --allow-read --allow-write src/compile.ts examples/game-of-life.ch
+To compile a Chipmunk program to JavaScript:
+```sh
+# Unfortunately npm is required in order to use the "source-map" module to generate source maps for the compiled JavaScript
+npm install
 
-# run the compiled JavaScript
+# Compile to JavaScript
+deno run --unstable --allow-read --allow-env --allow-write src/compile.ts examples/game-of-life.ch
+
+# Run the compiled JavaScript
 deno run examples/game-of-life.js
 ```
 
+To run tests:
+```sh
+deno test --unstable --allow-read --allow-env
+```
+
 ## Resources
-- [List of Chipmunk Functions](docs/functions.md)
-- [Source Map Visualization](https://sokra.github.io/source-map-visualization/)
+* [Visual Studio Code extension](https://github.com/escamilla/chipmunk-lang) (provides syntax highlighting)
+* [Documentation of core functions](docs/functions.md)
+* [Source map visualization tool](https://sokra.github.io/source-map-visualization/) (made by someone else)
