@@ -318,7 +318,7 @@ const inputs: string[] = [
                    (find predicate (tail collection)))))))`,
 ];
 
-inputs.forEach((input: string) => {
+inputs.forEach((input: string): void => {
   interpret(input, replEnv, dummyIOHandler);
 });
 
