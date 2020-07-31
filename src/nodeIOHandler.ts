@@ -1,26 +1,21 @@
-import * as fs from "fs";
-import * as readlineSync from "readline-sync";
-
-import IOHandler from "./io/IOHandler";
+import IOHandler from "./io/IOHandler.ts";
 
 const nodeIOHandler: IOHandler = {
   print(message: string): void {
-    process.stdout.write(message);
+    Deno.stdout.writeSync(new TextEncoder().encode(message));
   },
   printLine(message?: string): void {
     if (message === undefined) {
-      process.stdout.write("\n");
+      Deno.stdout.writeSync(new TextEncoder().encode("\n"));
     } else {
-      process.stdout.write(message + "\n");
+      Deno.stdout.writeSync(new TextEncoder().encode(message + "\n"));
     }
   },
   readLine(prompt: string): string {
-    const line: string = readlineSync.question(prompt);
-    return line;
+    throw new Error("not implemented");
   },
   readFile(path: string): string {
-    const contents: string = fs.readFileSync(path).toString();
-    return contents;
+    return Deno.readTextFileSync(path);
   },
 };
 

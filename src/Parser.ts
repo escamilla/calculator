@@ -1,4 +1,4 @@
-import { Token, TokenType } from "./tokens";
+import { Token, TokenType } from "./tokens.ts";
 import {
   ChipmunkList,
   ChipmunkMap,
@@ -7,12 +7,13 @@ import {
   ChipmunkString,
   ChipmunkSymbol,
   ChipmunkType,
-} from "./types";
+  ChipmunkVector,
+} from "./types.ts";
 
 class Parser {
   private position: number = 0;
 
-  public constructor(private readonly tokens: Token[]) { }
+  public constructor(private readonly tokens: Token[]) {}
 
   public parse(): ChipmunkType {
     const result: ChipmunkType = this.parseExpression();
@@ -41,7 +42,9 @@ class Parser {
     if (token.type === expectedType) {
       return token;
     }
-    throw new Error(`Expected token of type ${expectedType} but got token of type ${token.type}`);
+    throw new Error(
+      `Expected token of type ${expectedType} but got token of type ${token.type}`,
+    );
   }
 
   private parseExpression(): ChipmunkType {
@@ -50,6 +53,8 @@ class Parser {
         return this.parseMap();
       case TokenType.LeftParenthesis:
         return this.parseSymbolicExpression();
+      case TokenType.LeftSquareBracket:
+        return this.parseVector();
       case TokenType.Number:
         return this.parseNumber();
       case TokenType.SingleQuote:
@@ -60,7 +65,9 @@ class Parser {
         return this.parseSymbol();
       default:
         const actualType: string = TokenType[this.peek().type];
-        throw new Error(`expected expression but got token of type ${actualType}`);
+        throw new Error(
+          `expected expression but got token of type ${actualType}`,
+        );
     }
   }
 
@@ -71,7 +78,9 @@ class Parser {
       const key: ChipmunkType = this.parseExpression();
       if (key.type !== ChipmunkNodeType.String) {
         const actualType: string = ChipmunkNodeType[key.type];
-        throw new Error(`expected dictionary key to be of type STRING, but got type ${actualType}`);
+        throw new Error(
+          `expected dictionary key to be of type STRING, but got type ${actualType}`,
+        );
       }
       const value: ChipmunkType = this.parseExpression();
       entries.set(key.value, value);
@@ -141,6 +150,21 @@ class Parser {
         },
         this.parseExpression(),
       ],
+      line: firstToken.line,
+      column: firstToken.column,
+    };
+  }
+
+  private parseVector(): ChipmunkVector {
+    const firstToken: Token = this.consumeToken(TokenType.LeftSquareBracket);
+    const items: ChipmunkType[] = [];
+    while (this.peek().type !== TokenType.RightSquareBracket) {
+      items.push(this.parseExpression());
+    }
+    this.consumeToken(TokenType.RightSquareBracket);
+    return {
+      type: ChipmunkNodeType.Vector,
+      items,
       line: firstToken.line,
       column: firstToken.column,
     };

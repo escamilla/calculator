@@ -1,14 +1,16 @@
-[ Conway's Game of Life ]
+; Conway's Game of Life
 
 (def initial-grid
-  '((0 0 0 1 1 0 0 0)
-    (0 0 1 0 0 1 0 0)
-    (0 1 0 0 0 0 1 0)
-    (1 0 0 0 0 0 0 1)
-    (1 0 0 0 0 0 0 1)
-    (0 1 0 0 0 0 1 0)
-    (0 0 1 0 0 1 0 0)
-    (0 0 0 1 1 0 0 0)))
+  [
+    [0 0 0 1 1 0 0 0]
+    [0 0 1 0 0 1 0 0]
+    [0 1 0 0 0 0 1 0]
+    [1 0 0 0 0 0 0 1]
+    [1 0 0 0 0 0 0 1]
+    [0 1 0 0 0 0 1 0]
+    [0 0 1 0 0 1 0 0]
+    [0 0 0 1 1 0 0 0]
+  ])
 
 (def turn-cell-to-string (lambda (cell)
   (if (= cell 0) "  " "* ")))
@@ -23,15 +25,16 @@
   (do
     (def x (nth point 0))
     (def y (nth point 1))
-    (list
-      (list (- x 1) (- y 1))
-      (list (- x 1) y)
-      (list (- x 1) (+ y 1))
-      (list x (- y 1))
-      (list x (+ y 1))
-      (list (+ x 1) (- y 1))
-      (list (+ x 1) y)
-      (list (+ x 1) (+ y 1))))))
+    [
+      [(- x 1) (- y 1)]
+      [(- x 1) y]
+      [(- x 1) (+ y 1)]
+      [x (- y 1)]
+      [x (+ y 1)]
+      [(+ x 1) (- y 1)]
+      [(+ x 1) y]
+      [(+ x 1) (+ y 1)]
+    ])))
 
 (def get-value-at-point (lambda (grid point)
   (do
@@ -61,7 +64,7 @@
   (do
     (def rows (length grid))
     (def cols (length (head grid)))
-    (map (lambda (row) (map (lambda (col) (compute-new-value grid (list row col)))
+    (map (lambda (row) (map (lambda (col) (compute-new-value grid [row col]))
                             (range cols)))
          (range rows)))))
 

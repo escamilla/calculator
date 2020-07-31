@@ -1,11 +1,11 @@
-import { Token, TokenType } from "./tokens";
+import { Token, TokenType } from "./tokens.ts";
 
 class Tokenizer {
   private position: number = 0;
   private line: number = 1;
   private column: number = 1;
 
-  public constructor(private readonly input: string) { }
+  public constructor(private readonly input: string) {}
 
   public tokenize(): Token[] {
     const tokens: Token[] = [];
@@ -75,23 +75,20 @@ class Tokenizer {
   }
 
   private skipComment(): void {
-    const lineNumber: number = this.line;
-    const columnNumber: number = this.column;
     while (!this.eof()) {
-      if (this.peek() === "]") {
+      if (this.peek() === "\n") {
         this.next();
         return;
       }
       this.next();
     }
-    this.die(`unterminated comment starting at ${lineNumber}:${columnNumber}`);
   }
 
   private skipWhitespaceAndComments(): void {
     while (true) {
       if (this.isWhitespace(this.peek())) {
         this.skipWhitespace();
-      } else if (this.peek() === "[") {
+      } else if (this.peek() === ";") {
         this.skipComment();
       } else {
         break;
@@ -162,7 +159,9 @@ class Tokenizer {
     const line: number = this.line;
     const column: number = this.column;
 
-    if (this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))) {
+    if (
+      this.isDigit(char) || (char === "-" && this.isDigit(this.lookAhead()))
+    ) {
       return { type: TokenType.Number, value: this.readNumber(), line, column };
     }
 
@@ -171,23 +170,65 @@ class Tokenizer {
     }
 
     switch (char) {
-      case "\"":
-        return { type: TokenType.String, value: this.readString(), line, column };
+      case '"':
+        return {
+          type: TokenType.String,
+          value: this.readString(),
+          line,
+          column,
+        };
       case "'":
-        return { type: TokenType.SingleQuote, value: this.next(), line, column };
+        return {
+          type: TokenType.SingleQuote,
+          value: this.next(),
+          line,
+          column,
+        };
       case "(":
-        return { type: TokenType.LeftParenthesis, value: this.next(), line, column };
+        return {
+          type: TokenType.LeftParenthesis,
+          value: this.next(),
+          line,
+          column,
+        };
       case ")":
-        return { type: TokenType.RightParenthesis, value: this.next(), line, column };
+        return {
+          type: TokenType.RightParenthesis,
+          value: this.next(),
+          line,
+          column,
+        };
+      case "[":
+        return {
+          type: TokenType.LeftSquareBracket,
+          value: this.next(),
+          line,
+          column,
+        };
+      case "]":
+        return {
+          type: TokenType.RightSquareBracket,
+          value: this.next(),
+          line,
+          column,
+        };
       case "{":
-        return { type: TokenType.LeftCurlyBrace, value: this.next(), line, column };
+        return {
+          type: TokenType.LeftCurlyBrace,
+          value: this.next(),
+          line,
+          column,
+        };
       case "}":
-        return { type: TokenType.RightCurlyBrace, value: this.next(), line, column };
+        return {
+          type: TokenType.RightCurlyBrace,
+          value: this.next(),
+          line,
+          column,
+        };
       default:
         this.die(`unexpected character: ${char}`);
     }
-
-    return null;
   }
 }
 

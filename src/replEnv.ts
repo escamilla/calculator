@@ -1,26 +1,32 @@
-import Environment from "./Environment";
-import evaluate from "./evaluate";
-import interpret from "./interpret";
-import dummyIOHandler from "./io/dummyIOHandler";
-import IOHandler from "./io/IOHandler";
-import Parser from "./Parser";
-import Tokenizer from "./Tokenizer";
+import Environment from "./Environment.ts";
+import evaluate from "./evaluate.ts";
+import interpret from "./interpret.ts";
+import dummyIOHandler from "./io/dummyIOHandler.ts";
+import IOHandler from "./io/IOHandler.ts";
+import Parser from "./Parser.ts";
+import Tokenizer from "./Tokenizer.ts";
 import {
   ChipmunkBoolean,
-  ChipmunkList,
   ChipmunkNil,
   ChipmunkNodeType,
   ChipmunkNumber,
   ChipmunkString,
   ChipmunkType,
-} from "./types";
-import toString from "./utils/toString";
+  ChipmunkVector,
+} from "./types.ts";
+import toString from "./utils/toString.ts";
 
 const replEnv: Environment = new Environment();
 
-type ChipmunkCallable = (args: ChipmunkType[], ioHandler: IOHandler) => ChipmunkType;
+type ChipmunkCallable = (
+  args: ChipmunkType[],
+  ioHandler: IOHandler,
+) => ChipmunkType;
 
-function defineChipmunkFunction(name: string, callable: ChipmunkCallable): void {
+function defineChipmunkFunction(
+  name: string,
+  callable: ChipmunkCallable,
+): void {
   replEnv.set(name, {
     type: ChipmunkNodeType.Function,
     callable,
@@ -29,158 +35,149 @@ function defineChipmunkFunction(name: string, callable: ChipmunkCallable): void 
   });
 }
 
-defineChipmunkFunction("+",
-  (args: ChipmunkType[]): ChipmunkNumber => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Number, value: x.value + y.value };
-  },
-);
+defineChipmunkFunction("+", (args: ChipmunkType[]): ChipmunkNumber => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Number, value: x.value + y.value };
+});
 
-defineChipmunkFunction("-",
-  (args: ChipmunkType[]): ChipmunkNumber => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Number, value: x.value - y.value };
-  },
-);
+defineChipmunkFunction("-", (args: ChipmunkType[]): ChipmunkNumber => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Number, value: x.value - y.value };
+});
 
-defineChipmunkFunction("*",
-  (args: ChipmunkType[]): ChipmunkNumber => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Number, value: x.value * y.value };
-  },
-);
+defineChipmunkFunction("*", (args: ChipmunkType[]): ChipmunkNumber => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Number, value: x.value * y.value };
+});
 
-defineChipmunkFunction("/",
-  (args: ChipmunkType[]): ChipmunkNumber => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Number, value: x.value / y.value };
-  },
-);
+defineChipmunkFunction("/", (args: ChipmunkType[]): ChipmunkNumber => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Number, value: x.value / y.value };
+});
 
-defineChipmunkFunction("%",
-  (args: ChipmunkType[]): ChipmunkNumber => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Number, value: x.value % y.value };
-  },
-);
+defineChipmunkFunction("%", (args: ChipmunkType[]): ChipmunkNumber => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Number, value: x.value % y.value };
+});
 
-defineChipmunkFunction("pow",
-  (args: ChipmunkType[]): ChipmunkNumber => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Number, value: Math.pow(x.value, y.value) };
-  },
-);
+defineChipmunkFunction("pow", (args: ChipmunkType[]): ChipmunkNumber => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Number, value: Math.pow(x.value, y.value) };
+});
 
-defineChipmunkFunction("=",
-  (args: ChipmunkType[]): ChipmunkBoolean => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Boolean, value: x.value === y.value };
-  },
-);
+defineChipmunkFunction("=", (args: ChipmunkType[]): ChipmunkBoolean => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Boolean, value: x.value === y.value };
+});
 
-defineChipmunkFunction("<",
-  (args: ChipmunkType[]): ChipmunkBoolean => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Boolean, value: x.value < y.value };
-  },
-);
+defineChipmunkFunction("<", (args: ChipmunkType[]): ChipmunkBoolean => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Boolean, value: x.value < y.value };
+});
 
-defineChipmunkFunction(">",
-  (args: ChipmunkType[]): ChipmunkType => {
-    const x: ChipmunkNumber = args[0] as ChipmunkNumber;
-    const y: ChipmunkNumber = args[1] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.Boolean, value: x.value > y.value };
-  },
-);
+defineChipmunkFunction(">", (args: ChipmunkType[]): ChipmunkType => {
+  const x: ChipmunkNumber = args[0] as ChipmunkNumber;
+  const y: ChipmunkNumber = args[1] as ChipmunkNumber;
+  return { type: ChipmunkNodeType.Boolean, value: x.value > y.value };
+});
 
-defineChipmunkFunction("list",
-  (args: ChipmunkType[]): ChipmunkList => {
-    return { type: ChipmunkNodeType.List, items: args };
-  },
-);
+defineChipmunkFunction("length", (args: ChipmunkType[]): ChipmunkNumber => {
+  const arg: ChipmunkType = args[0];
+  if (arg.type === ChipmunkNodeType.List) {
+    return { type: ChipmunkNodeType.Number, value: arg.items.length };
+  } else if (arg.type === ChipmunkNodeType.String) {
+    return { type: ChipmunkNodeType.Number, value: arg.value.length };
+  } else if (arg.type === ChipmunkNodeType.Vector) {
+    return { type: ChipmunkNodeType.Number, value: arg.items.length };
+  } else {
+    throw new Error("length() takes a list, vector, or string");
+  }
+});
 
-defineChipmunkFunction("length",
-  (args: ChipmunkType[]): ChipmunkNumber => {
-    const arg: ChipmunkType = args[0];
-    if (arg.type === ChipmunkNodeType.List) {
-      return { type: ChipmunkNodeType.Number, value: arg.items.length };
-    } else if (arg.type === ChipmunkNodeType.String) {
-      return { type: ChipmunkNodeType.Number, value: arg.value.length };
-    } else {
-      throw new Error("length() takes a list or string");
-    }
-  },
-);
+defineChipmunkFunction("nth", (args: ChipmunkType[]): ChipmunkType => {
+  if (
+    (args[0].type === ChipmunkNodeType.List ||
+      args[0].type === ChipmunkNodeType.Vector) &&
+    args[1].type === ChipmunkNodeType.Number
+  ) {
+    return args[0].items[args[1].value];
+  } else if (
+    args[0].type === ChipmunkNodeType.String &&
+    args[1].type === ChipmunkNodeType.Number
+  ) {
+    return {
+      type: ChipmunkNodeType.String,
+      value: args[0].value.charAt(args[1].value),
+    };
+  } else {
+    throw new Error("nth() takes a list, string, or vector and a number");
+  }
+});
 
-defineChipmunkFunction("nth",
-  (args: ChipmunkType[]): ChipmunkType => {
-    const arg: ChipmunkType = args[0];
-    const index: ChipmunkNumber = args[1] as ChipmunkNumber;
+defineChipmunkFunction("slice", (args: ChipmunkType[]): ChipmunkVector => {
+  if (
+    args[0].type === ChipmunkNodeType.Vector &&
+    args[1].type === ChipmunkNodeType.Number &&
+    args[2].type === ChipmunkNodeType.Number
+  ) {
+    return {
+      type: ChipmunkNodeType.Vector,
+      items: args[0].items.slice(args[1].value, args[2].value),
+    };
+  } else {
+    throw new Error("slice() takes a vector and two numbers");
+  }
+});
 
-    if (arg.type === ChipmunkNodeType.List) {
-      return arg.items[index.value];
-    } else if (arg.type === ChipmunkNodeType.String) {
-      return { type: ChipmunkNodeType.String, value: arg.value.charAt(index.value) };
-    } else {
-      throw new Error("nth() takes a list or string");
-    }
-  },
-);
+defineChipmunkFunction("join", (args: ChipmunkType[]): ChipmunkVector => {
+  if (
+    args[0].type === ChipmunkNodeType.Vector &&
+    args[1].type === ChipmunkNodeType.Vector
+  ) {
+    return {
+      type: ChipmunkNodeType.Vector,
+      items: args[0].items.concat(args[1].items),
+    };
+  } else {
+    throw new Error("join() takes two vectors");
+  }
+});
 
-defineChipmunkFunction("slice",
-  (args: ChipmunkType[]): ChipmunkList => {
-    const list: ChipmunkList = args[0] as ChipmunkList;
-    const start: ChipmunkNumber = args[1] as ChipmunkNumber;
-    const end: ChipmunkNumber = args[2] as ChipmunkNumber;
-    return { type: ChipmunkNodeType.List, items: list.items.slice(start.value, end.value) };
-  },
-);
+defineChipmunkFunction("concat", (args: ChipmunkType[]): ChipmunkString => {
+  const castedArgs: ChipmunkString[] = args.map((arg: ChipmunkType) =>
+    arg as ChipmunkString
+  );
+  const strings: string[] = castedArgs.map((arg: ChipmunkString) => arg.value);
+  return { type: ChipmunkNodeType.String, value: strings.join("") };
+});
 
-defineChipmunkFunction("join",
-  (args: ChipmunkType[]): ChipmunkList => {
-    const list1: ChipmunkList = args[0] as ChipmunkList;
-    const list2: ChipmunkList = args[1] as ChipmunkList;
-    return { type: ChipmunkNodeType.List, items: list1.items.concat(list2.items) };
-  },
-);
+defineChipmunkFunction("to-string", (args: ChipmunkType[]): ChipmunkString => {
+  return { type: ChipmunkNodeType.String, value: toString(args[0]) };
+});
 
-defineChipmunkFunction("concat",
-  (args: ChipmunkType[]): ChipmunkString => {
-    const castedArgs: ChipmunkString[] = args.map((arg: ChipmunkType): ChipmunkString => arg as ChipmunkString);
-    const strings: string[] = castedArgs.map((arg: ChipmunkString): string => arg.value);
-    return { type: ChipmunkNodeType.String, value: strings.join("") };
-  },
-);
-
-defineChipmunkFunction("to-string",
-  (args: ChipmunkType[]): ChipmunkString => {
-    return { type: ChipmunkNodeType.String, value: toString(args[0]) };
-  },
-);
-
-defineChipmunkFunction("parse-integer",
+defineChipmunkFunction(
+  "parse-integer",
   (args: ChipmunkType[]): ChipmunkType => {
     const arg: ChipmunkString = args[0] as ChipmunkString;
     return { type: ChipmunkNodeType.Number, value: parseInt(arg.value, 10) };
   },
 );
 
-defineChipmunkFunction("parse-float",
-  (args: ChipmunkType[]): ChipmunkType => {
-    const arg: ChipmunkString = args[0] as ChipmunkString;
-    return { type: ChipmunkNodeType.Number, value: parseFloat(arg.value) };
-  },
-);
+defineChipmunkFunction("parse-float", (args: ChipmunkType[]): ChipmunkType => {
+  const arg: ChipmunkString = args[0] as ChipmunkString;
+  return { type: ChipmunkNodeType.Number, value: parseFloat(arg.value) };
+});
 
-defineChipmunkFunction("print",
+defineChipmunkFunction(
+  "print",
   (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkNil => {
     const message: string = toString(args[0], true);
     ioHandler.print(message);
@@ -188,7 +185,8 @@ defineChipmunkFunction("print",
   },
 );
 
-defineChipmunkFunction("print-line",
+defineChipmunkFunction(
+  "print-line",
   (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkNil => {
     if (args.length === 0) {
       ioHandler.printLine();
@@ -200,7 +198,8 @@ defineChipmunkFunction("print-line",
   },
 );
 
-defineChipmunkFunction("read-line",
+defineChipmunkFunction(
+  "read-line",
   (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkString => {
     const prompt: string = (args[0] as ChipmunkString).value;
     const line: string = ioHandler.readLine(prompt);
@@ -208,7 +207,8 @@ defineChipmunkFunction("read-line",
   },
 );
 
-defineChipmunkFunction("read-file",
+defineChipmunkFunction(
+  "read-file",
   (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkString => {
     const path: string = (args[0] as ChipmunkString).value;
     const contents: string = ioHandler.readFile(path);
@@ -216,22 +216,19 @@ defineChipmunkFunction("read-file",
   },
 );
 
-defineChipmunkFunction("do",
-  (args: ChipmunkType[]): ChipmunkType => {
-    return args[args.length - 1];
-  },
-);
+defineChipmunkFunction("do", (args: ChipmunkType[]): ChipmunkType => {
+  return args[args.length - 1];
+});
 
-defineChipmunkFunction("parse-string",
-  (args: ChipmunkType[]): ChipmunkType => {
-    const input: ChipmunkString = args[0] as ChipmunkString;
-    const tokenizer: Tokenizer = new Tokenizer(input.value);
-    const parser: Parser = new Parser(tokenizer.tokenize());
-    return parser.parse();
-  },
-);
+defineChipmunkFunction("parse-string", (args: ChipmunkType[]): ChipmunkType => {
+  const input: ChipmunkString = args[0] as ChipmunkString;
+  const tokenizer: Tokenizer = new Tokenizer(input.value);
+  const parser: Parser = new Parser(tokenizer.tokenize());
+  return parser.parse();
+});
 
-defineChipmunkFunction("eval",
+defineChipmunkFunction(
+  "eval",
   (args: ChipmunkType[], ioHandler: IOHandler): ChipmunkType => {
     return evaluate(args[0], replEnv, ioHandler);
   },
@@ -264,20 +261,20 @@ const inputs: string[] = [
      (slice collection 1 (+ (length collection) 1))))`,
   `(def range (lambda (x)
      (if (<= x 0)
-       '()
+       []
        (join (range (- x 1))
-             (list (- x 1))))))`,
+             [(- x 1)]))))`,
   `(def map (lambda (function collection)
      (if (empty? collection)
-       '()
-       (join (list (function (head collection)))
+       []
+       (join [(function (head collection))]
              (map function (tail collection))))))`,
   `(def filter (lambda (predicate collection)
      (if (empty? collection)
-       '()
+       []
        (join (if (predicate (head collection))
-               (list (head collection))
-               '())
+               [(head collection)]
+               [])
              (filter predicate (tail collection))))))`,
   `(def any? (lambda (predicate collection)
      (if (empty? collection)
@@ -311,7 +308,7 @@ const inputs: string[] = [
      (if (empty? collection)
        collection
        (join (reverse (tail collection))
-             (list (head collection))))))`,
+             [(head collection)]))))`,
   `(def find (lambda (predicate collection)
      (if (empty? collection)
        nil

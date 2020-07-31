@@ -1,5 +1,5 @@
-import { compileChipmunkFileToJavaScript } from "./codegen";
+import { compileChipmunkFileToJavaScript } from "./codegen.ts";
 
-process.argv.slice(2).forEach((path: string): void => {
+for (const path of Deno.args) {
   compileChipmunkFileToJavaScript(path);
-});
+}

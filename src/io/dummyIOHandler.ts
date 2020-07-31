@@ -1,4 +1,4 @@
-import IOHandler from "./IOHandler";
+import IOHandler from "./IOHandler.ts";
 
 const dummyIOHandler: IOHandler = {
   print(): void {
