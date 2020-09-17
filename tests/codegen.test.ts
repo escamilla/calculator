@@ -1,11 +1,11 @@
+import type { JavaScriptNode } from "../src/jstypes.ts";
+import type { ChipmunkType } from "../src/types.ts";
 import {
   compileJavaScriptToSourceNode,
   convertChipmunkNodeToJavaScriptNode,
 } from "../src/codegen.ts";
-import { JavaScriptNode } from "../src/jstypes.ts";
 import Parser from "../src/Parser.ts";
 import Tokenizer from "../src/Tokenizer.ts";
-import { ChipmunkType } from "../src/types.ts";
 
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 

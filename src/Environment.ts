@@ -1,4 +1,4 @@
-import { ChipmunkSymbol, ChipmunkType } from "./types.ts";
+import type { ChipmunkSymbol, ChipmunkType } from "./types.ts";
 
 class Environment {
   private data: Map<string, ChipmunkType> = new Map();
