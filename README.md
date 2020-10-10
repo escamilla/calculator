@@ -31,7 +31,7 @@ To compile a Chipmunk program to JavaScript:
 npm install
 
 # Compile to JavaScript
-deno run --unstable --allow-read --allow-env --allow-write src/compile.ts examples/game-of-life.ch
+deno run --allow-read --allow-env --allow-write src/compile.ts examples/game-of-life.ch
 
 # Run the compiled JavaScript
 deno run examples/game-of-life.js
@@ -39,7 +39,7 @@ deno run examples/game-of-life.js
 
 To run tests:
 ```sh
-deno test --unstable --allow-read --allow-env
+deno test --allow-read --allow-env
 ```
 
 ## Resources
